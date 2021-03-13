@@ -10,7 +10,7 @@ interface PriceData {
     price: number;
 }
 
-const COUNTERPARTY_LIST = ["Biedronka", "Auchan", "Carrefour"]
+const COUNTERPARTY_LIST = ["Biedronka", "Auchan", "Carrefour", "Lidl"];
 
 const ProductView = (props: ProductViewPros) => {
     const [latestPrice, setLatestPrice] = useState(0);

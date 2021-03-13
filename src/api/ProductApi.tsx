@@ -5,6 +5,7 @@ import LocalDB from "./LocalDB";
 interface ProductApi {
     getProducts(): Promise<Product[]>;
     saveProduct(product: Product): Promise<Product>;
+    findBy(generalName: string): Promise<Product[]>;
 }
 
 class MockedProductApi implements ProductApi {
@@ -13,6 +14,10 @@ class MockedProductApi implements ProductApi {
 
     constructor() {
         this.productCache = [];
+    }
+
+    findBy(generalName: string): Promise<Product[]> {
+        return LocalDB.findProductsBy(generalName);
     }
 
     async getProducts(): Promise<Product[]> {

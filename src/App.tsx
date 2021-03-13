@@ -7,6 +7,7 @@ import {
   Link
 } from "react-router-dom";
 import BrowseProductsPage from "./pages/browse-products/BrowseProductsPage";
+import GroceriesTodoPage from "./pages/groceries-todo/GroceriesTodoPage";
 import AddNewProduct from './pages/new-product/AddNewProductPage'
 import ScanTest from "./pages/scan-test/ScanTestPage";
  
@@ -44,7 +45,7 @@ export default function App() {
             <AddNewProduct />
           </Route>
           <Route path="/groceries-todo">
-            <GroceriesTodo />
+            <GroceriesTodoPage />
           </Route>
           <Route path="/scan-test">
             <ScanTest />
@@ -60,8 +61,4 @@ export default function App() {
  
 function Home() {
   return <h2>Home</h2>;
-}
-
-function GroceriesTodo() {
-  return <h2>groceries-todo</h2>;
 }

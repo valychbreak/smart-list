@@ -38,6 +38,14 @@ class LocalDB {
         })
     }
 
+    async findProductsBy(generalName: string): Promise<Product[]> {
+        await this.initCacheIfNeeded();
+
+        return this._productCache.filter(
+            product => product.productGeneralName.toLocaleLowerCase() === generalName.toLocaleLowerCase()
+        );
+    }
+
     async saveNewPriceEntry(productPriceEntry: ProductPriceEntry): Promise<ProductPriceEntry> {
         await this.initPriceEntriesCacheIfNeeded();
 
