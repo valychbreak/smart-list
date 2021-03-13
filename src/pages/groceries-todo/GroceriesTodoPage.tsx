@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import remove from './icons/remove.jfif';
 import add from './icons/add2.png';
 import space from './icons/space.jfif';
@@ -7,27 +7,32 @@ import './GroceriesTodoPage.css'
 import ProductApi from "../../api/ProductApi";
 import TodoItem from "./components/TodoItem";
 import TodoListView from "./components/TodoListView";
-import TodoItemListContext from "./context/TodoItemListContext";
+import TodoItemListContext, { TodoItemListContextType } from "./context/TodoItemListContext";
+import { TodoItemListContextProvider } from "./context/TodoItemListContextProvider";
+import ProductPriceForm from "../../components/ProductPriceForm";
+import ProductPriceEntry from "../../entity/ProductPriceEntry";
 import ProductPriceApi from "../../api/ProductPriceApi";
-import COUNTERPARTY_LIST from "../../api/Constants";
-import PriceData from "../../entity/PriceData";
 
-
-class ProductPriceData {
-    latestPrice: number;
-    perCounterpartyPrice: {[id: string]: PriceData};
-
-    constructor () {
-        this.latestPrice = 0;
-        this.perCounterpartyPrice = {};
-    }
-}
+const ADDING_ITEMS_MODE = 1;
+const PURCHASE_MODE = 2;
 
 const GroceriesTodoPage = (props: any) => {
 
-    const [items, setItems] = useState<TodoItem[]>([]);
+    const [mode, setMode] = useState(ADDING_ITEMS_MODE);
+
     const [text, setText] = useState('');
     const [text2, setText2] = useState('1');
+
+    const [addingPrice, setAddingPrice] = useState(false);
+    const [selectedItem, setSelectedItem] = useState<TodoItem>();
+
+    function enablePurchaseMode(e: any) {
+        setMode(PURCHASE_MODE);
+    }
+
+    function enableAddingItemsMode(e: any) {
+        setMode(ADDING_ITEMS_MODE);
+    }
 
     function handleChange(e: any) {
         setText(e.target.value)
@@ -38,7 +43,7 @@ const GroceriesTodoPage = (props: any) => {
     }
 
 
-    function handleSubmit(e: any) {
+    function handleSubmit(e: any, context: TodoItemListContextType) {
         e.preventDefault();
         if (text.length === 0) {
             return;
@@ -49,128 +54,139 @@ const GroceriesTodoPage = (props: any) => {
             if (products.length === 0) {
                 newItem = new TodoItem(Date.now(), text);
                 newItem.quantity = parseInt(text2);
-                addItem(newItem);
+                context.addItem(newItem);
             } else {
                 let targetProduct = products[0];
                 
                 newItem = new TodoItem(Date.now(), text);
                 newItem.quantity = parseInt(text2);
                 newItem.targetProduct = targetProduct;
-                addItem(newItem);
+                context.addItem(newItem);
             }
         });
     }
 
-    function addItem(item: TodoItem) {
-        if (item.targetProduct) {
-            let latestPricePromise = ProductPriceApi.fetchLatestPrice(item.targetProduct).then((entry) => {
-                if (entry) {
-                    item.priceData.latestPrice = entry.price;
-                }
-            });
-
-            let counterpartyPriceFetchList = [latestPricePromise];
-
-            COUNTERPARTY_LIST.forEach(counterparty => {
-                if (item.targetProduct) {
-                    let fetchPromise = ProductPriceApi.fetchLatestPrice(item.targetProduct, counterparty)
-                        .then(priceEntry => {
-                            if (priceEntry) {
-                                item.priceData.setCounterpartyPrice(counterparty, {price: priceEntry.price});
-                            }
-                        })
-                    counterpartyPriceFetchList.push(fetchPromise);
-                }
-            });
-
-            Promise.all(counterpartyPriceFetchList).then(_ => {
-                setItems(items.concat(item));
-            });
+    function onItemPurchaseToggle(item: TodoItem, isChecked: boolean) {
+        if (isChecked) {
+            setSelectedItem(item);
+            setAddingPrice(true);
+        } else {
+            cancelAddingPrice();
         }
     }
 
-    function removeItem(removeItem: TodoItem) {
-        setItems(items.filter(item => item.id !== removeItem.id));
+    function onPriceEntrySubmit(priceEntry: ProductPriceEntry) {
+        setSelectedItem(undefined);
+        if (selectedItem?.targetProduct) {
+            ProductPriceApi.addPriceEntry(selectedItem.targetProduct, priceEntry)
+                .then((priceEntry) => {
+                  console.log(priceEntry);
+                  setAddingPrice(false);
+                });
+        }
+    }
+
+    function cancelAddingPrice() {
+        setSelectedItem(undefined);
+        setAddingPrice(false);
     }
 
     return (
         <fieldset>
             <legend>Purchase list</legend>
             <div>
-                <TodoItemListContext.Provider value={{todoItems: items, addItem: addItem, removeItem: removeItem}}>
+                <TodoItemListContextProvider onItemPurchaseToggle={onItemPurchaseToggle}>
+                {addingPrice && 
+                    <>
+                        <h3>Add price for {selectedItem?.targetProduct?.productFullName}</h3>
+                        <button onClick={() => cancelAddingPrice()}>Skip / Cancel</button>
+                        <ProductPriceForm targetProduct={selectedItem?.targetProduct} onEntrySubmit={onPriceEntrySubmit}/>
+                    </>
+                }
                     <TodoListView />
-                </TodoItemListContext.Provider>
-                <hr />
-                <table>
-                    <tbody>
-                        <tr>
-                            <td className="T_action_button">
-                                <div className="center">
-                                    <input type="checkbox" id="show" className="scan_chk" />
-                                    <label htmlFor="show" className="show-btn">
-                                        <img src={scan} alt="remove" className="icon_scan" />
-                                    </label>
-                                    <div className="container">
-                                        <label htmlFor="show" className="close-btn fas fa-times" title="close">
-                                            <img src={remove} alt="remove" className="icons" />
+                    <hr />
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td className="T_action_button">
+                                    <div className="center">
+                                        <input type="checkbox" id="show" className="scan_chk" />
+                                        <label htmlFor="show" className="show-btn">
+                                            <img src={scan} alt="remove" className="icon_scan" />
                                         </label>
-                                    </div>
-                                </div>
-                            </td>
-                            <td colSpan={2}>
-
-                                <form onSubmit={handleSubmit} className="MyForm">
-                                    <div>
-                                        <div className="Iname">
-                                            <input
-                                                id="new-todo"
-                                                onChange={handleChange}
-                                                value={text}
-                                            />
-                                        </div>
-                                        <div className="quantity">
-                                            <input
-                                                id="quantity"
-                                                onChange={handleChange2}
-                                                value={text2}
-                                            />
-                                        </div>
-                                        <div className="btn">
-                                            <button>
-                                                Add #{items.length + 1}
-                                            </button>
+                                        <div className="container">
+                                            <label htmlFor="show" className="close-btn fas fa-times" title="close">
+                                                <img src={remove} alt="remove" className="icons" />
+                                            </label>
                                         </div>
                                     </div>
-                                </form>
+                                </td>
+                                <td colSpan={2}>
 
-                            </td>
-                            <td colSpan={3}>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colSpan={2}>
-                                <div className="myBTN">
-                                    <button>Purchase mode</button>
-                                </div>
-                                <div className="myBTN">
-                                    <button>Export to csv</button>
-                                </div>
-                            </td>
-                            <td className="cpty">
-                                [total_sum]
-                            </td>
-                            <td className="cpty">
-                                [total_sum]
-                            </td>
-                            <td className="cpty">
-                                [total_sum]
-                            </td>
-                            <td className="T_action_button">
-                                <img src={space} alt="remove" className="icons" />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                    <TodoItemListContext.Consumer>
+                                        {context => (
+                                            <form onSubmit={(e) => handleSubmit(e, context)} className="MyForm">
+                                                <div>
+                                                    <div className="Iname">
+                                                        <input
+                                                            id="new-todo"
+                                                            onChange={handleChange}
+                                                            value={text}
+                                                        />
+                                                    </div>
+                                                    <div className="quantity">
+                                                        <input
+                                                            id="quantity"
+                                                            onChange={handleChange2}
+                                                            value={text2}
+                                                        />
+                                                    </div>
+                                                    <div className="btn">
+                                                        <button>
+                                                            Add #{context.todoItems.length + 1}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        )}
+                                    </TodoItemListContext.Consumer>
+
+                                </td>
+                                <td colSpan={3}>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colSpan={2}>
+                                    <div className="myBTN">
+                                        {mode === ADDING_ITEMS_MODE && <button onClick={enablePurchaseMode}>Purchase mode</button>}
+                                        {mode === PURCHASE_MODE && <button onClick={enableAddingItemsMode}>Exit Purchase mode</button>}
+                                    </div>
+                                    <div className="myBTN">
+                                        <button>Export to csv</button>
+                                    </div>
+                                </td>
+                                <td className="cpty">
+                                    [total_sum]
+                                </td>
+                                <td className="cpty">
+                                    [total_sum]
+                                </td>
+                                <td className="cpty">
+                                    [total_sum]
+                                </td>
+                                <td className="T_action_button">
+                                    <img src={space} alt="remove" className="icons" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colSpan={4}>
+                                    {mode === ADDING_ITEMS_MODE && <p>You are currently in the list preparation mode. Add items you are planning to buy by scanning barcode or typing Product General Name (e.g. milk, tea, bread).</p>}
+                                    {mode === PURCHASE_MODE && <p>You are currently in the purchase mode. Scan or type product's barcode to mark as purchased.</p>}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </TodoItemListContextProvider>
             </div>
         </fieldset>
     );

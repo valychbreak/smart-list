@@ -6,6 +6,7 @@ export type TodoItemListContextType = {
     
     addItem: (item: TodoItem) => void;
     removeItem: (item: TodoItem) => void;
+    toggleItemPurchased: (item: TodoItem, toggle: boolean) => void;
 }
 
 const TodoItemListContext = React.createContext<TodoItemListContextType>({
@@ -16,6 +17,10 @@ const TodoItemListContext = React.createContext<TodoItemListContextType>({
     },
 
     removeItem: (item: TodoItem) => {
+        throw new Error("No implementation");
+    },
+
+    toggleItemPurchased: (item: TodoItem, toggle: boolean) => {
         throw new Error("No implementation");
     }
 });

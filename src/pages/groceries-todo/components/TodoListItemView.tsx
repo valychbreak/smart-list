@@ -7,13 +7,22 @@ import TodoItem from "./TodoItem";
 
 const TodoListItemView = (props: {item: TodoItem}) => {
 
+    const [isPurchased, setIsPurchased] = useState(false);
+
     const todoItemListProvider = useContext(TodoItemListContext);
+
+    function togglePurchase(toggle: boolean) {
+        setIsPurchased(toggle);
+        todoItemListProvider.toggleItemPurchased(props.item, toggle);
+    }
 
     return (
         <tr>
             <td>
                 <input
                     type="checkbox"
+                    defaultChecked={isPurchased}
+                    onChange={() => togglePurchase(!isPurchased)}
                     id={props.item.id.toString()}
                     name='MyItem'
                 />
