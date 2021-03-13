@@ -1,27 +1,27 @@
-import React, { useState } from "react";
-import remove from './remove.jfif';
-import add from './add2.png';
-import space from './space.jfif';
-import scan from './scan.png';
+import React, { useEffect, useState } from "react";
+import remove from './icons/remove.jfif';
+import add from './icons/add2.png';
+import space from './icons/space.jfif';
+import scan from './icons/scan.png';
 import './GroceriesTodoPage.css'
 import ProductApi from "../../api/ProductApi";
+import TodoItem from "./components/TodoItem";
+import TodoListView from "./components/TodoListView";
+import TodoItemListContext from "./context/TodoItemListContext";
 import ProductPriceApi from "../../api/ProductPriceApi";
-import Product from "../../entity/Product";
+import COUNTERPARTY_LIST from "../../api/Constants";
+import PriceData from "../../entity/PriceData";
 
-class TodoItem {
-    id: number;
-    generalName: string;
-    quantity: number;
-    targetProduct?: Product;
 
-    constructor (id: number, generalName: string) {
-        this.id = id;
-        this.generalName = generalName;
-        this.quantity = 1;
+class ProductPriceData {
+    latestPrice: number;
+    perCounterpartyPrice: {[id: string]: PriceData};
+
+    constructor () {
+        this.latestPrice = 0;
+        this.perCounterpartyPrice = {};
     }
 }
-
-const COUNTERPARTY_LIST = ["Biedronka", "Auchan", "Carrefour", "Lidl"];
 
 const GroceriesTodoPage = (props: any) => {
 
@@ -49,23 +49,57 @@ const GroceriesTodoPage = (props: any) => {
             if (products.length === 0) {
                 newItem = new TodoItem(Date.now(), text);
                 newItem.quantity = parseInt(text2);
-                setItems(items.concat(newItem));
+                addItem(newItem);
             } else {
                 let targetProduct = products[0];
                 
                 newItem = new TodoItem(Date.now(), text);
                 newItem.quantity = parseInt(text2);
                 newItem.targetProduct = targetProduct;
-                setItems(items.concat(newItem));
+                addItem(newItem);
             }
         });
+    }
+
+    function addItem(item: TodoItem) {
+        if (item.targetProduct) {
+            let latestPricePromise = ProductPriceApi.fetchLatestPrice(item.targetProduct).then((entry) => {
+                if (entry) {
+                    item.priceData.latestPrice = entry.price;
+                }
+            });
+
+            let counterpartyPriceFetchList = [latestPricePromise];
+
+            COUNTERPARTY_LIST.forEach(counterparty => {
+                if (item.targetProduct) {
+                    let fetchPromise = ProductPriceApi.fetchLatestPrice(item.targetProduct, counterparty)
+                        .then(priceEntry => {
+                            if (priceEntry) {
+                                item.priceData.setCounterpartyPrice(counterparty, {price: priceEntry.price});
+                            }
+                        })
+                    counterpartyPriceFetchList.push(fetchPromise);
+                }
+            });
+
+            Promise.all(counterpartyPriceFetchList).then(_ => {
+                setItems(items.concat(item));
+            });
+        }
+    }
+
+    function removeItem(removeItem: TodoItem) {
+        setItems(items.filter(item => item.id !== removeItem.id));
     }
 
     return (
         <fieldset>
             <legend>Purchase list</legend>
             <div>
-                <TodoList items={items} />
+                <TodoItemListContext.Provider value={{todoItems: items, addItem: addItem, removeItem: removeItem}}>
+                    <TodoListView />
+                </TodoItemListContext.Provider>
                 <hr />
                 <table>
                     <tbody>
@@ -142,78 +176,5 @@ const GroceriesTodoPage = (props: any) => {
     );
 }
 
-class TodoList extends React.Component<{items: TodoItem[]}, any> {
-    render() {
-
-        return (
-            <table>
-                <thead>
-                    <tr className="cpty">
-                        <td className="T_action_button">
-                            Purchased
-                        </td>
-                        <td>
-                            Item list
-                        </td>
-                        <td>
-                            Quantity
-                        </td>
-                        <td className="cpty">
-                            Auchan
-                            <img src={remove} alt="remove" className="icons" />
-                        </td>
-                        <td className="cpty">
-                            Lidl
-                            <img src={remove} alt="remove" className="icons" />
-                        </td>
-                        <td className="cpty">
-                            Biedronka
-                            <img src={remove} alt="remove" className="icons" />
-                        </td>
-                        <td className="T_action_button">
-                            <img src={add} alt="remove" className="icons" />
-                        </td>
-                    </tr>
-                </thead>
-                <tbody>
-                    {this.props.items.map((item: TodoItem, idx: number) => (
-                        <tr key={idx}>
-                            <td>
-                                <input
-                                    type="checkbox"
-                                    id={item.id.toString()}
-                                    name='MyItem'
-                                />
-                            </td>
-                            <td className="ItemName">
-                                <label htmlFor={item.id.toString()}>
-                                    {item.generalName} {item.targetProduct && item.targetProduct.productFullName}
-                                </label>
-                            </td>
-                            <td>
-                                <label htmlFor={item.id.toString()}>
-                                    {item.quantity}
-                                </label>
-                            </td>
-                            <td>
-                                [A_price]
-                            </td>
-                            <td>
-                                [L_price]
-                            </td>
-                            <td>
-                                [B_price]
-                            </td>
-                            <td>
-
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-
-        );
-    }
-}
 
 export default GroceriesTodoPage;

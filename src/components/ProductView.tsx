@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import COUNTERPARTY_LIST from "../api/Constants";
 import ProductPriceApi from "../api/ProductPriceApi";
 import Product from "../entity/Product";
 
@@ -9,8 +10,6 @@ interface ProductViewPros {
 interface PriceData {
     price: number;
 }
-
-const COUNTERPARTY_LIST = ["Biedronka", "Auchan", "Carrefour", "Lidl"];
 
 const ProductView = (props: ProductViewPros) => {
     const [latestPrice, setLatestPrice] = useState(0);
