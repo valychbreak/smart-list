@@ -1,7 +1,7 @@
 import React from 'react'
 import { useForm } from 'react-hook-form';
 import Product from '../entity/Product';
-import ProductPriceEntry from './ProductPriceEntry';
+import ProductPriceEntry from '../entity/ProductPriceEntry';
 
 
 interface ProductPriceFormFields {

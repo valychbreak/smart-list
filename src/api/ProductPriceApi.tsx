@@ -1,4 +1,4 @@
-import ProductPriceEntry from "../components/ProductPriceEntry";
+import ProductPriceEntry from "../entity/ProductPriceEntry";
 import Product from "../entity/Product";
 import LocalDB from "./LocalDB";
 

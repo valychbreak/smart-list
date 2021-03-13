@@ -1,5 +1,5 @@
 import axios from "axios";
-import ProductPriceEntry from "../components/ProductPriceEntry";
+import ProductPriceEntry from "../entity/ProductPriceEntry";
 import Product from "../entity/Product";
 
 const PRODUCTS_KEY = 'products';

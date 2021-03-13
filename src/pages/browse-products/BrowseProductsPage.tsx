@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import ProductApi from "../../api/ProductApi";
 import ProductPriceApi from "../../api/ProductPriceApi";
-import ProductPriceEntry from "../../components/ProductPriceEntry";
+import ProductPriceEntry from "../../entity/ProductPriceEntry";
 import ProductPriceForm from "../../components/ProductPriceForm";
 import ProductView from "../../components/ProductView";
 import Product from "../../entity/Product";
