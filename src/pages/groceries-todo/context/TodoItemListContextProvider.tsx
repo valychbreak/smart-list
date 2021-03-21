@@ -49,8 +49,12 @@ export const TodoItemListContextProvider = (props: React.PropsWithChildren<TodoI
         props.onItemPurchaseToggle(item, toggle);
     }
 
+    const clearItems = () => {
+        setTodoItems([]);
+    }
+
     return (
-        <TodoItemListContext.Provider value={{todoItems, addItem: addItem, removeItem: removeItem, toggleItemPurchased}}>
+        <TodoItemListContext.Provider value={{todoItems, addItem, removeItem, toggleItemPurchased, clearItems}}>
             {props.children}
         </TodoItemListContext.Provider>
     )

@@ -60,18 +60,28 @@ const GroceriesTodoPage = (props: any) => {
         setAddingPrice(false);
     }
 
+    const clearTodoList = (context: TodoItemListContextType) => {
+        if (window.confirm("Are you sure you want to clear the list? CANNOT BE UNDONE!")) {
+            context.clearItems();
+        }
+    }
+
     return (
         <fieldset>
             <legend>Purchase list</legend>
             <div>
                 <TodoItemListContextProvider onItemPurchaseToggle={onItemPurchaseToggle}>
-                {addingPrice && 
-                    <>
-                        <h3>Add price for {selectedItem?.targetProduct?.productFullName}</h3>
-                        <button onClick={() => cancelAddingPrice()}>Skip / Cancel</button>
-                        <ProductPriceForm targetProduct={selectedItem?.targetProduct} onEntrySubmit={onPriceEntrySubmit}/>
-                    </>
-                }
+                    {addingPrice && 
+                        <>
+                            <h3>Add price for {selectedItem?.targetProduct?.productFullName}</h3>
+                            <button onClick={() => cancelAddingPrice()}>Skip / Cancel</button>
+                            <ProductPriceForm targetProduct={selectedItem?.targetProduct} onEntrySubmit={onPriceEntrySubmit}/>
+                        </>
+                    }<TodoItemListContext.Consumer>
+                        {context => (
+                            <button onClick={e => clearTodoList(context)}>CLEAR LIST</button>
+                        )}
+                    </TodoItemListContext.Consumer>
                     <TodoListView />
                     <hr />
                     <table>
