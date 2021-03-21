@@ -4,7 +4,7 @@ import AsyncSelect from "react-select/async";
 import { OptionsType } from "react-select";
 import ProductApi from "../../../api/ProductApi";
 
-type TagItem = {
+type ProductSelectItem = {
     label: string,
     product: Product;
 }
@@ -15,11 +15,11 @@ interface ProductSelectProps {
 
 export const ProductSelect = (props: ProductSelectProps) => {
 
-    const onItemTagValueChange = (value: string): Promise<OptionsType<TagItem>> => {
+    const onItemTagValueChange = (value: string): Promise<OptionsType<ProductSelectItem>> => {
         return new Promise((resolve, reject) => {
             ProductApi.findMatchingBy(value)
                 .then(products => {
-                    let foundProducts: TagItem[] = products.map(product => { 
+                    let foundProducts: ProductSelectItem[] = products.map(product => { 
                         return {label: product.productFullName as string, product: product}
                     });
 
@@ -28,7 +28,7 @@ export const ProductSelect = (props: ProductSelectProps) => {
         });
     }
 
-    const onProductSelect = (selectedProduct: TagItem | null) => {
+    const onProductSelect = (selectedProduct: ProductSelectItem | null) => {
         props.onProductSelect(selectedProduct == null ? null : selectedProduct.product);
     }
     return (
