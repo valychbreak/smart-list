@@ -1,10 +1,11 @@
-import React, { ElementRef, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Product from "../../../entity/Product";
-import AsyncSelect, { Async } from "react-select/async";
-import { OptionsType } from "react-select";
+import AsyncCreatableSelect from "react-select/async-creatable";
+import { ActionMeta, OptionsType } from "react-select";
 import ProductApi from "../../../api/ProductApi";
 import TodoItemListContext, { TodoItemListContextType } from "../context/TodoItemListContext";
 import TodoItem from "./TodoItem";
+import { RouteComponentProps, withRouter } from "react-router-dom";
 
 type ProductSelectItem = {
     label: string,
@@ -13,6 +14,7 @@ type ProductSelectItem = {
 
 interface ProductSelectProps {
     onProductSelect(selectedProduct: Product | null): void;
+    onProductCreateOptionSelect(inputValue: string): void;
 }
 
 const ProductSelect = React.forwardRef<any, ProductSelectProps>((props: ProductSelectProps, ref: React.ForwardedRef<any>) => {
@@ -30,17 +32,29 @@ const ProductSelect = React.forwardRef<any, ProductSelectProps>((props: ProductS
         });
     }
 
-    const onProductSelect = (selectedProduct: ProductSelectItem | null) => {
-        props.onProductSelect(selectedProduct == null ? null : selectedProduct.product);
+    const onProductSelect = (selectedProduct: ProductSelectItem | OptionsType<ProductSelectItem> | null, action: ActionMeta<ProductSelectItem>) => {
+        if (selectedProduct) {
+            // workaround: couldn't find a way how to resolve union types in this case
+            props.onProductSelect((selectedProduct as ProductSelectItem).product);
+        } else {
+            props.onProductSelect(null);
+        }
     }
+
+    const onProductOptionCreate = (inputValue: string) => {
+        props.onProductCreateOptionSelect(inputValue);
+    }
+
     return (
-        <AsyncSelect loadOptions={onItemTagValueChange} 
-                     onChange={onProductSelect} 
-                     ref={ref}/>
+        <AsyncCreatableSelect loadOptions={onItemTagValueChange}
+                              onChange={onProductSelect}
+                              onCreateOption={onProductOptionCreate}
+                              isMulti={false}
+                              ref={ref}/>
     )
 })
 
-export const AddTodoItemForm = () => {
+const AddTodoItemForm = (props: RouteComponentProps) => {
 
     const [selectedProduct, setSelectedProduct] = useState<Product | null>();
     const [newItemQuantity, setNewItemQuantity] = useState('1');
@@ -62,13 +76,20 @@ export const AddTodoItemForm = () => {
 
             if (productSelectRef) {
                 // workaround to reset value on adding item (element was found by debug)
-                productSelectRef.current.select.select.clearValue();
+                // console.log(productSelectRef);
+                productSelectRef.current.select.select.select.clearValue();
             }
         }
     }
 
-    const onTagItemChange = (selectedItem: Product | null) => {
+    const onProductSelect = (selectedItem: Product | null) => {
         setSelectedProduct(selectedItem);
+    }
+
+    const onProductCreateOptionSelect = (inputValue: string) => {
+        if (window.confirm(`No product matching '${inputValue}' was added. \nDo you want to go to product adding page?`)) {
+            props.history.push('new-product');
+        }
     }
 
     return (
@@ -76,7 +97,10 @@ export const AddTodoItemForm = () => {
             {context => (
                 <form onSubmit={(e) => handleSubmit(e, context)} className="MyForm">
                     <div>
-                        <ProductSelect onProductSelect={onTagItemChange} ref={productSelectRef} />
+                        <ProductSelect onProductSelect={onProductSelect}
+                                       onProductCreateOptionSelect={onProductCreateOptionSelect} 
+                                       ref={productSelectRef} />
+
                         <div className="quantity">
                             <input
                                 id="quantity"
@@ -95,3 +119,5 @@ export const AddTodoItemForm = () => {
         </TodoItemListContext.Consumer>
     )
 }
+
+export default withRouter(AddTodoItemForm);

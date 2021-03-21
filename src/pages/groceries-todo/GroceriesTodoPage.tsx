@@ -12,10 +12,7 @@ import { TodoItemListContextProvider } from "./context/TodoItemListContextProvid
 import ProductPriceForm from "../../components/ProductPriceForm";
 import ProductPriceEntry from "../../entity/ProductPriceEntry";
 import ProductPriceApi from "../../api/ProductPriceApi";
-import AsyncSelect from "react-select/async";
-import { OptionsType, OptionTypeBase } from "react-select";
-import Product from "../../entity/Product";
-import { AddTodoItemForm } from "./components/AddTodoItemForm";
+import AddTodoItemForm from "./components/AddTodoItemForm";
 
 const ADDING_ITEMS_MODE = 1;
 const PURCHASE_MODE = 2;
