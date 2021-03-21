@@ -30,6 +30,16 @@ class TodoItem {
         this.isBought = false;
         this.priceData = new ProductPriceData();
     }
+
+    incrementQuantity() {
+        this.quantity ++;
+    }
+
+    decrementQuantity() {
+        if (this.quantity > 1) {
+            this.quantity --;
+        }
+    }
 }
 
 export default TodoItem;

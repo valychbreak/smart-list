@@ -1,12 +1,12 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useReducer, useState } from "react";
 import COUNTERPARTY_LIST from "../../../api/Constants";
-import ProductPriceApi from "../../../api/ProductPriceApi";
 import PriceData from "../../../entity/PriceData";
 import TodoItemListContext from "../context/TodoItemListContext";
 import TodoItem from "./TodoItem";
 
 const TodoListItemView = (props: {item: TodoItem}) => {
 
+    const [, forceUpdate] = useReducer(x => x + 1, 0);
     const [isPurchased, setIsPurchased] = useState(false);
 
     const todoItemListProvider = useContext(TodoItemListContext);
@@ -14,6 +14,16 @@ const TodoListItemView = (props: {item: TodoItem}) => {
     function togglePurchase(toggle: boolean) {
         setIsPurchased(toggle);
         todoItemListProvider.toggleItemPurchased(props.item, toggle);
+    }
+
+    const increaseQuantity = () => {
+        props.item.incrementQuantity();
+        forceUpdate();
+    }
+
+    const decreaseQuantity = () => {
+        props.item.decrementQuantity();
+        forceUpdate();
     }
 
     return (
@@ -33,9 +43,11 @@ const TodoListItemView = (props: {item: TodoItem}) => {
                 </label>
             </td>
             <td>
+                <button onClick={increaseQuantity}>+</button>
                 <label htmlFor={props.item.id.toString()}>
                     {props.item.quantity}
                 </label>
+                <button onClick={decreaseQuantity}>-</button>
             </td>
             <td>
                 {props.item.priceData.latestPrice}
