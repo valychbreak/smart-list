@@ -15,7 +15,7 @@ import ProductPriceApi from "../../api/ProductPriceApi";
 import AsyncSelect from "react-select/async";
 import { OptionsType, OptionTypeBase } from "react-select";
 import Product from "../../entity/Product";
-import { ProductSelect } from "./components/ProductSelect";
+import { AddTodoItemForm } from "./components/AddTodoItemForm";
 
 const ADDING_ITEMS_MODE = 1;
 const PURCHASE_MODE = 2;
@@ -23,9 +23,6 @@ const PURCHASE_MODE = 2;
 const GroceriesTodoPage = (props: any) => {
 
     const [mode, setMode] = useState(ADDING_ITEMS_MODE);
-
-    const [selectedTagItem, setSelectedTagItem] = useState<Product | null>(null);
-    const [newItemQuantity, setNewItemQuantity] = useState('1');
 
     const [addingPrice, setAddingPrice] = useState(false);
     const [selectedItem, setSelectedItem] = useState<TodoItem>();
@@ -36,22 +33,6 @@ const GroceriesTodoPage = (props: any) => {
 
     function enableAddingItemsMode(e: any) {
         setMode(ADDING_ITEMS_MODE);
-    }
-
-    function handleQuantityFieldChange(e: any) {
-        setNewItemQuantity(e.target.value)
-    }
-
-
-    function handleSubmit(e: any, context: TodoItemListContextType) {
-        e.preventDefault();
-        
-        if (selectedTagItem) {
-            const newItem = new TodoItem(Date.now(), selectedTagItem.productGeneralName);
-            newItem.quantity = parseInt(newItemQuantity);
-            newItem.targetProduct = selectedTagItem;
-            context.addItem(newItem);
-        }
     }
 
     function onItemPurchaseToggle(item: TodoItem, isChecked: boolean) {
@@ -77,10 +58,6 @@ const GroceriesTodoPage = (props: any) => {
     function cancelAddingPrice() {
         setSelectedItem(undefined);
         setAddingPrice(false);
-    }
-
-    function onTagItemChange(selectedItem: Product | null) {
-        setSelectedTagItem(selectedItem);
     }
 
     return (
@@ -114,29 +91,7 @@ const GroceriesTodoPage = (props: any) => {
                                     </div>
                                 </td>
                                 <td colSpan={2}>
-
-                                    <TodoItemListContext.Consumer>
-                                        {context => (
-                                            <form onSubmit={(e) => handleSubmit(e, context)} className="MyForm">
-                                                <div>
-                                                    <ProductSelect onProductSelect={onTagItemChange} />
-                                                    <div className="quantity">
-                                                        <input
-                                                            id="quantity"
-                                                            onChange={handleQuantityFieldChange}
-                                                            value={newItemQuantity}
-                                                        />
-                                                    </div>
-                                                    <div className="btn">
-                                                        <button>
-                                                            Add #{context.todoItems.length + 1}
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        )}
-                                    </TodoItemListContext.Consumer>
-
+                                    <AddTodoItemForm />
                                 </td>
                                 <td colSpan={3}>
                                 </td>
