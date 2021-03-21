@@ -12,6 +12,10 @@ import { TodoItemListContextProvider } from "./context/TodoItemListContextProvid
 import ProductPriceForm from "../../components/ProductPriceForm";
 import ProductPriceEntry from "../../entity/ProductPriceEntry";
 import ProductPriceApi from "../../api/ProductPriceApi";
+import AsyncSelect from "react-select/async";
+import { OptionsType, OptionTypeBase } from "react-select";
+import Product from "../../entity/Product";
+import { ProductSelect } from "./components/ProductSelect";
 
 const ADDING_ITEMS_MODE = 1;
 const PURCHASE_MODE = 2;
@@ -20,8 +24,8 @@ const GroceriesTodoPage = (props: any) => {
 
     const [mode, setMode] = useState(ADDING_ITEMS_MODE);
 
-    const [text, setText] = useState('');
-    const [text2, setText2] = useState('1');
+    const [selectedTagItem, setSelectedTagItem] = useState<Product | null>(null);
+    const [newItemQuantity, setNewItemQuantity] = useState('1');
 
     const [addingPrice, setAddingPrice] = useState(false);
     const [selectedItem, setSelectedItem] = useState<TodoItem>();
@@ -34,36 +38,20 @@ const GroceriesTodoPage = (props: any) => {
         setMode(ADDING_ITEMS_MODE);
     }
 
-    function handleChange(e: any) {
-        setText(e.target.value)
-    }
-
-    function handleChange2(e: any) {
-        setText2(e.target.value)
+    function handleQuantityFieldChange(e: any) {
+        setNewItemQuantity(e.target.value)
     }
 
 
     function handleSubmit(e: any, context: TodoItemListContextType) {
         e.preventDefault();
-        if (text.length === 0) {
-            return;
-        }
         
-        ProductApi.findBy(text).then(products => {
-            let newItem: TodoItem;
-            if (products.length === 0) {
-                newItem = new TodoItem(Date.now(), text);
-                newItem.quantity = parseInt(text2);
-                context.addItem(newItem);
-            } else {
-                let targetProduct = products[0];
-                
-                newItem = new TodoItem(Date.now(), text);
-                newItem.quantity = parseInt(text2);
-                newItem.targetProduct = targetProduct;
-                context.addItem(newItem);
-            }
-        });
+        if (selectedTagItem) {
+            const newItem = new TodoItem(Date.now(), selectedTagItem.productGeneralName);
+            newItem.quantity = parseInt(newItemQuantity);
+            newItem.targetProduct = selectedTagItem;
+            context.addItem(newItem);
+        }
     }
 
     function onItemPurchaseToggle(item: TodoItem, isChecked: boolean) {
@@ -89,6 +77,10 @@ const GroceriesTodoPage = (props: any) => {
     function cancelAddingPrice() {
         setSelectedItem(undefined);
         setAddingPrice(false);
+    }
+
+    function onTagItemChange(selectedItem: Product | null) {
+        setSelectedTagItem(selectedItem);
     }
 
     return (
@@ -127,18 +119,12 @@ const GroceriesTodoPage = (props: any) => {
                                         {context => (
                                             <form onSubmit={(e) => handleSubmit(e, context)} className="MyForm">
                                                 <div>
-                                                    <div className="Iname">
-                                                        <input
-                                                            id="new-todo"
-                                                            onChange={handleChange}
-                                                            value={text}
-                                                        />
-                                                    </div>
+                                                    <ProductSelect onProductSelect={onTagItemChange} />
                                                     <div className="quantity">
                                                         <input
                                                             id="quantity"
-                                                            onChange={handleChange2}
-                                                            value={text2}
+                                                            onChange={handleQuantityFieldChange}
+                                                            value={newItemQuantity}
                                                         />
                                                     </div>
                                                     <div className="btn">

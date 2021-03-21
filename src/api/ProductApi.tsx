@@ -6,6 +6,7 @@ interface ProductApi {
     getProducts(): Promise<Product[]>;
     saveProduct(product: Product): Promise<Product>;
     findBy(generalName: string): Promise<Product[]>;
+    findMatchingBy(query: string): Promise<Product[]>;
 }
 
 class MockedProductApi implements ProductApi {
@@ -14,6 +15,10 @@ class MockedProductApi implements ProductApi {
 
     constructor() {
         this.productCache = [];
+    }
+
+    findMatchingBy(query: string): Promise<Product[]> {
+        return LocalDB.findByGeneralNameOrFullName(query);
     }
 
     findBy(generalName: string): Promise<Product[]> {

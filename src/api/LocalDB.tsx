@@ -46,6 +46,18 @@ class LocalDB {
         );
     }
 
+    async findByGeneralNameOrFullName(query: string): Promise<Product[]> {
+        await this.initCacheIfNeeded();
+
+        let lowerCaseQuery = query.toLowerCase();
+        return this._productCache.filter(
+            product => {
+                return product.productGeneralName.toLowerCase().includes(lowerCaseQuery) 
+                       || (product.productFullName && product.productFullName.toLowerCase().includes(lowerCaseQuery))
+            }
+        )
+    }
+
     async saveNewPriceEntry(productPriceEntry: ProductPriceEntry): Promise<ProductPriceEntry> {
         await this.initPriceEntriesCacheIfNeeded();
 
