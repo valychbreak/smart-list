@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { ElementRef, useRef, useState } from "react";
 import Product from "../../../entity/Product";
-import AsyncSelect from "react-select/async";
+import AsyncSelect, { Async } from "react-select/async";
 import { OptionsType } from "react-select";
 import ProductApi from "../../../api/ProductApi";
 import TodoItemListContext, { TodoItemListContextType } from "../context/TodoItemListContext";
@@ -15,7 +15,7 @@ interface ProductSelectProps {
     onProductSelect(selectedProduct: Product | null): void;
 }
 
-const ProductSelect = (props: ProductSelectProps) => {
+const ProductSelect = React.forwardRef<any, ProductSelectProps>((props: ProductSelectProps, ref: React.ForwardedRef<any>) => {
 
     const onItemTagValueChange = (value: string): Promise<OptionsType<ProductSelectItem>> => {
         return new Promise((resolve, reject) => {
@@ -35,14 +35,17 @@ const ProductSelect = (props: ProductSelectProps) => {
     }
     return (
         <AsyncSelect loadOptions={onItemTagValueChange} 
-                     onChange={onProductSelect} />
+                     onChange={onProductSelect} 
+                     ref={ref}/>
     )
-}
+})
 
 export const AddTodoItemForm = () => {
 
     const [selectedProduct, setSelectedProduct] = useState<Product | null>();
     const [newItemQuantity, setNewItemQuantity] = useState('1');
+
+    const productSelectRef = useRef<any>();
 
     const handleQuantityFieldChange = (e: any) => {
         setNewItemQuantity(e.target.value)
@@ -56,6 +59,11 @@ export const AddTodoItemForm = () => {
             newItem.quantity = parseInt(newItemQuantity);
             newItem.targetProduct = selectedProduct;
             context.addItem(newItem);
+
+            if (productSelectRef) {
+                // workaround to reset value on adding item (element was found by debug)
+                productSelectRef.current.select.select.clearValue();
+            }
         }
     }
 
@@ -68,7 +76,7 @@ export const AddTodoItemForm = () => {
             {context => (
                 <form onSubmit={(e) => handleSubmit(e, context)} className="MyForm">
                     <div>
-                        <ProductSelect onProductSelect={onTagItemChange} />
+                        <ProductSelect onProductSelect={onTagItemChange} ref={productSelectRef} />
                         <div className="quantity">
                             <input
                                 id="quantity"
