@@ -17,4 +17,15 @@ export default class Product {
         this.productBarcode = productBarcode;
         this.productBarcodeType = productBarcodeType;
     }
+
+    static from (productJson: any): Product {
+        let parsedProduct = new Product(productJson.productGeneralName, productJson.productBarcode, productJson.productBarcodeType);
+        
+        parsedProduct.id = productJson.id;
+        parsedProduct.productFullName = productJson.productFullName;
+        parsedProduct.productCompanyName = productJson.productCompanyName;
+        parsedProduct.productCountry = productJson.productCountry;
+
+        return parsedProduct;
+    }
 }

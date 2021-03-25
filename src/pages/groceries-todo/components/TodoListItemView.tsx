@@ -17,13 +17,18 @@ const TodoListItemView = (props: {item: TodoItem}) => {
     }
 
     const increaseQuantity = () => {
-        props.item.incrementQuantity();
+        const { item } = props;
+        todoItemListProvider.updateItemQuantity(item, item.quantity + 1);
         forceUpdate();
     }
 
     const decreaseQuantity = () => {
-        props.item.decrementQuantity();
-        forceUpdate();
+        const { item } = props;
+
+        if (item.quantity > 1) {
+            todoItemListProvider.updateItemQuantity(item, item.quantity - 1);
+            forceUpdate();
+        }
     }
 
     return (

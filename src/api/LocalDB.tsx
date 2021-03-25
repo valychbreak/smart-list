@@ -1,18 +1,22 @@
 import axios from "axios";
 import ProductPriceEntry from "../entity/ProductPriceEntry";
 import Product from "../entity/Product";
+import TodoItem from "../pages/groceries-todo/components/TodoItem";
 
 const PRODUCTS_KEY = 'products';
 const PRODUCTS_PRICES_KEY = 'productPrices';
+const TODO_PRODUCT_ITEMS_KEY = 'todoProductItems'
 
 
 class LocalDB {
     private _productCache: Product[];
     private _priceEntriesCache: ProductPriceEntry[];
+    private _todoProductItemsCache: TodoItem[];
 
     constructor() {
         this._productCache = [];
         this._priceEntriesCache = [];
+        this._todoProductItemsCache =[];
     }
 
     async loadProducts(): Promise<Product[]> {
@@ -90,6 +94,54 @@ class LocalDB {
             
             return resolve(this.getLatestEntry(productPriceEntries));
         });
+    }
+
+    async loadTodoProductItems(): Promise<TodoItem[]> {
+        await this.initTodoProductItemsCache();
+
+        return this._todoProductItemsCache;
+    }
+
+    async saveTodoProductItem(todoItem: TodoItem): Promise<void> {
+        await this.initTodoProductItemsCache();
+
+        this._todoProductItemsCache.push(todoItem);
+        localStorage.setItem(TODO_PRODUCT_ITEMS_KEY, JSON.stringify(this._todoProductItemsCache));
+    }
+
+    async removeTodoProductItem(todoItemRemove: TodoItem): Promise<TodoItem> {
+        await this.initTodoProductItemsCache();
+
+        this._todoProductItemsCache = this._todoProductItemsCache.filter(todoItem => todoItem.id !== todoItemRemove.id);
+        localStorage.setItem(TODO_PRODUCT_ITEMS_KEY, JSON.stringify(this._todoProductItemsCache));
+        return todoItemRemove;
+    }
+
+    async updateTodoProductItem(todoItem: TodoItem): Promise<void> {
+        await this.initTodoProductItemsCache();
+
+        this._todoProductItemsCache = this._todoProductItemsCache.map(cachedItem => cachedItem.id === todoItem.id ? todoItem : cachedItem);
+        localStorage.setItem(TODO_PRODUCT_ITEMS_KEY, JSON.stringify(this._todoProductItemsCache));
+    }
+
+    private async initTodoProductItemsCache(): Promise<void> {
+        if (this._todoProductItemsCache.length === 0) {
+            let storedTodoItemsJson = localStorage.getItem(TODO_PRODUCT_ITEMS_KEY);
+            let parsedTodoItems: TodoItem[] = [];
+
+            if (storedTodoItemsJson != null) {
+                try {
+                    for (let todoItemJson of JSON.parse(storedTodoItemsJson)) {
+                        let parsedTodoItem = TodoItem.from(todoItemJson);
+                        parsedTodoItems.push(parsedTodoItem);
+                    }
+                } catch (err) {
+                    console.log(err);
+                }
+            }
+
+            this._todoProductItemsCache = parsedTodoItems;            
+        }
     }
 
     private getLatestEntry(priceEntries: ProductPriceEntry[]): ProductPriceEntry | null {
@@ -177,14 +229,7 @@ class LocalDB {
     }
 
     private toProduct(productJson: any) {
-        let parsedProduct = new Product(productJson.productGeneralName, productJson.productBarcode, productJson.productBarcodeType);
-        
-        parsedProduct.id = productJson.id;
-        parsedProduct.productFullName = productJson.productFullName;
-        parsedProduct.productCompanyName = productJson.productCompanyName;
-        parsedProduct.productCountry = productJson.productCountry;
-
-        return parsedProduct;
+        return Product.from(productJson);
     }
 }
 

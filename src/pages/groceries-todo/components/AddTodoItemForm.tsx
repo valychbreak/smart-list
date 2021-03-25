@@ -109,7 +109,7 @@ const AddTodoItemForm = (props: RouteComponentProps) => {
                             />
                         </div>
                         <div className="btn">
-                            <button>
+                            <button type="submit">
                                 Add #{context.todoItems.length + 1}
                             </button>
                         </div>

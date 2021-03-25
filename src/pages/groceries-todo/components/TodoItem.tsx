@@ -31,14 +31,13 @@ class TodoItem {
         this.priceData = new ProductPriceData();
     }
 
-    incrementQuantity() {
-        this.quantity ++;
-    }
+    static from (json: any): TodoItem {
+        let todoItem = new TodoItem(json.id, json.generalName);
 
-    decrementQuantity() {
-        if (this.quantity > 1) {
-            this.quantity --;
-        }
+        todoItem.quantity = json.quantity;
+        todoItem.targetProduct = Product.from(json.targetProduct);
+        todoItem.isBought = json.isBought;
+        return todoItem;
     }
 }
 

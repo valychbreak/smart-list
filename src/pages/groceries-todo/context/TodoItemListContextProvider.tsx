@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import COUNTERPARTY_LIST from "../../../api/Constants";
 import ProductPriceApi from "../../../api/ProductPriceApi";
+import TodoProductItemsApi from "../../../api/TodoProductItemsApi";
 import TodoItem from "../components/TodoItem";
 import TodoItemListContext from "./TodoItemListContext";
 
@@ -12,7 +13,50 @@ export const TodoItemListContextProvider = (props: React.PropsWithChildren<TodoI
     
     const [todoItems, setTodoItems] = useState<TodoItem[]>([]);
 
-    function addItem(item: TodoItem) {
+    useEffect(() => {
+        TodoProductItemsApi.fetchTodoProductItems()
+            .then(fetchedTodoItems => {
+                const promiseList: Promise<any>[] = [];
+                for (let todoItem of fetchedTodoItems) {
+                    let enrichingPromise = enrichTodoItem(todoItem);
+                    promiseList.push(enrichingPromise);
+                }
+
+                Promise.all(promiseList).then(_ => {
+                    setTodoItems(fetchedTodoItems)
+                });
+            })
+    }, []);
+
+    const addItem = (item: TodoItem) => {
+        TodoProductItemsApi.add(item).then(_ => {
+            enrichTodoItem(item).then(_ => {
+                setTodoItems(todoItems.concat(item));
+            });
+        })
+    }
+
+    const removeItem = (removeItem: TodoItem) => {
+        TodoProductItemsApi.remove(removeItem).then(_ => {
+            setTodoItems(todoItems.filter(item => item.id !== removeItem.id));
+        });
+    }
+
+    const toggleItemPurchased = (item: TodoItem, toggle: boolean) => {
+        item.isBought = toggle;
+        props.onItemPurchaseToggle(item, toggle);
+    }
+
+    const updateItemQuantity = (item: TodoItem, quantity: number) => {
+        item.quantity = quantity;
+        TodoProductItemsApi.update(item);
+    }
+
+    const clearItems = () => {
+        setTodoItems([]);
+    }
+
+    const enrichTodoItem = async (item: TodoItem): Promise<void> => {
         if (item.targetProduct) {
             let latestPricePromise = ProductPriceApi.fetchLatestPrice(item.targetProduct).then((entry) => {
                 if (entry) {
@@ -20,7 +64,7 @@ export const TodoItemListContextProvider = (props: React.PropsWithChildren<TodoI
                 }
             });
 
-            let counterpartyPriceFetchList = [latestPricePromise];
+            const priceFetchingPromiseList = [latestPricePromise];
 
             COUNTERPARTY_LIST.forEach(counterparty => {
                 if (item.targetProduct) {
@@ -30,31 +74,19 @@ export const TodoItemListContextProvider = (props: React.PropsWithChildren<TodoI
                                 item.priceData.setCounterpartyPrice(counterparty, {price: priceEntry.price});
                             }
                         })
-                    counterpartyPriceFetchList.push(fetchPromise);
+                    priceFetchingPromiseList.push(fetchPromise);
                 }
             });
 
-            Promise.all(counterpartyPriceFetchList).then(_ => {
-                setTodoItems(todoItems.concat(item));
-            });
+            return Promise.all(priceFetchingPromiseList)
+                .then(_ => Promise.resolve());
+        } else {
+            return Promise.resolve();
         }
     }
 
-    function removeItem(removeItem: TodoItem) {
-        setTodoItems(todoItems.filter(item => item.id !== removeItem.id));
-    }
-
-    function toggleItemPurchased(item: TodoItem, toggle: boolean) {
-        item.isBought = toggle;
-        props.onItemPurchaseToggle(item, toggle);
-    }
-
-    const clearItems = () => {
-        setTodoItems([]);
-    }
-
     return (
-        <TodoItemListContext.Provider value={{todoItems, addItem, removeItem, toggleItemPurchased, clearItems}}>
+        <TodoItemListContext.Provider value={{todoItems, addItem, removeItem, toggleItemPurchased, updateItemQuantity, clearItems}}>
             {props.children}
         </TodoItemListContext.Provider>
     )
