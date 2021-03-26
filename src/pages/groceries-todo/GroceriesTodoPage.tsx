@@ -4,7 +4,7 @@ import space from './icons/space.jfif';
 import './GroceriesTodoPage.css'
 import ProductApi from "../../api/ProductApi";
 import TodoItem from "./components/TodoItem";
-import TodoListView from "./components/TodoListView";
+import TodoListView from "../../components/todo-item-list/components/todo-item-list-view";
 import TodoItemListContext, { TodoItemListContextType } from "./context/TodoItemListContext";
 import { TodoItemListContextProvider } from "./context/TodoItemListContextProvider";
 import ProductPriceForm from "../../components/ProductPriceForm";
@@ -58,12 +58,6 @@ const GroceriesTodoPage = (props: RouteComponentProps) => {
         setAddingPrice(false);
     }
 
-    const clearTodoList = (context: TodoItemListContextType) => {
-        if (window.confirm("Are you sure you want to clear the list? CANNOT BE UNDONE!")) {
-            context.clearItems();
-        }
-    }
-
     
 
     return (
@@ -78,11 +72,6 @@ const GroceriesTodoPage = (props: RouteComponentProps) => {
                             <ProductPriceForm targetProduct={selectedItem?.targetProduct} onEntrySubmit={onPriceEntrySubmit}/>
                         </>
                     }
-                    <TodoItemListContext.Consumer>
-                        {context => (
-                            <button onClick={e => clearTodoList(context)}>CLEAR LIST</button>
-                        )}
-                    </TodoItemListContext.Consumer>
                     <TodoListView />
                     <hr />
                     <table>
