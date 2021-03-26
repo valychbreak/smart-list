@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import remove from './icons/remove.jfif';
 import add from './icons/add2.png';
 import space from './icons/space.jfif';
-import scan from './icons/scan.png';
 import './GroceriesTodoPage.css'
 import ProductApi from "../../api/ProductApi";
 import TodoItem from "./components/TodoItem";
@@ -15,6 +13,7 @@ import ProductPriceApi from "../../api/ProductPriceApi";
 import AddTodoItemForm from "./components/AddTodoItemForm";
 import Scanner from "../../Scanner";
 import { RouteComponentProps, withRouter } from "react-router";
+import AddTodoItemComponent from "../../components/todo-item-list/components/todo-item-add";
 
 const ADDING_ITEMS_MODE = 1;
 const PURCHASE_MODE = 2;
@@ -22,7 +21,6 @@ const PURCHASE_MODE = 2;
 const GroceriesTodoPage = (props: RouteComponentProps) => {
 
     const [mode, setMode] = useState(ADDING_ITEMS_MODE);
-    const [isScannerEnabled, setScannerEnabled] = useState(false);
 
     const [addingPrice, setAddingPrice] = useState(false);
     const [selectedItem, setSelectedItem] = useState<TodoItem>();
@@ -66,35 +64,7 @@ const GroceriesTodoPage = (props: RouteComponentProps) => {
         }
     }
 
-    const enableScanner = () => {
-        setScannerEnabled(true);
-    }
-
-    const disableScanner = () => {
-        setScannerEnabled(false);
-    }
-
-    const onBarcodeDetected = (result: any, context: TodoItemListContextType) => {
-        disableScanner();
-
-        let barcode = result.codeResult?.code;
-        let barcodeType = result.codeResult?.format;
-
-        if (barcode && barcodeType) {
-            ProductApi.findByBarcode(barcode, barcodeType).then(product => {
-                if (product == null) {
-                    if (window.confirm(`Scanned barcode  ${barcode} (${barcodeType}) does not exist in our database. \nDo you want to go to 'Add new item' page?`)) {
-                        props.history.push('new-product');
-                    }
-                } else {
-                    const newItem = new TodoItem(Date.now(), product.productGeneralName);
-                    newItem.quantity = 1;
-                    newItem.targetProduct = product;
-                    context.addItem(newItem);
-                }
-            })
-        }
-    }
+    
 
     return (
         <fieldset>
@@ -117,32 +87,7 @@ const GroceriesTodoPage = (props: RouteComponentProps) => {
                     <hr />
                     <table>
                         <tbody>
-                            <tr>
-                                <td className="T_action_button">
-                                    <div className="center">
-                                        <label htmlFor="show" className="show-btn" title="Enable scanner">
-                                            <img src={scan} onClick={() => enableScanner()} alt="remove" className="icon_scan" />
-                                        </label>
-                                        {isScannerEnabled && 
-                                            <div className="container">
-                                                <label htmlFor="show" className="close-btn fas fa-times" title="close">
-                                                    <img src={remove} onClick={() => disableScanner()} alt="remove" className="icons" />
-                                                </label>
-                                                <TodoItemListContext.Consumer>
-                                                    {context => (
-                                                        <Scanner onDetected={(result: any) => onBarcodeDetected(result, context)} />
-                                                    )}
-                                                </TodoItemListContext.Consumer>
-                                            </div>
-                                        }
-                                    </div>
-                                </td>
-                                <td colSpan={2}>
-                                    <AddTodoItemForm />
-                                </td>
-                                <td colSpan={3}>
-                                </td>
-                            </tr>
+                            <AddTodoItemComponent />
                             <tr>
                                 <td colSpan={2}>
                                     <div className="myBTN">
