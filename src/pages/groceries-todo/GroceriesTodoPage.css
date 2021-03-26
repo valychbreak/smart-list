@@ -90,15 +90,13 @@
     display: none;
   }
   .container{
-    display: none;
+    display: block;
     background: #C1C1C1;
     width: 200px;
     padding: 200px;
     box-shadow: 0 0 8px rgba(0,0,0,0.1);
   }
-  #show:checked ~ .container{
-    display: block;
-  }
+  
   .container .close-btn{
     position: absolute;
     right: 20px;

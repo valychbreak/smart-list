@@ -13,13 +13,16 @@ import ProductPriceForm from "../../components/ProductPriceForm";
 import ProductPriceEntry from "../../entity/ProductPriceEntry";
 import ProductPriceApi from "../../api/ProductPriceApi";
 import AddTodoItemForm from "./components/AddTodoItemForm";
+import Scanner from "../../Scanner";
+import { RouteComponentProps, withRouter } from "react-router";
 
 const ADDING_ITEMS_MODE = 1;
 const PURCHASE_MODE = 2;
 
-const GroceriesTodoPage = (props: any) => {
+const GroceriesTodoPage = (props: RouteComponentProps) => {
 
     const [mode, setMode] = useState(ADDING_ITEMS_MODE);
+    const [isScannerEnabled, setScannerEnabled] = useState(false);
 
     const [addingPrice, setAddingPrice] = useState(false);
     const [selectedItem, setSelectedItem] = useState<TodoItem>();
@@ -63,6 +66,36 @@ const GroceriesTodoPage = (props: any) => {
         }
     }
 
+    const enableScanner = () => {
+        setScannerEnabled(true);
+    }
+
+    const disableScanner = () => {
+        setScannerEnabled(false);
+    }
+
+    const onBarcodeDetected = (result: any, context: TodoItemListContextType) => {
+        disableScanner();
+
+        let barcode = result.codeResult?.code;
+        let barcodeType = result.codeResult?.format;
+
+        if (barcode && barcodeType) {
+            ProductApi.findByBarcode(barcode, barcodeType).then(product => {
+                if (product == null) {
+                    if (window.confirm(`Scanned barcode  ${barcode} (${barcodeType}) does not exist in our database. \nDo you want to go to 'Add new item' page?`)) {
+                        props.history.push('new-product');
+                    }
+                } else {
+                    const newItem = new TodoItem(Date.now(), product.productGeneralName);
+                    newItem.quantity = 1;
+                    newItem.targetProduct = product;
+                    context.addItem(newItem);
+                }
+            })
+        }
+    }
+
     return (
         <fieldset>
             <legend>Purchase list</legend>
@@ -74,7 +107,8 @@ const GroceriesTodoPage = (props: any) => {
                             <button onClick={() => cancelAddingPrice()}>Skip / Cancel</button>
                             <ProductPriceForm targetProduct={selectedItem?.targetProduct} onEntrySubmit={onPriceEntrySubmit}/>
                         </>
-                    }<TodoItemListContext.Consumer>
+                    }
+                    <TodoItemListContext.Consumer>
                         {context => (
                             <button onClick={e => clearTodoList(context)}>CLEAR LIST</button>
                         )}
@@ -86,15 +120,21 @@ const GroceriesTodoPage = (props: any) => {
                             <tr>
                                 <td className="T_action_button">
                                     <div className="center">
-                                        <input type="checkbox" id="show" className="scan_chk" />
-                                        <label htmlFor="show" className="show-btn">
-                                            <img src={scan} alt="remove" className="icon_scan" />
+                                        <label htmlFor="show" className="show-btn" title="Enable scanner">
+                                            <img src={scan} onClick={() => enableScanner()} alt="remove" className="icon_scan" />
                                         </label>
-                                        <div className="container">
-                                            <label htmlFor="show" className="close-btn fas fa-times" title="close">
-                                                <img src={remove} alt="remove" className="icons" />
-                                            </label>
-                                        </div>
+                                        {isScannerEnabled && 
+                                            <div className="container">
+                                                <label htmlFor="show" className="close-btn fas fa-times" title="close">
+                                                    <img src={remove} onClick={() => disableScanner()} alt="remove" className="icons" />
+                                                </label>
+                                                <TodoItemListContext.Consumer>
+                                                    {context => (
+                                                        <Scanner onDetected={(result: any) => onBarcodeDetected(result, context)} />
+                                                    )}
+                                                </TodoItemListContext.Consumer>
+                                            </div>
+                                        }
                                     </div>
                                 </td>
                                 <td colSpan={2}>
@@ -141,4 +181,4 @@ const GroceriesTodoPage = (props: any) => {
 }
 
 
-export default GroceriesTodoPage;
+export default withRouter(GroceriesTodoPage);
