@@ -22,7 +22,7 @@ class LocalDB {
     async loadProducts(): Promise<Product[]> {
         await this.initCacheIfNeeded();
         
-        return this._productCache;
+        return [...this._productCache];
     }
 
     async saveProduct(product: Product): Promise<Product> {
@@ -99,7 +99,7 @@ class LocalDB {
     async loadTodoProductItems(): Promise<TodoItem[]> {
         await this.initTodoProductItemsCache();
 
-        return this._todoProductItemsCache;
+        return [...this._todoProductItemsCache];
     }
 
     async saveTodoProductItem(todoItem: TodoItem): Promise<void> {
