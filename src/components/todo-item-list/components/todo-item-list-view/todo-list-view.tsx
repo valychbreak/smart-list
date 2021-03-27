@@ -49,6 +49,14 @@ const TodoListView = () => {
                 {todoItemListContext.todoItems.map((item: TodoItem, idx: number) => (
                     <TodoListItemView item={item} key={idx}/>
                 ))}
+                <tr>
+                    <td colSpan={4} />
+                    {COUNTERPARTY_LIST.map((counterparty: string, idx: number) => {
+                        return <td className="cpty" key={idx}>
+                            [total_sum]
+                        </td>
+                    })}
+                </tr>
             </tbody>
         </table>
 
