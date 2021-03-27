@@ -2,13 +2,12 @@ import React from "react";
 import './GroceriesTodoPage.css'
 import TodoListView from "../../components/todo-item-list/components/todo-item-list-view";
 import { TodoItemListContextProvider } from "./context/TodoItemListContextProvider";
-import { RouteComponentProps, withRouter } from "react-router";
 import AddTodoItemComponent from "../../components/todo-item-list/components/todo-item-add";
 import TodoItemPriceSubmitDialog from "../../components/todo-item-list/components/todo-item-price-submit-dialog";
 import useGroceriesTodoController, { Mode } from "../../components/todo-item-list/components/use-groceries-todo-controller";
 
 
-const GroceriesTodoPage = (props: RouteComponentProps) => {
+const GroceriesTodoPage = () => {
 
     const controller = useGroceriesTodoController();
 
@@ -60,4 +59,4 @@ const GroceriesTodoPage = (props: RouteComponentProps) => {
 }
 
 
-export default withRouter(GroceriesTodoPage);
+export default GroceriesTodoPage;
