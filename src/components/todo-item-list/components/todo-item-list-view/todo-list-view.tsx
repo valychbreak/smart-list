@@ -6,8 +6,14 @@ import add from '../icons/add2.png';
 import COUNTERPARTY_LIST from "../../../../api/Constants";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 
+interface TodoListViewProps {
+    showPurchaseAction?: boolean;
+}
 
-const TodoListView = () => {
+const TodoListView: React.FC<TodoListViewProps> = ({
+        showPurchaseAction = false, 
+        ...props}
+    ) => {
 
     const todoItemListContext = useContext(TodoItemListContext);
 
@@ -22,7 +28,7 @@ const TodoListView = () => {
         <table>
             <thead>
                 <tr className="cpty">
-                    <td className="T_action_button">
+                    <td className="T_action_button" hidden={!showPurchaseAction}>
                         Purchased
                     </td>
                     <td>
@@ -47,10 +53,11 @@ const TodoListView = () => {
             </thead>
             <tbody>
                 {todoItemListContext.todoItems.map((item: TodoItem, idx: number) => (
-                    <TodoListItemView item={item} key={idx}/>
+                    <TodoListItemView item={item} showPurchaseAction={showPurchaseAction} key={idx}/>
                 ))}
                 <tr>
-                    <td colSpan={4} />
+                    <td hidden={!showPurchaseAction} />
+                    <td colSpan={3} />
                     {COUNTERPARTY_LIST.map((counterparty: string, idx: number) => {
                         return <td className="cpty" key={idx}>
                             [total_sum]

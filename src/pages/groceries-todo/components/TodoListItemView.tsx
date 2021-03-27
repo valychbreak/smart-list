@@ -4,7 +4,13 @@ import PriceData from "../../../entity/PriceData";
 import TodoItemListContext from "../context/TodoItemListContext";
 import TodoItem from "./TodoItem";
 
-const TodoListItemView = (props: {item: TodoItem}) => {
+
+interface TodoListItemViewProps {
+    item: TodoItem; 
+    showPurchaseAction: boolean;
+}
+
+const TodoListItemView = (props: TodoListItemViewProps) => {
 
     const [, forceUpdate] = useReducer(x => x + 1, 0);
     const [isPurchased, setIsPurchased] = useState(false);
@@ -33,7 +39,7 @@ const TodoListItemView = (props: {item: TodoItem}) => {
 
     return (
         <tr>
-            <td>
+            <td hidden={!props.showPurchaseAction}>
                 <input
                     type="checkbox"
                     defaultChecked={isPurchased}
