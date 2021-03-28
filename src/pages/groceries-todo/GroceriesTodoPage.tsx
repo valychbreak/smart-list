@@ -19,22 +19,20 @@ const GroceriesTodoPage = () => {
         <div>
             <TodoItemListContextProvider>
 
-                {controller.currentMode === Mode.PLANNING && 
+                {controller.currentMode === Mode.PLANNING && <>
                     <GroceriesTodoPlanningModeView />
-                }
+                    <div className="myBTN">
+                        <button onClick={controller.enablePurchasingMode}>Purchase mode</button>
+                    </div>
+                </>}
 
                 {controller.currentMode === Mode.PURCHASING && <>
                     <GroceriesTodoPurchasingModeView />
+                    <div className="myBTN">
+                        <button onClick={controller.enablePlanningMode}>Exit Purchase mode</button>
+                    </div>
                 </>}
 
-                <div className="myBTN">
-                    {controller.currentMode === Mode.PLANNING && 
-                        <button onClick={controller.enablePurchasingMode}>Purchase mode</button>
-                    }
-                    {controller.currentMode === Mode.PURCHASING && 
-                        <button onClick={controller.enablePlanningMode}>Exit Purchase mode</button>
-                    }
-                </div>
                 <div className="myBTN">
                     <button>Export to csv</button>
                 </div>
