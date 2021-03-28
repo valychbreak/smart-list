@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import TodoItem from "../../../../pages/groceries-todo/components/TodoItem";
+import TodoItem from "../../types";
 import TodoListItemView from "../../../../pages/groceries-todo/components/TodoListItemView";
 import remove from '../../../icons/remove.jfif';
 import add from '../../../icons/add2.png';

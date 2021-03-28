@@ -4,7 +4,7 @@ import AsyncCreatableSelect from "react-select/async-creatable";
 import { ActionMeta, OptionsType } from "react-select";
 import ProductApi from "../../../api/ProductApi";
 import TodoItemListContext, { TodoItemListContextType } from "../context/TodoItemListContext";
-import TodoItem from "./TodoItem";
+import TodoItem from "../../../components/todo-item-list/types";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 
 type ProductSelectItem = {

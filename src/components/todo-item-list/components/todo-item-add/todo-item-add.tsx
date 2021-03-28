@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import ProductApi from "../../../../api/ProductApi";
 import AddTodoItemForm from "../../../../pages/groceries-todo/components/AddTodoItemForm";
-import TodoItem from "../../../../pages/groceries-todo/components/TodoItem";
+import TodoItem from "../../types";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import Scanner from "../../../../Scanner";
 import CustomDialog from "../../../custom-dialog";

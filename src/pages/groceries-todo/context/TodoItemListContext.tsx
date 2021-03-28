@@ -1,5 +1,5 @@
 import React from "react";
-import TodoItem from "../components/TodoItem";
+import TodoItem from "../../../components/todo-item-list/types";
 
 export type TodoItemListContextType = {
     todoItems: TodoItem[];

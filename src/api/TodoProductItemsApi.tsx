@@ -1,4 +1,4 @@
-import TodoItem from "../pages/groceries-todo/components/TodoItem";
+import TodoItem from "../components/todo-item-list/types";
 import LocalDB from "./LocalDB";
 
 interface TodoProductItemsApi {

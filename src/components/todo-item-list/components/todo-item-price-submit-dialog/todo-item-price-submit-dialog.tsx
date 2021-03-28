@@ -1,7 +1,7 @@
 import React from "react";
 import ProductPriceApi from "../../../../api/ProductPriceApi";
 import ProductPriceEntry from "../../../../entity/ProductPriceEntry";
-import TodoItem from "../../../../pages/groceries-todo/components/TodoItem";
+import TodoItem from "../../types";
 import ProductPriceForm from "../../../ProductPriceForm";
 
 interface TodoItemPriceSubmitDialogProps {

@@ -1,7 +1,7 @@
 import axios from "axios";
 import ProductPriceEntry from "../entity/ProductPriceEntry";
 import Product from "../entity/Product";
-import TodoItem from "../pages/groceries-todo/components/TodoItem";
+import TodoItem from "../components/todo-item-list/types";
 
 const PRODUCTS_KEY = 'products';
 const PRODUCTS_PRICES_KEY = 'productPrices';

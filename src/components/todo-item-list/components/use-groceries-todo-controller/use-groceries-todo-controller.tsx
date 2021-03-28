@@ -1,5 +1,5 @@
 import { useState } from "react";
-import TodoItem from "../../../../pages/groceries-todo/components/TodoItem";
+import TodoItem from "../../types";
 
 export enum Mode {
     PLANNING,

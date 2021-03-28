@@ -1,5 +1,5 @@
 import { useState } from "react";
-import TodoItem from "../../../../pages/groceries-todo/components/TodoItem";
+import TodoItem from "../../types";
 
 const useGroceriesTodoPurchasingController = () => {
     const [addingPrice, setAddingPrice] = useState(false);

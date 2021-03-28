@@ -1,5 +1,5 @@
 import React from "react";
-import TodoItem from "../../../../pages/groceries-todo/components/TodoItem";
+import TodoItem from "../../types";
 import AddTodoItemComponent from "../todo-item-add";
 import TodoListView from "../todo-item-list-view";
 

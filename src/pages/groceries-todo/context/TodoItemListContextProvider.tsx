@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import COUNTERPARTY_LIST from "../../../api/Constants";
 import ProductPriceApi from "../../../api/ProductPriceApi";
 import TodoProductItemsApi from "../../../api/TodoProductItemsApi";
-import TodoItem from "../components/TodoItem";
+import TodoItem from "../../../components/todo-item-list/types";
 import TodoItemListContext from "./TodoItemListContext";
 
 interface TodoItemListContextProviderProps {

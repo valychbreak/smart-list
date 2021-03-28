@@ -2,7 +2,7 @@ import { useContext, useReducer, useState } from "react";
 import COUNTERPARTY_LIST from "../../../api/Constants";
 import PriceData from "../../../entity/PriceData";
 import TodoItemListContext from "../context/TodoItemListContext";
-import TodoItem from "./TodoItem";
+import TodoItem from "../../../components/todo-item-list/types";
 
 
 interface TodoListItemViewProps {
