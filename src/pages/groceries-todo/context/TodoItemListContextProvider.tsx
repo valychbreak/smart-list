@@ -6,7 +6,7 @@ import TodoItem from "../components/TodoItem";
 import TodoItemListContext from "./TodoItemListContext";
 
 interface TodoItemListContextProviderProps {
-    onItemPurchaseToggle(item: TodoItem, isChecked: boolean): void;
+    
 }
 
 export const TodoItemListContextProvider = (props: React.PropsWithChildren<TodoItemListContextProviderProps>) => {
@@ -44,7 +44,6 @@ export const TodoItemListContextProvider = (props: React.PropsWithChildren<TodoI
 
     const toggleItemPurchased = (item: TodoItem, toggle: boolean) => {
         item.isBought = toggle;
-        props.onItemPurchaseToggle(item, toggle);
     }
 
     const updateItemQuantity = (item: TodoItem, quantity: number) => {

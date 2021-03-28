@@ -8,6 +8,7 @@ import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoIt
 
 interface TodoListViewProps {
     showPurchaseAction?: boolean;
+    onTodoItemPurchaseToggle(todoItem: TodoItem, isBought: boolean): void;
 }
 
 const TodoListView: React.FC<TodoListViewProps> = ({
@@ -53,7 +54,10 @@ const TodoListView: React.FC<TodoListViewProps> = ({
             </thead>
             <tbody>
                 {todoItemListContext.todoItems.map((item: TodoItem, idx: number) => (
-                    <TodoListItemView item={item} showPurchaseAction={showPurchaseAction} key={idx}/>
+                    <TodoListItemView item={item} 
+                                      showPurchaseAction={showPurchaseAction} 
+                                      onTodoItemPurchaseToggle={props.onTodoItemPurchaseToggle}
+                                      key={idx}/>
                 ))}
                 <tr>
                     <td hidden={!showPurchaseAction} />

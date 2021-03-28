@@ -8,6 +8,7 @@ import TodoItem from "./TodoItem";
 interface TodoListItemViewProps {
     item: TodoItem; 
     showPurchaseAction: boolean;
+    onTodoItemPurchaseToggle(todoItem: TodoItem, isBought: boolean): void;
 }
 
 const TodoListItemView = (props: TodoListItemViewProps) => {
@@ -20,6 +21,8 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
     function togglePurchase(toggle: boolean) {
         setIsPurchased(toggle);
         todoItemListProvider.toggleItemPurchased(props.item, toggle);
+
+        props.onTodoItemPurchaseToggle(props.item, toggle);
     }
 
     const increaseQuantity = () => {
