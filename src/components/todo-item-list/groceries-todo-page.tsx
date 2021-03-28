@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import './GroceriesTodoPage.css'
+import './groceries-todo-page.css'
 import { TodoItemListContextProvider } from "../../pages/groceries-todo/context/TodoItemListContextProvider";
 import useGroceriesTodoController, { Mode } from "./components/use-groceries-todo-controller";
 import GroceriesTodoPlanningModeView from "./components/groceries-todo-planning";
