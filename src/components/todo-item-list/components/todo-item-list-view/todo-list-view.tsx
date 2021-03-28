@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
 import TodoItem from "../../../../pages/groceries-todo/components/TodoItem";
 import TodoListItemView from "../../../../pages/groceries-todo/components/TodoListItemView";
-import remove from '../icons/remove.jfif';
-import add from '../icons/add2.png';
+import remove from '../../../icons/remove.jfif';
+import add from '../../../icons/add2.png';
 import COUNTERPARTY_LIST from "../../../../api/Constants";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 

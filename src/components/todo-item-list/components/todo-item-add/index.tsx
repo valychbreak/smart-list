@@ -4,8 +4,10 @@ import AddTodoItemForm from "../../../../pages/groceries-todo/components/AddTodo
 import TodoItem from "../../../../pages/groceries-todo/components/TodoItem";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import Scanner from "../../../../Scanner";
-import remove from '../icons/remove.jfif';
-import scan from '../icons/scan.png';
+import CustomDialog from "../../../custom-dialog";
+import scan from '../../../icons/scan.png';
+
+
 
 const AddTodoItemComponent = (props: any) => {
     const [isScannerEnabled, setScannerEnabled] = useState(false);
@@ -48,14 +50,10 @@ const AddTodoItemComponent = (props: any) => {
                     <label htmlFor="show" className="show-btn" title="Enable scanner">
                         <img src={scan} onClick={() => enableScanner()} alt="remove" className="icon_scan" />
                     </label>
-                    {isScannerEnabled && 
-                        <div className="container">
-                            <label htmlFor="show" className="close-btn fas fa-times" title="close">
-                                <img src={remove} onClick={() => disableScanner()} alt="remove" className="icons" />
-                            </label>
-                            <Scanner onDetected={onBarcodeDetected} />
-                        </div>
-                    }
+
+                    <CustomDialog open={isScannerEnabled} handleClose={disableScanner}>
+                        <Scanner onDetected={onBarcodeDetected} />
+                    </CustomDialog>
                 </div>
             </td>
             <td colSpan={2}>
