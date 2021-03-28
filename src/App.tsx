@@ -7,9 +7,9 @@ import {
   Link
 } from "react-router-dom";
 import BrowseProductsPage from "./pages/browse-products/BrowseProductsPage";
-import GroceriesTodoPage from "./pages/groceries-todo/GroceriesTodoPage";
 import AddNewProduct from './pages/new-product/AddNewProductPage'
 import ScanTest from "./pages/scan-test/ScanTestPage";
+import { GroceriesTodo } from "./routes/groceries-todo";
  
 export default function App() {
   return (
@@ -45,7 +45,7 @@ export default function App() {
             <AddNewProduct />
           </Route>
           <Route path="/groceries-todo">
-            <GroceriesTodoPage />
+            <GroceriesTodo />
           </Route>
           <Route path="/scan-test">
             <ScanTest />
