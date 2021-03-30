@@ -6,26 +6,43 @@ import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoIt
 import { BarcodeScanResult } from "../../../barcode-scanner/types";
 import TodoItem from "../../types";
 
-const useGroceriesTodoPurchasingController = () => {
-    const [addingPrice, setAddingPrice] = useState(false);
-    const [selectedItem, setSelectedItem] = useState<TodoItem>();
+function useExtendedState<T>() {
+    const [value, setValue] = useState<T | null>(null);
 
-    const todoitemListContext = useContext(TodoItemListContext);
+    const setValueStrict = (newValue: T) => {
+        setValue(newValue);
+    }
+
+    const clearValue = () => {
+        setValue(null);
+    }
+
+    return {
+        value: value,
+        isSet: value !== null,
+        setValue: setValueStrict,
+        clearValue: clearValue
+    }
+}
+
+const useGroceriesTodoPurchasingController = () => {
+    const purchasedTodoItem = useExtendedState<TodoItem>();
+    const scannedProductResult = useExtendedState<BarcodeScanResult>();
+
+    const todoItemListContext = useContext(TodoItemListContext);
     const history = useHistory();
 
 
     function onItemPurchaseToggle(item: TodoItem, isChecked: boolean) {
         if (isChecked) {
-            setSelectedItem(item);
-            setAddingPrice(true);
+            purchasedTodoItem.setValue(item);
         } else {
             cancelAddingPrice();
         }
     }
 
     function cancelAddingPrice() {
-        setSelectedItem(undefined);
-        setAddingPrice(false);
+        purchasedTodoItem.clearValue();
     }
 
     const onBarcodeScan = (result: QuaggaJSResultObject) => {
@@ -40,33 +57,43 @@ const useGroceriesTodoPurchasingController = () => {
             return;
         }
 
-        const foundItem: TodoItem | undefined = todoitemListContext.todoItems.find(todoItem => {
+        const foundItem: TodoItem | undefined = todoItemListContext.todoItems.find(todoItem => {
             const targetProduct = todoItem.targetProduct;
             return targetProduct?.productBarcode === result.code
                 && targetProduct?.productBarcodeType === result.format;
         });
 
         if (foundItem) {
-            todoitemListContext.toggleItemPurchased(foundItem, true);
+            todoItemListContext.toggleItemPurchased(foundItem, true);
             onItemPurchaseToggle(foundItem, true);
             return;
         }
-
         
         ProductApi.findByBarcode(result.code, result.format)
             .then(foundProduct => {
                 if (foundProduct === null) {
-                    if (window.confirm(`There is no product with barcode ${result.code} in the list and in database.\nDo you want to go to 'Add new item' page?`)) {
-                        history.push('new-product');
-                    }
+                    // if (window.confirm(`There is no product with barcode ${result.code} in the list and in database.\nDo you want to go to 'Add new item' page?`)) {
+                    //     history.push('new-product');
+                    // }
+                    scannedProductResult.setValue(result);
                     return;
+                }
+
+                if (window.confirm(`Scanned product was not added to the list. Do you want to add it?\nProduct: ${foundProduct.productFullName}`)) {
+                    const newItem = new TodoItem(Date.now(), foundProduct.productGeneralName);
+                    newItem.quantity = 1;
+                    newItem.targetProduct = foundProduct;
+                    todoItemListContext.addItem(newItem);
                 }
             })
     }
 
     return {
-        openPriceSubmission: addingPrice,
-        selectedItem: selectedItem,
+        openPriceSubmission: purchasedTodoItem.isSet,
+        selectedItem: purchasedTodoItem.value,
+
+        openAddNewProductForm: scannedProductResult.isSet,
+        scannedProductResult: scannedProductResult.value,
 
         onItemPurchaseToggle: onItemPurchaseToggle,
         onPriceSubmissionClose: cancelAddingPrice,

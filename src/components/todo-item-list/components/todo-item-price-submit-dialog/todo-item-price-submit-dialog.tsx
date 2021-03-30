@@ -6,7 +6,7 @@ import ProductPriceForm from "../../../ProductPriceForm";
 
 interface TodoItemPriceSubmitDialogProps {
     open: boolean;
-    selectedItem: TodoItem | undefined;
+    selectedItem: TodoItem | null;
     handleClose(): void;
 }
 
