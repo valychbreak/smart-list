@@ -30,7 +30,6 @@ const useGroceriesTodoPurchasingController = () => {
     const scannedProductResult = useExtendedState<BarcodeScanResult>();
 
     const todoItemListContext = useContext(TodoItemListContext);
-    const history = useHistory();
 
 
     function onItemPurchaseToggle(item: TodoItem, isChecked: boolean) {
@@ -72,9 +71,6 @@ const useGroceriesTodoPurchasingController = () => {
         ProductApi.findByBarcode(result.code, result.format)
             .then(foundProduct => {
                 if (foundProduct === null) {
-                    // if (window.confirm(`There is no product with barcode ${result.code} in the list and in database.\nDo you want to go to 'Add new item' page?`)) {
-                    //     history.push('new-product');
-                    // }
                     scannedProductResult.setValue(result);
                     return;
                 }

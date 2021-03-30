@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Scanner from "../../../../Scanner";
 import CustomDialog from "../../../custom-dialog";
 import AddTodoItemComponent from "../todo-item-add";
@@ -7,12 +7,23 @@ import TodoItemPriceSubmitDialog from "../todo-item-price-submit-dialog";
 import useGroceriesTodoPurchasingController from "./use-groceries-todo-purchasing-controller";
 import scan from '../../../icons/scan.png'
 import { QuaggaJSResultObject } from "@ericblade/quagga2";
+import { useHistory } from "react-router-dom";
 
 
 const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
 
     const [isScanning, setScanning] = useState(false);
     const purchasingController = useGroceriesTodoPurchasingController();
+    const history = useHistory();
+
+    useEffect(() => {
+        let scannedResult = purchasingController.scannedProductResult;
+        if (purchasingController.openAddNewProductForm && scannedResult !== null) {
+            if (window.confirm(`There is no product with barcode ${scannedResult.code} in the list and in database.\nDo you want to go to 'Add new item' page?`)) {
+                history.push('new-product');
+            }
+        }
+    }, [purchasingController.scannedProductResult]);
 
     const enableScanner = () => {
         setScanning(true);
