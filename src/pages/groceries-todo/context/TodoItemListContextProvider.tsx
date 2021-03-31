@@ -44,6 +44,7 @@ export const TodoItemListContextProvider = (props: React.PropsWithChildren<TodoI
 
     const toggleItemPurchased = (item: TodoItem, toggle: boolean) => {
         item.isBought = toggle;
+        TodoProductItemsApi.update(item);
     }
 
     const updateItemQuantity = (item: TodoItem, quantity: number) => {
