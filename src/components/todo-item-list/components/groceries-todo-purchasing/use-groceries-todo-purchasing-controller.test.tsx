@@ -128,6 +128,46 @@ describe('useGroceriesTodoPurchasingController', () => {
             // then
             verify(todoItemListMockedContext.todoItems).never();
         });
+
+        test.each`
+            todoItemBarcode | scannedBarcode | productInDb | description
+            ${"12345678"}   | ${"12345678"}  | ${true}     | ${"When barcodes match"}
+            ${"12345678"}   | ${"87654321"}  | ${true}     | ${"When barcodes don't match and product is in DB"}
+            ${"12345678"}   | ${"87654321"}  | ${true}     | ${"When barcodes don't match and product is not in DB"}
+        `('should disable scanner $description', async ({todoItemBarcode, scannedBarcode, productInDb, description}) => {
+            // given
+            ProductApiMocked.findByBarcode.mockResolvedValue(productInDb? createAnyProduct() : null);
+
+            const todoItem = createTodoItem(todoItemBarcode, 'ean8');
+            const { result } = renderGroceriesTodoPurchasingController([todoItem]);
+
+            // when
+            act(() => {
+                result.current.enableScanner();
+                result.current.onBarcodeScanAdapter(createScanResult(scannedBarcode, 'ean8'));
+            })
+
+            // then
+            await act(() => waitFor(() => {
+                expect(result.current.openScanner).toBeFalsy();
+            }));
+            
+        });
+
+        test('should not disable scanner when barcode is null', () => {
+            // given
+            const { result } = renderGroceriesTodoPurchasingController([]);
+
+            // when
+            act(() => {
+                result.current.enableScanner();
+                result.current.onBarcodeScanAdapter(createScanResult(null, 'ean8'));
+            })
+
+            // then
+            expect(result.current.openScanner).toBeTruthy();
+            
+        });
     })
 });
 

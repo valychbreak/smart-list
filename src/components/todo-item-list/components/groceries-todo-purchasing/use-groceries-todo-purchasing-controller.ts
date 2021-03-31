@@ -9,6 +9,8 @@ import TodoItem from "../../types";
 
 
 const useGroceriesTodoPurchasingController = () => {
+    const [isScanning, setScanning] = useState(false);
+
     const purchasedTodoItem = useExtendedState<TodoItem>();
     const notExistingProductScanResult = useExtendedState<BarcodeScanResult>();
     const newScannedProduct = useExtendedState<Product>();
@@ -41,6 +43,8 @@ const useGroceriesTodoPurchasingController = () => {
             return;
         }
 
+        disableScanner();
+
         const foundItem: TodoItem | undefined = todoItemListContext.todoItems.find(todoItem => {
             const targetProduct = todoItem.targetProduct;
             return targetProduct?.productBarcode === result.code
@@ -69,7 +73,12 @@ const useGroceriesTodoPurchasingController = () => {
         toggleTodoItemPurchaseStatus(newItem, true);
     }
 
+    const enableScanner = () => setScanning(true);
+
+    const disableScanner = () => setScanning(false);
+
     return {
+        openScanner: isScanning,
         openPriceSubmission: purchasedTodoItem.isSet,
         selectedItem: purchasedTodoItem.value,
 
@@ -87,7 +96,10 @@ const useGroceriesTodoPurchasingController = () => {
         addPurchasedProduct: addPurchasedProduct,
 
         dismissSubmitingNewProduct: () => notExistingProductScanResult.clearValue(),
-        dismissAddingProduct: () => newScannedProduct.clearValue()
+        dismissAddingProduct: () => newScannedProduct.clearValue(),
+
+        enableScanner: enableScanner,
+        disableScanner: disableScanner
     }
 }
 

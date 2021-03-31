@@ -12,13 +12,10 @@ import { useHistory } from "react-router-dom";
 
 const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
 
-    const [isScanning, setScanning] = useState(false);
     const purchasingController = useGroceriesTodoPurchasingController();
     const history = useHistory();
 
     useEffect(() => {
-        disableScanner();
-
         let scannedResult = purchasingController.scannedProductResult;
         let productToAdd = purchasingController.productToAdd;
         if (purchasingController.openAddNewProductForm && scannedResult !== null) {
@@ -37,13 +34,6 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
         }
     }, [purchasingController.scannedProductResult, purchasingController.productToAdd]);
 
-    const enableScanner = () => {
-        setScanning(true);
-    }
-
-    const disableScanner = () => {
-        setScanning(false);
-    }
     return (<>
         <TodoItemPriceSubmitDialog open={purchasingController.openPriceSubmission} 
                                    selectedItem={purchasingController.selectedItem} 
@@ -56,9 +46,9 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
                 <tr>
                     <td colSpan={4}>
                         <label htmlFor="show" className="show-btn" title="Enable scanner">
-                            <img src={scan} onClick={() => enableScanner()} alt="remove" className="icon_scan" />
+                            <img src={scan} onClick={() => purchasingController.enableScanner()} alt="remove" className="icon_scan" />
                         </label>
-                        <CustomDialog open={isScanning} handleClose={() => disableScanner()}>
+                        <CustomDialog open={purchasingController.openScanner} handleClose={() => purchasingController.disableScanner()}>
                             <Scanner onDetected={(result: any) => purchasingController.onBarcodeScan(result as QuaggaJSResultObject)} />
                         </CustomDialog>
                     </td>

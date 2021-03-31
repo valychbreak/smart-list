@@ -14,7 +14,7 @@ interface TodoListItemViewProps {
 const TodoListItemView = (props: TodoListItemViewProps) => {
 
     const [, forceUpdate] = useReducer(x => x + 1, 0);
-    const [isPurchased, setIsPurchased] = useState(false);
+    const [isPurchased, setIsPurchased] = useState(props.item.isBought);
 
     const todoItemListProvider = useContext(TodoItemListContext);
 
