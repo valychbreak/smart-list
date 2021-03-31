@@ -34,9 +34,7 @@ const AddTodoItemComponent = (props: any) => {
                         props.history.push('new-product');
                     }
                 } else {
-                    const newItem = new TodoItem(Date.now(), product.productGeneralName);
-                    newItem.quantity = 1;
-                    newItem.targetProduct = product;
+                    const newItem = TodoItem.fromProduct(product);
                     todoItemListContext.addItem(newItem);
                 }
             })

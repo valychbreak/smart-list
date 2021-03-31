@@ -69,9 +69,7 @@ const AddTodoItemForm = (props: RouteComponentProps) => {
         e.preventDefault();
         
         if (selectedProduct) {
-            const newItem = new TodoItem(Date.now(), selectedProduct.productGeneralName);
-            newItem.quantity = parseInt(newItemQuantity);
-            newItem.targetProduct = selectedProduct;
+            const newItem = TodoItem.fromProduct(selectedProduct, parseInt(newItemQuantity));
             context.addItem(newItem);
 
             if (productSelectRef) {

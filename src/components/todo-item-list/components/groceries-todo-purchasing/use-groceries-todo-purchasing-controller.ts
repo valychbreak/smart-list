@@ -64,9 +64,7 @@ const useGroceriesTodoPurchasingController = () => {
     }
 
     function addPurchasedProduct(product: Product) {
-        const newItem = new TodoItem(Date.now(), product.productGeneralName);
-        newItem.quantity = 1;
-        newItem.targetProduct = product;
+        const newItem = TodoItem.fromProduct(product);
         todoItemListContext.addItem(newItem);
         onItemPurchaseToggle(newItem, true);
     }

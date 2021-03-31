@@ -31,7 +31,16 @@ class TodoItem {
         this.priceData = new ProductPriceData();
     }
 
-    static from (json: any): TodoItem {
+    static fromProduct(product: Product, quantity?: number): TodoItem {
+        let todoItem = new TodoItem(Date.now(), product.productGeneralName);
+
+        todoItem.quantity = quantity? quantity : 1;
+        todoItem.targetProduct = product;
+        todoItem.isBought = false;
+        return todoItem;
+    }
+
+    static from(json: any): TodoItem {
         let todoItem = new TodoItem(json.id, json.generalName);
 
         todoItem.quantity = json.quantity;
