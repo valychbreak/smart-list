@@ -4,26 +4,9 @@ import ProductApi from "../../../../api/ProductApi";
 import Product from "../../../../entity/Product";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import { BarcodeScanResult } from "../../../barcode-scanner/types";
+import useExtendedState from "../../../use-extended-state";
 import TodoItem from "../../types";
 
-function useExtendedState<T>() {
-    const [value, setValue] = useState<T | null>(null);
-
-    const setValueStrict = (newValue: T) => {
-        setValue(newValue);
-    }
-
-    const clearValue = () => {
-        setValue(null);
-    }
-
-    return {
-        value: value,
-        isSet: value !== null,
-        setValue: setValueStrict,
-        clearValue: clearValue
-    }
-}
 
 const useGroceriesTodoPurchasingController = () => {
     const purchasedTodoItem = useExtendedState<TodoItem>();
