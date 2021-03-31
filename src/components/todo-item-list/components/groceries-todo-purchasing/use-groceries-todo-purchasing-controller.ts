@@ -16,8 +16,9 @@ const useGroceriesTodoPurchasingController = () => {
     const todoItemListContext = useContext(TodoItemListContext);
 
 
-    function onItemPurchaseToggle(item: TodoItem, isChecked: boolean) {
+    function toggleTodoItemPurchaseStatus(item: TodoItem, isChecked: boolean) {
         if (isChecked) {
+            todoItemListContext.toggleItemPurchased(item, true);
             purchasedTodoItem.setValue(item);
         } else {
             cancelAddingPrice();
@@ -47,8 +48,7 @@ const useGroceriesTodoPurchasingController = () => {
         });
 
         if (foundItem) {
-            todoItemListContext.toggleItemPurchased(foundItem, true);
-            onItemPurchaseToggle(foundItem, true);
+            toggleTodoItemPurchaseStatus(foundItem, true);
             return;
         }
         
@@ -66,7 +66,7 @@ const useGroceriesTodoPurchasingController = () => {
     function addPurchasedProduct(product: Product) {
         const newItem = TodoItem.fromProduct(product);
         todoItemListContext.addItem(newItem);
-        onItemPurchaseToggle(newItem, true);
+        toggleTodoItemPurchaseStatus(newItem, true);
     }
 
     return {
@@ -79,7 +79,7 @@ const useGroceriesTodoPurchasingController = () => {
         openAddProductConfirmation: newScannedProduct.isSet,
         productToAdd: newScannedProduct.value,
 
-        onItemPurchaseToggle: onItemPurchaseToggle,
+        toggleTodoItemPurchaseStatus: toggleTodoItemPurchaseStatus,
         onPriceSubmissionClose: cancelAddingPrice,
         onBarcodeScan: onBarcodeScan,
         onBarcodeScanAdapter: onBarcodeScanAdapter,

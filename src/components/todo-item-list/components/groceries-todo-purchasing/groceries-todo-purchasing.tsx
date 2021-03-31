@@ -18,7 +18,7 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
 
     useEffect(() => {
         disableScanner();
-        
+
         let scannedResult = purchasingController.scannedProductResult;
         let productToAdd = purchasingController.productToAdd;
         if (purchasingController.openAddNewProductForm && scannedResult !== null) {
@@ -49,7 +49,7 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
                                    selectedItem={purchasingController.selectedItem} 
                                    handleClose={purchasingController.onPriceSubmissionClose} />
 
-        <TodoListView showPurchaseAction={true} onTodoItemPurchaseToggle={purchasingController.onItemPurchaseToggle}/>
+        <TodoListView showPurchaseAction={true} onTodoItemPurchaseToggle={purchasingController.toggleTodoItemPurchaseStatus}/>
         <hr />
         <table>
             <tbody>

@@ -25,7 +25,7 @@ describe('useGroceriesTodoPurchasingController', () => {
         reset(todoItemListMockedContext);
     });
 
-    describe('onitemPurchaseToggle', () => {
+    describe('toggleTodoItemPurchaseStatus', () => {
         test('should set open price entry dialog to true when product was manually marked as purchased', async () => {
             // given
             const todoItem = createTodoItem('1234567', 'ean8');
@@ -33,10 +33,11 @@ describe('useGroceriesTodoPurchasingController', () => {
 
             // when
             act(() => {
-                result.current.onItemPurchaseToggle(todoItem, true);
+                result.current.toggleTodoItemPurchaseStatus(todoItem, true);
             })
 
             // then
+            verify(todoItemListMockedContext.toggleItemPurchased(todoItem, true)).once();
             expect(result.current.openPriceSubmission).toBeTruthy();
             expect(result.current.selectedItem).toBe(todoItem);
         });
@@ -73,6 +74,7 @@ describe('useGroceriesTodoPurchasingController', () => {
 
             // then
             expect(result.current.openPriceSubmission).toBe(true);
+            expect(result.current.selectedItem).toBe(todoItem);
             verify(todoItemListMockedContext.toggleItemPurchased(todoItem, true)).once();
         });
 

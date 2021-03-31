@@ -20,8 +20,6 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
 
     function togglePurchase(toggle: boolean) {
         setIsPurchased(toggle);
-        todoItemListProvider.toggleItemPurchased(props.item, toggle);
-
         props.onTodoItemPurchaseToggle(props.item, toggle);
     }
 
