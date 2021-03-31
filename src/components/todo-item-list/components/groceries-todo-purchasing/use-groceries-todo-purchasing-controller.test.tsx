@@ -11,18 +11,35 @@ import ProductApi from '../../../../api/ProductApi';
 import { mocked } from 'ts-jest/utils'
 import { waitFor } from '@testing-library/react';
 
-jest.mock('../../../../api/ProductApi', () => {
-    return { findByBarcode: jest.fn().mockResolvedValue(null) }
-});
 
+jest.mock('../../../../api/ProductApi');
 const ProductApiMocked = mocked(ProductApi, true);
 
-const mockedContext = mock<TodoItemListContextType>();
+
+const todoItemListMockedContext = mock<TodoItemListContextType>();
 
 describe('useGroceriesTodoPurchasingController', () => {
 
     beforeEach(() => {
-        reset(mockedContext);
+        ProductApiMocked.findByBarcode.mockReset();
+        reset(todoItemListMockedContext);
+    });
+
+    describe('onitemPurchaseToggle', () => {
+        test('should set open price entry dialog to true when product was manually marked as purchased', async () => {
+            // given
+            const todoItem = createTodoItem('1234567', 'ean8');
+            const { result } = renderGroceriesTodoPurchasingController([todoItem]);
+
+            // when
+            act(() => {
+                result.current.onItemPurchaseToggle(todoItem, true);
+            })
+
+            // then
+            expect(result.current.openPriceSubmission).toBeTruthy();
+            expect(result.current.selectedItem).toBe(todoItem);
+        });
     });
 
     describe('onBarcodeScan', () => {
@@ -38,15 +55,16 @@ describe('useGroceriesTodoPurchasingController', () => {
 
             // then
             expect(result.current.openPriceSubmission).toBe(true);
-            verify(mockedContext.toggleItemPurchased(todoItem, true)).once();
+            verify(todoItemListMockedContext.toggleItemPurchased(todoItem, true)).once();
         });
 
         test('should set open new product dialog to true when product does not exist in the list and db', async () => {
             // given
-
+            ProductApiMocked.findByBarcode.mockResolvedValue(null);
+            
             const { result } = renderGroceriesTodoPurchasingController([]);
-
             const scannedResult = createScanResult('12345678', 'ean8');
+
             // when
             act(() => {
                 result.current.onBarcodeScanAdapter(scannedResult);
@@ -68,7 +86,7 @@ describe('useGroceriesTodoPurchasingController', () => {
             result.current.onBarcodeScanAdapter(createScanResult(null, 'ean8'));
 
             // then
-            verify(mockedContext.todoItems).never();
+            verify(todoItemListMockedContext.todoItems).never();
         });
     })
 });
@@ -76,10 +94,10 @@ describe('useGroceriesTodoPurchasingController', () => {
 
 const todoItemListContextProvider: WrapperComponent<{ todoItems: TodoItem[] }> = ({ ...props }) => {
 
-    when(mockedContext.todoItems).thenReturn(props.todoItems);
+    when(todoItemListMockedContext.todoItems).thenReturn(props.todoItems);
 
     return (
-        <TodoItemListContext.Provider value={instance(mockedContext)}>
+        <TodoItemListContext.Provider value={instance(todoItemListMockedContext)}>
             {props.children}
         </TodoItemListContext.Provider>
     )
