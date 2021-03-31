@@ -1,7 +1,7 @@
 import { QuaggaJSResultObject } from "@ericblade/quagga2";
 import { useContext, useState } from "react";
-import { useHistory } from "react-router";
 import ProductApi from "../../../../api/ProductApi";
+import Product from "../../../../entity/Product";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import { BarcodeScanResult } from "../../../barcode-scanner/types";
 import TodoItem from "../../types";
@@ -27,7 +27,8 @@ function useExtendedState<T>() {
 
 const useGroceriesTodoPurchasingController = () => {
     const purchasedTodoItem = useExtendedState<TodoItem>();
-    const scannedProductResult = useExtendedState<BarcodeScanResult>();
+    const notExistingProductScanResult = useExtendedState<BarcodeScanResult>();
+    const newScannedProduct = useExtendedState<Product>();
 
     const todoItemListContext = useContext(TodoItemListContext);
 
@@ -71,30 +72,41 @@ const useGroceriesTodoPurchasingController = () => {
         ProductApi.findByBarcode(result.code, result.format)
             .then(foundProduct => {
                 if (foundProduct === null) {
-                    scannedProductResult.setValue(result);
+                    notExistingProductScanResult.setValue(result);
                     return;
                 }
 
-                if (window.confirm(`Scanned product was not added to the list. Do you want to add it?\nProduct: ${foundProduct.productFullName}`)) {
-                    const newItem = new TodoItem(Date.now(), foundProduct.productGeneralName);
-                    newItem.quantity = 1;
-                    newItem.targetProduct = foundProduct;
-                    todoItemListContext.addItem(newItem);
-                }
+                newScannedProduct.setValue(foundProduct);
             })
+    }
+
+    function addPurchasedProduct(product: Product) {
+        const newItem = new TodoItem(Date.now(), product.productGeneralName);
+        newItem.quantity = 1;
+        newItem.targetProduct = product;
+        todoItemListContext.addItem(newItem);
+        onItemPurchaseToggle(newItem, true);
     }
 
     return {
         openPriceSubmission: purchasedTodoItem.isSet,
         selectedItem: purchasedTodoItem.value,
 
-        openAddNewProductForm: scannedProductResult.isSet,
-        scannedProductResult: scannedProductResult.value,
+        openAddNewProductForm: notExistingProductScanResult.isSet,
+        scannedProductResult: notExistingProductScanResult.value,
+
+        openAddProductConfirmation: newScannedProduct.isSet,
+        productToAdd: newScannedProduct.value,
 
         onItemPurchaseToggle: onItemPurchaseToggle,
         onPriceSubmissionClose: cancelAddingPrice,
         onBarcodeScan: onBarcodeScan,
-        onBarcodeScanAdapter: onBarcodeScanAdapter
+        onBarcodeScanAdapter: onBarcodeScanAdapter,
+        
+        addPurchasedProduct: addPurchasedProduct,
+
+        dismissSubmitingNewProduct: () => notExistingProductScanResult.clearValue(),
+        dismissAddingProduct: () => newScannedProduct.clearValue()
     }
 }
 

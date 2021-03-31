@@ -17,13 +17,25 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
     const history = useHistory();
 
     useEffect(() => {
+        disableScanner();
+        
         let scannedResult = purchasingController.scannedProductResult;
+        let productToAdd = purchasingController.productToAdd;
         if (purchasingController.openAddNewProductForm && scannedResult !== null) {
             if (window.confirm(`There is no product with barcode ${scannedResult.code} in the list and in database.\nDo you want to go to 'Add new item' page?`)) {
                 history.push('new-product');
+            } else {
+                purchasingController.dismissSubmitingNewProduct();
+            }
+        } else if (purchasingController.openAddProductConfirmation && productToAdd !== null) {
+            const addingProductConfirmed = window.confirm(`${productToAdd.productFullName} wasn't added to the list.\n Do you want to add it and mark as purchased?`);
+            if (addingProductConfirmed) {
+                purchasingController.addPurchasedProduct(productToAdd);
+            } else {
+                purchasingController.dismissAddingProduct();
             }
         }
-    }, [purchasingController.scannedProductResult]);
+    }, [purchasingController.scannedProductResult, purchasingController.productToAdd]);
 
     const enableScanner = () => {
         setScanning(true);
