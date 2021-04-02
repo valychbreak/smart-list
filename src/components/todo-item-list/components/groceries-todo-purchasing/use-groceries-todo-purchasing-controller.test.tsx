@@ -41,6 +41,20 @@ describe('useGroceriesTodoPurchasingController', () => {
             expect(result.current.openPriceSubmission).toBeTruthy();
             expect(result.current.selectedItem).toBe(todoItem);
         });
+
+        test('should call todo item context when product was manually marked as not purchased', async () => {
+            // given
+            const todoItem = createTodoItem('1234567', 'ean8');
+            const { result } = renderGroceriesTodoPurchasingController([todoItem]);
+
+            // when
+            act(() => {
+                result.current.toggleTodoItemPurchaseStatus(todoItem, false);
+            })
+
+            // then
+            verify(todoItemListMockedContext.toggleItemPurchased(todoItem, false)).once();
+        });
     });
 
     describe('addPurchasedProduct', () => {

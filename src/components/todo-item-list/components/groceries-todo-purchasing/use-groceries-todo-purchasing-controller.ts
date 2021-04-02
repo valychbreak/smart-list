@@ -19,8 +19,9 @@ const useGroceriesTodoPurchasingController = () => {
 
 
     function toggleTodoItemPurchaseStatus(item: TodoItem, isChecked: boolean) {
+        todoItemListContext.toggleItemPurchased(item, isChecked);
+        
         if (isChecked) {
-            todoItemListContext.toggleItemPurchased(item, true);
             purchasedTodoItem.setValue(item);
         } else {
             cancelAddingPrice();
