@@ -54,23 +54,28 @@ const ProductSelect = React.forwardRef<any, ProductSelectProps>((props: ProductS
     )
 })
 
+const DEFAULT_AMOUNT = '1';
+
 const AddTodoItemForm = (props: RouteComponentProps) => {
 
     const [selectedProduct, setSelectedProduct] = useState<Product | null>();
-    const [newItemQuantity, setNewItemQuantity] = useState('1');
+    const [newItemQuantity, setNewItemQuantity] = useState(DEFAULT_AMOUNT);
 
     const productSelectRef = useRef<any>();
 
     const handleQuantityFieldChange = (e: any) => {
-        setNewItemQuantity(e.target.value)
+        const inputValue = e.target.value as string;
+        setNewItemQuantity(inputValue);
     }
 
     const handleSubmit = (e: any, context: TodoItemListContextType) => {
         e.preventDefault();
         
-        if (selectedProduct) {
-            const newItem = TodoItem.fromProduct(selectedProduct, parseInt(newItemQuantity));
+        const quantity = parseInt(newItemQuantity);
+        if (selectedProduct && quantity > 0) {
+            const newItem = TodoItem.fromProduct(selectedProduct, quantity);
             context.addItem(newItem);
+            setNewItemQuantity(DEFAULT_AMOUNT);
 
             if (productSelectRef) {
                 // workaround to reset value on adding item (element was found by debug)
@@ -102,6 +107,8 @@ const AddTodoItemForm = (props: RouteComponentProps) => {
                         <div className="quantity">
                             <input
                                 id="quantity"
+                                type="number"
+                                step="1"
                                 onChange={handleQuantityFieldChange}
                                 value={newItemQuantity}
                             />
