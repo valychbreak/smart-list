@@ -6,12 +6,14 @@ import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoIt
 import Scanner from "../../../../Scanner";
 import CustomDialog from "../../../custom-dialog";
 import scan from '../../../icons/scan.png';
+import { useHistory } from "react-router";
 
 
 
 const AddTodoItemComponent = (props: any) => {
     const [isScannerEnabled, setScannerEnabled] = useState(false);
     const todoItemListContext = useContext(TodoItemListContext);
+    const history = useHistory();
 
     const enableScanner = () => {
         setScannerEnabled(true);
@@ -31,7 +33,7 @@ const AddTodoItemComponent = (props: any) => {
             ProductApi.findByBarcode(barcode, barcodeType).then(product => {
                 if (product == null) {
                     if (window.confirm(`Scanned barcode  ${barcode} (${barcodeType}) does not exist in our database. \nDo you want to go to 'Add new item' page?`)) {
-                        props.history.push('new-product');
+                        history.push('new-product');
                     }
                 } else {
                     const newItem = TodoItem.fromProduct(product);
