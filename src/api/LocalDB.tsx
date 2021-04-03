@@ -2,6 +2,8 @@ import axios from "axios";
 import ProductPriceEntry from "../entity/ProductPriceEntry";
 import Product from "../entity/Product";
 import TodoItem from "../components/todo-item-list/types";
+import CategoryLocalDB from "./persistance/local-db-category"
+import Category from "../entity/category";
 
 const PRODUCTS_KEY = 'products';
 const PRODUCTS_PRICES_KEY = 'productPrices';
@@ -190,6 +192,10 @@ class LocalDB {
                     for (let storedProduct of JSON.parse(storedProducts)) {
                         let parsedProduct = this.toProduct(storedProduct);
                         if (!this.containsProduct(combinedProducts, parsedProduct)) {
+                            const productCategory = await CategoryLocalDB.findCategoryFor(parsedProduct);
+                            if (productCategory != null) {
+                                parsedProduct.category = new Category(productCategory.id, productCategory.name);
+                            }
                             combinedProducts.push(parsedProduct);
                         }
                     }

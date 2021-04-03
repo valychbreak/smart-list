@@ -1,3 +1,4 @@
+import Category from "./category";
 
 export default class Product {
     id: number | null = null;
@@ -10,6 +11,8 @@ export default class Product {
     productCountry: string | null = null;
     productCompanyName: string | null = null;
     image: string | null = null;
+
+    category: Category | null = null;
 
     constructor(productGeneralName: string, productBarcode: string, productBarcodeType: string) {
         this.productGeneralName = productGeneralName;
