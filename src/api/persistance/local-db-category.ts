@@ -8,6 +8,13 @@ const CATEGORIES_KEY = 'productCategories';
 class CategoryLocalDB {
     private _categoriesCache: CategoryPersistance[] = [];
 
+    async findCategoriesBy(name: string): Promise<Category[]> {
+        await this.initCategoriesCacheIfNeeded();
+
+        const foundCategories = this._categoriesCache.filter(category => category.name.toLowerCase().includes(name.toLowerCase()));
+        return foundCategories.filter((category, idx) => foundCategories.indexOf(category) === idx);
+    }
+
     async changeCategory(product: Product, category: Category): Promise<void> {
         await this.initCategoriesCacheIfNeeded();
 
@@ -48,6 +55,7 @@ class CategoryLocalDB {
 
     private getUsername(): string {
         throw new Error("Not implemented");
+        //return "test";
     }
 
     private async initCategoriesCacheIfNeeded() {
