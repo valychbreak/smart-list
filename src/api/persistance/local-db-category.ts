@@ -1,6 +1,7 @@
 import Category from "../../entity/category";
 import Product from "../../entity/Product";
 import CategoryPersistance from "./category-persistance";
+import localDbUsername from "./local-db-username";
 
 
 const CATEGORIES_KEY = 'productCategories';
@@ -54,8 +55,7 @@ class CategoryLocalDB {
     }
 
     private getUsername(): string {
-        throw new Error("Not implemented");
-        //return "test";
+        return localDbUsername.getUsername();
     }
 
     private async initCategoriesCacheIfNeeded() {

@@ -1,4 +1,5 @@
 import { useState } from "react"
+import localDbUsername from "../../api/persistance/local-db-username"
 import AuthenticationContext from "./authentication-context"
 import { AuthenticationData, User } from "./types"
 
@@ -15,6 +16,10 @@ export const AuthenticationContextProvider = (props: React.PropsWithChildren<{}>
     const authenticate = (authenticationData: AuthenticationData): Promise<void> => {
         return new Promise(resolve => {
             setUser({ username: authenticationData.username });
+            
+            // Saving to share data with TEMP local dbs
+            localDbUsername.save(authenticationData.username);
+
             return resolve();
         });
     }
@@ -22,6 +27,9 @@ export const AuthenticationContextProvider = (props: React.PropsWithChildren<{}>
     const signout = (): Promise<void> => {
         return new Promise(resolve => {
             setUser(GUEST);
+
+            localDbUsername.clear();
+            
             return resolve();
         });
     }
