@@ -12,7 +12,12 @@ class CategoryLocalDB {
     async findCategoriesBy(name: string): Promise<Category[]> {
         await this.initCategoriesCacheIfNeeded();
 
-        const foundCategories = this._categoriesCache.filter(category => category.name.toLowerCase().includes(name.toLowerCase()));
+        const username = this.getUsername();
+        const foundCategories = this._categoriesCache.filter(category => {
+            return category.name.toLowerCase().includes(name.toLowerCase())
+                && category.username === username
+
+        });
         return foundCategories.filter((category, idx) => foundCategories.indexOf(category) === idx);
     }
 
