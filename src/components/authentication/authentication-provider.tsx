@@ -1,16 +1,43 @@
-import { useState } from "react"
+import { useEffect, useReducer, useState } from "react"
 import localDbUsername from "../../api/persistance/local-db-username"
 import AuthenticationContext from "./authentication-context"
 import { AuthenticationData, User } from "./types"
 
 const GUEST: User = { username: "GUEST" }
 
+type AuthenticationContextProviderProps = {
+    isLoggedIn: boolean;
+    setLoggedIn(value: boolean): void;
+}
+
+// This "container" component is required because of re-rendering when user logs in or out
 export const AuthenticationContextProvider = (props: React.PropsWithChildren<{}>) => {
+    const [isLoggedIn, setLoggedIn] = useState(localDbUsername.hasUsername());
+
+    return (
+        <AuthenticationContextProviderImpl isLoggedIn={isLoggedIn} setLoggedIn={setLoggedIn} {...props} />
+    )
+}
+
+const AuthenticationContextProviderImpl = (props: React.PropsWithChildren<AuthenticationContextProviderProps>) => {
 
     const [user, setUser] = useState<User>(GUEST);
 
+    useEffect(() => {
+        if (props.isLoggedIn) {
+            try {
+                const username = localDbUsername.getUsername();
+                setUser({ username });
+                
+                console.log("authenticated");
+            } catch (error) {
+                signout();
+            }
+        }
+    }, []);
+
     const isAuthenticated = (): boolean => {
-        return user !== GUEST;
+        return props.isLoggedIn;
     }
 
     const authenticate = (authenticationData: AuthenticationData): Promise<void> => {
@@ -20,6 +47,7 @@ export const AuthenticationContextProvider = (props: React.PropsWithChildren<{}>
             // Saving to share data with TEMP local dbs
             localDbUsername.save(authenticationData.username);
 
+            props.setLoggedIn(true);
             return resolve();
         });
     }
@@ -30,6 +58,7 @@ export const AuthenticationContextProvider = (props: React.PropsWithChildren<{}>
 
             localDbUsername.clear();
             
+            props.setLoggedIn(false);
             return resolve();
         });
     }

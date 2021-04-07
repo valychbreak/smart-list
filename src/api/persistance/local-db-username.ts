@@ -20,6 +20,10 @@ class UsernameLocalDB {
     clear() {
         localStorage.removeItem(USERNAME_KEY);
     }
+
+    hasUsername(): boolean {
+        return localStorage.getItem(USERNAME_KEY) !== null;
+    }
 }
 
 export default new UsernameLocalDB();
