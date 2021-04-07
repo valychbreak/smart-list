@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Redirect, Route, RouteProps, useHistory } from "react-router-dom";
+import { Redirect, Route, RouteProps } from "react-router-dom";
 import AuthenticationContext from "../authentication";
 
 type ProtectedRouteProps = {
@@ -22,19 +22,6 @@ const AuthenticatedRoute = (routeProps: RouteProps) => {
     const authContext = useContext(AuthenticationContext);
 
     return <ProtectedRoute {...routeProps} isAuthenticated={authContext.isAuthenticated()} authenticationPath='/login' />
-}
-
-export function AuthButton() {
-    const authContext = useContext(AuthenticationContext);
-    const history = useHistory();
-
-    return authContext.isAuthenticated() === true
-        ? <p>
-            Welcome! <button onClick={() => {
-                authContext.signout().then(_ => history.push('/'))
-            }}>Sign out</button>
-        </p>
-        : <p>You are not logged in.</p>
 }
 
 export default AuthenticatedRoute;

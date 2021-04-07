@@ -2,8 +2,8 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import AuthenticatedRoute from "./components/authenticated-route";
-import { AuthButton } from "./components/authenticated-route/authenticated-route";
 import { AuthenticationContextProvider } from "./components/authentication/authentication-provider";
+import { ProfileBar } from "./components/profile";
 import BrowseProductsPage from "./pages/browse-products/BrowseProductsPage";
 import AddNewProduct from './pages/new-product/AddNewProductPage'
 import ScanTest from "./pages/scan-test/ScanTestPage";
@@ -36,7 +36,7 @@ export default function App() {
                 <Link to="/login">Login</Link>
               </li>
             </ul>
-            <AuthButton />
+            <ProfileBar />
           </nav>
           {/* A <Switch> looks through its children <Route>s and
               renders the first one that matches the current URL. */}
