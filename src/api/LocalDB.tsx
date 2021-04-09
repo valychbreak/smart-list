@@ -2,6 +2,8 @@ import axios from "axios";
 import ProductPriceEntry from "../entity/ProductPriceEntry";
 import Product from "../entity/Product";
 import TodoItem from "../components/todo-item-list/types";
+import CategoryLocalDB from "./persistance/local-db-category"
+import Category from "../entity/category";
 
 const PRODUCTS_KEY = 'products';
 const PRODUCTS_PRICES_KEY = 'productPrices';
@@ -133,6 +135,12 @@ class LocalDB {
                 try {
                     for (let todoItemJson of JSON.parse(storedTodoItemsJson)) {
                         let parsedTodoItem = TodoItem.from(todoItemJson);
+                        const todoItemProduct = parsedTodoItem.targetProduct;
+
+                        if (todoItemProduct) {
+                            await this.enrichProduct(todoItemProduct);
+                        }
+
                         parsedTodoItems.push(parsedTodoItem);
                     }
                 } catch (err) {
@@ -190,6 +198,7 @@ class LocalDB {
                     for (let storedProduct of JSON.parse(storedProducts)) {
                         let parsedProduct = this.toProduct(storedProduct);
                         if (!this.containsProduct(combinedProducts, parsedProduct)) {
+                            await this.enrichProduct(parsedProduct);
                             combinedProducts.push(parsedProduct);
                         }
                     }
@@ -203,6 +212,13 @@ class LocalDB {
             }
 
             localStorage.setItem(PRODUCTS_KEY, JSON.stringify(this._productCache));
+        }
+    }
+
+    private async enrichProduct(product: Product) {
+        const productCategory = await CategoryLocalDB.findCategoryFor(product);
+        if (productCategory != null) {
+            product.category = new Category(productCategory.id, productCategory.name);
         }
     }
 

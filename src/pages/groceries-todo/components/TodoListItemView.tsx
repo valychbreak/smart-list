@@ -3,6 +3,9 @@ import COUNTERPARTY_LIST from "../../../api/Constants";
 import PriceData from "../../../entity/PriceData";
 import TodoItemListContext from "../context/TodoItemListContext";
 import TodoItem from "../../../components/todo-item-list/types";
+import CategorySelector from "../../../components/category-selector";
+import Category from "../../../entity/category";
+import UserCategoryAPI from "../../../api/UserCategoryAPI";
 
 
 interface TodoListItemViewProps {
@@ -53,6 +56,7 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
                 <label htmlFor={props.item.id.toString()}>
                     {props.item.generalName} ({props.item.targetProduct && props.item.targetProduct.productFullName})
                 </label>
+                <ProductCategorySelector item={props.item} />
             </td>
             <td>
                 <button onClick={increaseQuantity}>+</button>
@@ -88,6 +92,21 @@ const CounterpartyPriceView = (props: CounterpartyPriceViewProps) => {
     } else {
         return <span>No data yet</span>
     }
+}
+
+const ProductCategorySelector = (props: {item: TodoItem}) => {
+
+    const onCategorySelect = (category: Category) => {
+        const product = props.item.targetProduct;
+        if (product !== undefined) {
+            product.category = category;
+            UserCategoryAPI.changeCategory(product, category);
+        }
+    }
+
+    return (
+        <CategorySelector defaultCategory={props.item.targetProduct?.category} onCategorySelect={onCategorySelect}/>
+    )
 }
 
 
