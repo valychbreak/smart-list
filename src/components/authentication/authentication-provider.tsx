@@ -28,8 +28,6 @@ const AuthenticationContextProviderImpl = (props: React.PropsWithChildren<Authen
             try {
                 const username = localDbUsername.getUsername();
                 setUser({ username });
-                
-                console.log("authenticated");
             } catch (error) {
                 signout();
             }
