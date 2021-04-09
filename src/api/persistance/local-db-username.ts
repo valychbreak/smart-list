@@ -1,5 +1,3 @@
-import { User } from "../../components/authentication/types";
-
 
 const USERNAME_KEY = 'usernameTmp';
 
