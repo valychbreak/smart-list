@@ -6,7 +6,7 @@ import COUNTERPARTY_LIST from "../../../../api/Constants";
 const BootstrapInput = withStyles((theme) => ({}))(InputBase);
 
 const headCells = [
-    { id: "name", numeric: false, disablePadding: true, label: "Name" },
+    { id: "generalName", numeric: false, disablePadding: true, label: "Name" },
     { id: "quantity", numeric: true, disablePadding: false, label: "Quantity" }
 ];
 

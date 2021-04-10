@@ -1,17 +1,10 @@
 import React, { useContext } from "react";
-
 import TodoItem from "../../types";
 import TodoListItemView from "../../../../pages/groceries-todo/components/TodoListItemView";
-import remove from '../../../icons/remove.jfif';
-import add from '../../../icons/add2.png';
-import COUNTERPARTY_LIST from "../../../../api/Constants";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
-import SettingsOverscanIcon from "@material-ui/icons/SettingsOverscan";
 import './todo-list-view.css'
-import { Checkbox, InputBase, makeStyles, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, TextField, withStyles } from "@material-ui/core";
+import { makeStyles, Table, TableBody, TableContainer } from "@material-ui/core";
 import { EnhancedTableHead } from "./todo-list-table-head";
-import TodoItemQuantityAdjustmentField from "../todo-item-quantity-adjustment-field";
-import QuantityField from "../../../quantity-field";
 
 const useStyles = makeStyles((theme) => ({
     root: {},
@@ -30,17 +23,24 @@ const useStyles = makeStyles((theme) => ({
     },
     container: {
         maxHeight: 360
-    }
+    },
 }));
 
-function stableSort(array: any[], comparator: any) {
-    const stabilizedThis = array.map((el, index) => [el, index]);
-    stabilizedThis.sort((a, b) => {
-        const order = comparator(a[0], b[0]);
-        if (order !== 0) return order;
-        return a[1] - b[1];
+type SortElement = {
+    todoItem: TodoItem;
+    index: number;
+}
+function stableSort(array: TodoItem[], comparator: any): TodoItem[] {
+    const stabilizedThis = array.map((el, index): SortElement => {
+        return { todoItem: el, index: index }
     });
-    return stabilizedThis.map((el) => el[0]);
+
+    stabilizedThis.sort((a: SortElement, b: SortElement) => {
+        const order = comparator(a.todoItem, b.todoItem);
+        if (order !== 0) return order;
+        return a.index - b.index;
+    });
+    return stabilizedThis.map((el) => el.todoItem);
 }
 
 function getComparator(order: string, orderBy: string) {
@@ -78,7 +78,7 @@ const TodoListView: React.FC<TodoListViewProps> = ({
     const maxItemsCount = todoItemListContext.todoItems.length;
 
     const [order, setOrder] = React.useState("asc");
-    const [orderBy, setOrderBy] = React.useState("quantity");
+    const [orderBy, setOrderBy] = React.useState("generalName");
 
     const handleRequestSort = (event: any, property: string) => {
         const isAsc = orderBy === property && order === "asc";
@@ -119,11 +119,14 @@ const TodoListView: React.FC<TodoListViewProps> = ({
                 <TableBody>
                     {stableSort(todoItemListContext.todoItems, getComparator(order, orderBy))
                         .map((todoItem: TodoItem, idx: number) => {
-                            return <TodoListItemView item={todoItem}
-                                        showPurchaseAction={showPurchaseAction}
-                                        onTodoItemPurchaseToggle={props.onTodoItemPurchaseToggle}
-                                        key={idx} />
-                        })}
+                            return (
+                                <TodoListItemView item={todoItem}
+                                    showPurchaseAction={showPurchaseAction}
+                                    onTodoItemPurchaseToggle={props.onTodoItemPurchaseToggle}
+                                    key={todoItem.id} />
+                            )
+                        })
+                    }
                 </TableBody>
             </Table>
         </TableContainer>
