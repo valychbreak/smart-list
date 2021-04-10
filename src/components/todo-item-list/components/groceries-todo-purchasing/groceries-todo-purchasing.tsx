@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Scanner from "../../../../Scanner";
-import CustomDialog from "../../../custom-dialog";
-import AddTodoItemComponent from "../todo-item-add";
 import TodoListView from "../todo-item-list-view";
 import TodoItemPriceSubmitDialog from "../todo-item-price-submit-dialog";
 import useGroceriesTodoPurchasingController from "./use-groceries-todo-purchasing-controller";
 import scan from '../../../icons/scan.png'
 import { QuaggaJSResultObject } from "@ericblade/quagga2";
 import { useHistory } from "react-router-dom";
+import { Button, Dialog, IconButton } from "@material-ui/core";
+import SettingsOverscanIcon from "@material-ui/icons/SettingsOverscan";
 
 
 const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
@@ -45,12 +45,12 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
             <tbody>
                 <tr>
                     <td colSpan={4}>
-                        <label htmlFor="show" className="show-btn" title="Enable scanner">
-                            <img src={scan} onClick={() => purchasingController.enableScanner()} alt="remove" className="icon_scan" />
-                        </label>
-                        <CustomDialog open={purchasingController.openScanner} handleClose={() => purchasingController.disableScanner()}>
+                        <Button variant="contained" onClick={() => purchasingController.enableScanner()} startIcon={<SettingsOverscanIcon />}>
+                            Scan barcode
+                        </Button>
+                        <Dialog open={purchasingController.openScanner} onClose={() => purchasingController.disableScanner()}>
                             <Scanner onDetected={(result: any) => purchasingController.onBarcodeScan(result as QuaggaJSResultObject)} />
-                        </CustomDialog>
+                        </Dialog>
                     </td>
                 </tr>
                 

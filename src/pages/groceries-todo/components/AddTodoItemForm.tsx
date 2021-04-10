@@ -8,8 +8,6 @@ import TodoItem from "../../../components/todo-item-list/types";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { TableContainer, Table, TableHead, TableRow, TableCell, TextField, Button } from "@material-ui/core";
 import QuantityField from "../../../components/quantity-field";
-import SettingsOverscanIcon from "@material-ui/icons/SettingsOverscan";
-
 
 
 function ccyFormat(num: number) {
@@ -113,9 +111,6 @@ const AddTodoItemForm = (props: RouteComponentProps) => {
                         <Table stickyHeader aria-label="sticky table">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell padding="none">
-                                        <SettingsOverscanIcon />
-                                    </TableCell>
                                     <TableCell align="left">
                                         {/* <TextField id="standard-basic" label="Add new" /> */}
                                         <ProductSelect onProductSelect={onProductSelect}

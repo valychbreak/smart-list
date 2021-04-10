@@ -4,10 +4,9 @@ import AddTodoItemForm from "../../../../pages/groceries-todo/components/AddTodo
 import TodoItem from "../../types";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import Scanner from "../../../../Scanner";
-import CustomDialog from "../../../custom-dialog";
-import scan from '../../../icons/scan.png';
 import { useHistory } from "react-router";
-
+import { Dialog, IconButton } from "@material-ui/core";
+import SettingsOverscanIcon from "@material-ui/icons/SettingsOverscan";
 
 
 const AddTodoItemComponent = (props: any) => {
@@ -45,16 +44,14 @@ const AddTodoItemComponent = (props: any) => {
 
     return (
         <tr>
-            <td className="T_action_button">
-                <div className="center">
-                    <label htmlFor="show" className="show-btn" title="Enable scanner">
-                        <img src={scan} onClick={() => enableScanner()} alt="remove" className="icon_scan" />
-                    </label>
+            <td>
+                <IconButton onClick={() => enableScanner()}>
+                    <SettingsOverscanIcon />
+                </IconButton>
 
-                    <CustomDialog open={isScannerEnabled} handleClose={disableScanner}>
-                        <Scanner onDetected={onBarcodeDetected} />
-                    </CustomDialog>
-                </div>
+                <Dialog open={isScannerEnabled} onClose={disableScanner}>
+                    <Scanner onDetected={onBarcodeDetected} />
+                </Dialog>
             </td>
             <td colSpan={2}>
                 <AddTodoItemForm />
