@@ -6,7 +6,7 @@ import TodoItem from "../../../components/todo-item-list/types";
 import CategorySelector from "../../../components/category-selector";
 import Category from "../../../entity/category";
 import UserCategoryAPI from "../../../api/UserCategoryAPI";
-import { TableRow, TableCell, Checkbox } from "@material-ui/core";
+import { TableRow, TableCell, Checkbox, IconButton } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import TodoItemQuantityAdjustmentField from "../../../components/todo-item-list/components/todo-item-quantity-adjustment-field";
 
@@ -33,23 +33,11 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
         props.onTodoItemPurchaseToggle(props.item, toggle);
     }
 
-    const increaseQuantity = () => {
-        const { item } = props;
-        todoItemListProvider.updateItemQuantity(item, item.quantity + 1);
-        forceUpdate();
-    }
-
-    const decreaseQuantity = () => {
-        const { item } = props;
-
-        if (item.quantity > 1) {
-            todoItemListProvider.updateItemQuantity(item, item.quantity - 1);
-            forceUpdate();
-        }
+    const deleteTodoItem = () => {
+        todoItemListProvider.removeItem(props.item);
     }
 
     const todoItem = props.item;
-    const labelId = `enhanced-table-checkbox-1`;
 
     return (
         <TableRow
@@ -62,10 +50,10 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
         >
             {props.showPurchaseAction && 
                 <TableCell padding="none">
-                    <Checkbox checked={isPurchased} onChange={() => togglePurchase(!isPurchased)} inputProps={{ "aria-labelledby": labelId }}/>
+                    <Checkbox checked={isPurchased} onChange={() => togglePurchase(!isPurchased)} inputProps={{ "aria-labelledby": "todo-item-name" }}/>
                 </TableCell>
             }
-            <TableCell component="th" id={labelId} scope="row">
+            <TableCell component="th" id="todo-item-name" scope="row">
                 {todoItem.generalName}
             </TableCell>
             <TableCell>
@@ -75,7 +63,9 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
                 <CounterpartyPriceView counterparty="Auchan" priceData={todoItem.priceData.perCounterpartyPrice} />
             </TableCell>
             <TableCell padding="none">
-                <DeleteIcon />
+                <IconButton onClick={deleteTodoItem}>
+                    <DeleteIcon />
+                </IconButton>
             </TableCell>
         </TableRow>
     );
