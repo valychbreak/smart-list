@@ -4,7 +4,7 @@ import TodoListItemView from "../../../../pages/groceries-todo/components/TodoLi
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import './todo-list-view.css'
 import { makeStyles, Table, TableBody, TableContainer } from "@material-ui/core";
-import { EnhancedTableHead } from "./todo-list-table-head";
+import { TodoItemListHeader } from "./todo-list-table-head";
 
 const useStyles = makeStyles((theme) => ({
     root: {},
@@ -12,15 +12,6 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: theme.spacing(2)
     },
     table: {},
-    visuallyHidden: {
-        border: 0,
-        clip: "rect(0 0 0 0)",
-        height: 1,
-        margin: -1,
-        overflow: "hidden",
-        padding: 0,
-        position: "absolute"
-    },
     container: {
         maxHeight: 360
     },
@@ -86,10 +77,6 @@ const TodoListView: React.FC<TodoListViewProps> = ({
         setOrderBy(property);
     };
 
-    const handleSelectAllClick = (event: any) => {
-
-    };
-
     const clearTodoList = () => {
         if (window.confirm("Are you sure you want to clear the list? CANNOT BE UNDONE!")) {
             todoItemListContext.clearItems();
@@ -106,14 +93,10 @@ const TodoListView: React.FC<TodoListViewProps> = ({
                 size="small"
                 aria-label="enhanced table"
             >
-                <EnhancedTableHead
-                    classes={classes}
-                    numSelected={selectedItemsCount}
+                <TodoItemListHeader
                     order={order}
                     orderBy={orderBy}
-                    onSelectAllClick={handleSelectAllClick}
                     onRequestSort={handleRequestSort}
-                    rowCount={maxItemsCount}
                     showPurchaseAction={showPurchaseAction}
                 />
                 <TableBody>
