@@ -62,7 +62,7 @@ const GroceriesTodoToolbar = (props: GroceriesTodoToolbarProps) => {
 
             {selectedItemsCount > 0 ? (
                 <Tooltip title="Hide selected">
-                    <IconButton aria-label="Hide selected">
+                    <IconButton disabled aria-label="Hide selected">
                         <FilterListIcon />
                     </IconButton>
                 </Tooltip>
