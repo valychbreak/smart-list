@@ -1,4 +1,4 @@
-import { useContext, useReducer, useState } from "react";
+import React, { useContext, useReducer, useState } from "react";
 import COUNTERPARTY_LIST from "../../../api/Constants";
 import PriceData from "../../../entity/PriceData";
 import TodoItemListContext from "../context/TodoItemListContext";
@@ -6,10 +6,13 @@ import TodoItem from "../../../components/todo-item-list/types";
 import CategorySelector from "../../../components/category-selector";
 import Category from "../../../entity/category";
 import UserCategoryAPI from "../../../api/UserCategoryAPI";
+import { TableRow, TableCell, Checkbox } from "@material-ui/core";
+import DeleteIcon from "@material-ui/icons/Delete";
+import TodoItemQuantityAdjustmentField from "../../../components/todo-item-list/components/todo-item-quantity-adjustment-field";
 
 
 interface TodoListItemViewProps {
-    item: TodoItem; 
+    item: TodoItem;
     showPurchaseAction: boolean;
     onTodoItemPurchaseToggle(todoItem: TodoItem, isBought: boolean): void;
 }
@@ -20,6 +23,10 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
     const [isPurchased, setIsPurchased] = useState(props.item.isBought);
 
     const todoItemListProvider = useContext(TodoItemListContext);
+
+    const handleClick = (e: any, todoItem: TodoItem) => {
+        // purchase logic
+    }
 
     function togglePurchase(toggle: boolean) {
         setIsPurchased(toggle);
@@ -41,48 +48,42 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
         }
     }
 
+    const todoItem = props.item;
+    const labelId = `enhanced-table-checkbox-1`;
+
     return (
-        <tr>
-            <td hidden={!props.showPurchaseAction}>
-                <input
-                    type="checkbox"
-                    defaultChecked={isPurchased}
-                    onChange={() => togglePurchase(!isPurchased)}
-                    id={props.item.id.toString()}
-                    name='MyItem'
-                />
-            </td>
-            <td className="ItemName">
-                <label htmlFor={props.item.id.toString()}>
-                    {props.item.generalName} ({props.item.targetProduct && props.item.targetProduct.productFullName})
-                </label>
-                <ProductCategorySelector item={props.item} />
-            </td>
-            <td>
-                <button onClick={increaseQuantity}>+</button>
-                <label htmlFor={props.item.id.toString()}>
-                    {props.item.quantity}
-                </label>
-                <button onClick={decreaseQuantity}>-</button>
-            </td>
-            <td>
-                {props.item.priceData.latestPrice}
-            </td>
-            {COUNTERPARTY_LIST.map((counterparty: string, idx: number) => {
-                return <td className="cpty" key={idx}>
-                    <CounterpartyPriceView counterparty={counterparty} priceData={props.item.priceData.perCounterpartyPrice} />
-                </td>
-            })}
-            <td>
-                <button onClick={() => todoItemListProvider.removeItem(props.item)}>Remove</button>
-            </td>
-        </tr>
-    )
+        <TableRow
+            hover
+            onClick={(event) => handleClick(event, todoItem)}
+            role="checkbox"
+            aria-checked={isPurchased}
+            tabIndex={-1}
+            selected={isPurchased}
+        >
+            {props.showPurchaseAction && 
+                <TableCell padding="none">
+                    <Checkbox checked={isPurchased} onChange={() => togglePurchase(!isPurchased)} inputProps={{ "aria-labelledby": labelId }}/>
+                </TableCell>
+            }
+            <TableCell component="th" id={labelId} scope="row">
+                {todoItem.generalName}
+            </TableCell>
+            <TableCell>
+                <TodoItemQuantityAdjustmentField todoItem={todoItem} />
+            </TableCell>
+            <TableCell>
+                <CounterpartyPriceView counterparty="Auchan" priceData={todoItem.priceData.perCounterpartyPrice} />
+            </TableCell>
+            <TableCell padding="none">
+                <DeleteIcon />
+            </TableCell>
+        </TableRow>
+    );
 }
 
 interface CounterpartyPriceViewProps {
     counterparty: string;
-    priceData: {[id: string]: PriceData};
+    priceData: { [id: string]: PriceData };
 }
 
 const CounterpartyPriceView = (props: CounterpartyPriceViewProps) => {
@@ -94,7 +95,7 @@ const CounterpartyPriceView = (props: CounterpartyPriceViewProps) => {
     }
 }
 
-const ProductCategorySelector = (props: {item: TodoItem}) => {
+const ProductCategorySelector = (props: { item: TodoItem }) => {
 
     const onCategorySelect = (category: Category) => {
         const product = props.item.targetProduct;
@@ -105,7 +106,7 @@ const ProductCategorySelector = (props: {item: TodoItem}) => {
     }
 
     return (
-        <CategorySelector defaultCategory={props.item.targetProduct?.category} onCategorySelect={onCategorySelect}/>
+        <CategorySelector defaultCategory={props.item.targetProduct?.category} onCategorySelect={onCategorySelect} />
     )
 }
 

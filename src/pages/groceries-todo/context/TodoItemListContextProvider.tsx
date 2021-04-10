@@ -54,6 +54,7 @@ export const TodoItemListContextProvider = (props: React.PropsWithChildren<TodoI
 
     const clearItems = () => {
         setTodoItems([]);
+        TodoProductItemsApi.clear();
     }
 
     const enrichTodoItem = async (item: TodoItem): Promise<void> => {

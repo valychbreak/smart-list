@@ -6,6 +6,17 @@ import ProductApi from "../../../api/ProductApi";
 import TodoItemListContext, { TodoItemListContextType } from "../context/TodoItemListContext";
 import TodoItem from "../../../components/todo-item-list/types";
 import { RouteComponentProps, withRouter } from "react-router-dom";
+import { TableContainer, Table, TableHead, TableRow, TableCell, TextField, Button } from "@material-ui/core";
+import QuantityField from "../../../components/quantity-field";
+import SettingsOverscanIcon from "@material-ui/icons/SettingsOverscan";
+
+
+
+function ccyFormat(num: number) {
+    // doesn't work
+    // return `${num.toFixed(2)}`;
+    return `${num}`;
+}
 
 type ProductSelectItem = {
     label: string,
@@ -63,9 +74,8 @@ const AddTodoItemForm = (props: RouteComponentProps) => {
 
     const productSelectRef = useRef<any>();
 
-    const handleQuantityFieldChange = (e: any) => {
-        const inputValue = e.target.value as string;
-        setNewItemQuantity(inputValue);
+    const handleQuantityFieldChange = (quantity: number) => {
+        setNewItemQuantity(quantity.toString());
     }
 
     const handleSubmit = (e: any, context: TodoItemListContextType) => {
@@ -97,30 +107,34 @@ const AddTodoItemForm = (props: RouteComponentProps) => {
 
     return (
         <TodoItemListContext.Consumer>
-            {context => (
+            {context => (<>
                 <form onSubmit={(e) => handleSubmit(e, context)} className="MyForm">
-                    <div>
-                        <ProductSelect onProductSelect={onProductSelect}
-                                       onProductCreateOptionSelect={onProductCreateOptionSelect} 
-                                       ref={productSelectRef} />
-
-                        <div className="quantity">
-                            <input
-                                id="quantity"
-                                type="number"
-                                step="1"
-                                onChange={handleQuantityFieldChange}
-                                value={newItemQuantity}
-                            />
-                        </div>
-                        <div className="btn">
-                            <button type="submit">
-                                Add #{context.todoItems.length + 1}
-                            </button>
-                        </div>
-                    </div>
+                    <TableContainer>
+                        <Table stickyHeader aria-label="sticky table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell padding="none">
+                                        <SettingsOverscanIcon />
+                                    </TableCell>
+                                    <TableCell align="left">
+                                        {/* <TextField id="standard-basic" label="Add new" /> */}
+                                        <ProductSelect onProductSelect={onProductSelect}
+                                                       onProductCreateOptionSelect={onProductCreateOptionSelect} 
+                                                       ref={productSelectRef} />
+                                    </TableCell>
+                                    <TableCell align="left" padding="none">
+                                        <QuantityField defaultQuantity={1} onChange={handleQuantityFieldChange} />
+                                        <Button type="submit">Add</Button>
+                                    </TableCell>
+                                    <TableCell align="left" padding="none">
+                                        Total: {ccyFormat(100)}
+                                    </TableCell>
+                                </TableRow>
+                            </TableHead>
+                        </Table>
+                    </TableContainer>
                 </form>
-            )}
+            </>)}
         </TodoItemListContext.Consumer>
     )
 }

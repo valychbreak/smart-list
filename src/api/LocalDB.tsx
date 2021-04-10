@@ -126,6 +126,13 @@ class LocalDB {
         localStorage.setItem(TODO_PRODUCT_ITEMS_KEY, JSON.stringify(this._todoProductItemsCache));
     }
 
+    async clearTodoProductItems(): Promise<void> {
+        await this.initTodoProductItemsCache();
+
+        this._todoProductItemsCache = [];
+        localStorage.setItem(TODO_PRODUCT_ITEMS_KEY, JSON.stringify(this._todoProductItemsCache));
+    }
+
     private async initTodoProductItemsCache(): Promise<void> {
         if (this._todoProductItemsCache.length === 0) {
             let storedTodoItemsJson = localStorage.getItem(TODO_PRODUCT_ITEMS_KEY);
