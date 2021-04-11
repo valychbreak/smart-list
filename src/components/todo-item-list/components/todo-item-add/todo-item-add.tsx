@@ -5,7 +5,7 @@ import TodoItem from "../../types";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import Scanner from "../../../../Scanner";
 import { useHistory } from "react-router";
-import { Dialog, IconButton } from "@material-ui/core";
+import { Button, Dialog, Grid, IconButton } from "@material-ui/core";
 import SettingsOverscanIcon from "@material-ui/icons/SettingsOverscan";
 
 
@@ -42,24 +42,20 @@ const AddTodoItemComponent = (props: any) => {
         }
     }
 
-    return (
-        <tr>
-            <td>
-                <IconButton onClick={() => enableScanner()}>
-                    <SettingsOverscanIcon />
-                </IconButton>
+    return (<>
+        <Grid item>
+            <IconButton onClick={() => enableScanner()}>
+                <SettingsOverscanIcon />
+            </IconButton>
 
-                <Dialog open={isScannerEnabled} onClose={disableScanner}>
-                    <Scanner onDetected={onBarcodeDetected} />
-                </Dialog>
-            </td>
-            <td colSpan={2}>
-                <AddTodoItemForm />
-            </td>
-            <td colSpan={3}>
-            </td>
-        </tr>
-    )
+            <Dialog open={isScannerEnabled} onClose={disableScanner}>
+                <Scanner onDetected={onBarcodeDetected} />
+            </Dialog>
+        </Grid>
+        <Grid item xs={6}>
+            <AddTodoItemForm />
+        </Grid>
+    </>)
 }
 
 export default AddTodoItemComponent;

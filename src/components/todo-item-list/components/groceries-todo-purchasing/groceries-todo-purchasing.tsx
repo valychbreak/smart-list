@@ -6,7 +6,7 @@ import useGroceriesTodoPurchasingController from "./use-groceries-todo-purchasin
 import scan from '../../../icons/scan.png'
 import { QuaggaJSResultObject } from "@ericblade/quagga2";
 import { useHistory } from "react-router-dom";
-import { Button, Dialog, IconButton } from "@material-ui/core";
+import { Button, Dialog, Grid, IconButton, Typography } from "@material-ui/core";
 import SettingsOverscanIcon from "@material-ui/icons/SettingsOverscan";
 
 
@@ -41,26 +41,23 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
 
         <TodoListView showPurchaseAction={true} onTodoItemPurchaseToggle={purchasingController.toggleTodoItemPurchaseStatus}/>
         <hr />
-        <table>
-            <tbody>
-                <tr>
-                    <td colSpan={4}>
-                        <Button variant="contained" onClick={() => purchasingController.enableScanner()} startIcon={<SettingsOverscanIcon />}>
-                            Scan barcode
-                        </Button>
-                        <Dialog open={purchasingController.openScanner} onClose={() => purchasingController.disableScanner()}>
-                            <Scanner onDetected={(result: any) => purchasingController.onBarcodeScan(result as QuaggaJSResultObject)} />
-                        </Dialog>
-                    </td>
-                </tr>
-                
-                <tr>
-                    <td colSpan={4}>
-                        <p>You are currently in the purchase mode. Scan or type product's barcode to mark as purchased.</p>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+
+        <Grid container>
+            <Grid item xs={12}>
+                <Button variant="contained" onClick={() => purchasingController.enableScanner()} startIcon={<SettingsOverscanIcon />}>
+                    Scan barcode
+                </Button>
+                <Dialog open={purchasingController.openScanner} onClose={() => purchasingController.disableScanner()}>
+                    <Scanner onDetected={(result: any) => purchasingController.onBarcodeScan(result as QuaggaJSResultObject)} />
+                </Dialog>
+            </Grid>
+        </Grid>
+
+        <Grid container>
+            <Grid item xs={12}>
+                <Typography>You are currently in the purchase mode. Scan or type product's barcode to mark as purchased.</Typography>
+            </Grid>
+        </Grid>
     </>)
 }
 

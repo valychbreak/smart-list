@@ -4,7 +4,7 @@ import ProductApi from "../../../api/ProductApi";
 import TodoItemListContext, { TodoItemListContextType } from "../context/TodoItemListContext";
 import TodoItem from "../../../components/todo-item-list/types";
 import { RouteComponentProps, withRouter } from "react-router-dom";
-import { TableContainer, Table, TableHead, TableRow, TableCell, TextField, Button, CircularProgress } from "@material-ui/core";
+import { TableContainer, Table, TableHead, TableRow, TableCell, TextField, Button, CircularProgress, Grid } from "@material-ui/core";
 import QuantityField from "../../../components/quantity-field";
 import { Autocomplete } from "@material-ui/lab";
 
@@ -84,8 +84,10 @@ const ProductSelect = (props: ProductSelectProps) => {
             renderInput={(params) => (
                 <TextField
                     {...params}
-                    label="Asynchronous"
+                    label="Select product..."
+                    size="small"
                     variant="standard"
+                    margin="none"
                     InputProps={{
                         ...params.InputProps,
                         endAdornment: (
@@ -137,29 +139,24 @@ const AddTodoItemForm = (props: RouteComponentProps) => {
         <TodoItemListContext.Consumer>
             {context => (<>
                 <form onSubmit={(e) => handleSubmit(e, context)} className="MyForm">
-                    <TableContainer>
-                        <Table stickyHeader aria-label="sticky table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell align="left">
-                                        {/* <TextField id="standard-basic" label="Add new" /> */}
-                                        <ProductSelect
-                                            inputValue={productSearchInput}
-                                            setInputValue={setProductSearchInput}
-                                            onProductSelect={onProductSelect}
-                                            onProductCreateOptionSelect={onProductCreateOptionSelect} />
-                                    </TableCell>
-                                    <TableCell align="left" padding="none">
-                                        <QuantityField defaultQuantity={1} onChange={handleQuantityFieldChange} />
-                                        <Button type="submit">Add</Button>
-                                    </TableCell>
-                                    <TableCell align="left" padding="none">
-                                        Total: {ccyFormat(100)}
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-                        </Table>
-                    </TableContainer>
+                    <Grid container>
+                        <Grid item xs={6}>
+                            <ProductSelect
+                                inputValue={productSearchInput}
+                                setInputValue={setProductSearchInput}
+                                onProductSelect={onProductSelect}
+                                onProductCreateOptionSelect={onProductCreateOptionSelect} />
+                        </Grid>
+                        <Grid item xs={2}>
+                            <QuantityField defaultQuantity={1} onChange={handleQuantityFieldChange} />
+                        </Grid>
+                        <Grid item xs={2}>
+                            <Button variant="contained" type="submit">Add</Button>
+                        </Grid>
+                        <Grid item xs={2}>
+                            Total: {ccyFormat(100)}
+                        </Grid>
+                    </Grid>
                 </form>
             </>)}
         </TodoItemListContext.Consumer>

@@ -1,3 +1,4 @@
+import { Grid, Typography } from "@material-ui/core";
 import React from "react";
 import TodoItem from "../../types";
 import AddTodoItemComponent from "../todo-item-add";
@@ -13,16 +14,14 @@ const GroceriesTodoPlanningModeView: React.FC<{}> = () => {
         <TodoListView showPurchaseAction={false} 
                       onTodoItemPurchaseToggle={onTodoItemPurchaseToggle} />
         <hr />
-        <table>
-            <tbody>
+        <Grid container spacing={3}>
                 <AddTodoItemComponent />
-                <tr>
-                    <td colSpan={4}>
-                        <p>You are currently in the list preparation mode. Add items you are planning to buy by scanning barcode or typing Product General Name (e.g. milk, tea, bread).</p>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        </Grid>
+        <Grid container>
+            <Grid item xs={12}>
+                <Typography>You are currently in the list preparation mode. Add items you are planning to buy by scanning barcode or typing Product General Name (e.g. milk, tea, bread).</Typography>
+            </Grid>
+        </Grid>
     </>)
 }
 
