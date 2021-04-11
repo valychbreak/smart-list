@@ -7,23 +7,11 @@ import VideocamIcon from "@material-ui/icons/Videocam";
 import React from "react"
 import { AccountBox, Home } from "@material-ui/icons";
 import { Link } from "react-router-dom";
+import { StyledMenu, useMenuController } from "../custom-menu";
 
 const AppMenu = () => {
 
-    const [anchorElement, setAnchorElement] = React.useState(null);
-    const [mode, setMode] = React.useState(false);
-
-    const handleChangemode = (event: any) => {
-        setMode(event.target.checked);
-    };
-
-    const openMenu = (event: any) => {
-        setAnchorElement(event.currentTarget);
-    };
-
-    const closeMenu = () => {
-        setAnchorElement(null);
-    };
+    const { open, anchorElement, openMenu, closeMenu } = useMenuController();
 
     return (<>
         <IconButton
@@ -39,15 +27,9 @@ const AppMenu = () => {
             id="customized-menu"
             anchorEl={anchorElement}
             keepMounted
-            open={Boolean(anchorElement)}
+            open={open}
             onClose={closeMenu}
         >
-            <MenuItem>
-                <FormControlLabel
-                    control={<Switch checked={mode} onChange={handleChangemode} />}
-                    label="Purchase mode"
-                />
-            </MenuItem>
             <MenuItem component={Link} to='/' onClick={closeMenu}>
                 <ListItemIcon>
                     <Home fontSize="small" />
@@ -87,25 +69,5 @@ const AppMenu = () => {
         </StyledMenu>
     </>)
 }
-
-const StyledMenu = withStyles({
-    paper: {
-        border: "1px solid #d3d4d5"
-    }
-})((props: MenuProps) => (
-    <Menu
-        elevation={0}
-        getContentAnchorEl={null}
-        anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "center"
-        }}
-        transformOrigin={{
-            vertical: "top",
-            horizontal: "center"
-        }}
-        {...props}
-    />
-));
 
 export default AppMenu;
