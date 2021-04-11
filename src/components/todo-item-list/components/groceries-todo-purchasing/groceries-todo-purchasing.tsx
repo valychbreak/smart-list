@@ -40,7 +40,6 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
                                    handleClose={purchasingController.onPriceSubmissionClose} />
 
         <TodoListView showPurchaseAction={true} onTodoItemPurchaseToggle={purchasingController.toggleTodoItemPurchaseStatus}/>
-        <hr />
 
         <Grid container>
             <Grid item xs={12}>
@@ -50,12 +49,6 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
                 <Dialog open={purchasingController.openScanner} onClose={() => purchasingController.disableScanner()}>
                     <Scanner onDetected={(result: any) => purchasingController.onBarcodeScan(result as QuaggaJSResultObject)} />
                 </Dialog>
-            </Grid>
-        </Grid>
-
-        <Grid container>
-            <Grid item xs={12}>
-                <Typography>You are currently in the purchase mode. Scan or type product's barcode to mark as purchased.</Typography>
             </Grid>
         </Grid>
     </>)

@@ -4,10 +4,8 @@ import clsx from 'clsx'
 import React, { useContext } from "react";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import AppMenu from "../../../header";
+import GroceriesTodoToolbarMenu from "./tool-bar-menu";
 
-type GroceriesTodoToolbarProps = {
-    
-}
 
 const useToolbarStyles = makeStyles((theme) => ({
     root: {
@@ -29,6 +27,10 @@ const useToolbarStyles = makeStyles((theme) => ({
     }
 }));
 
+type GroceriesTodoToolbarProps = {
+    onPurchaseModeToggle(toggle: boolean): void;
+}
+
 const GroceriesTodoToolbar = (props: GroceriesTodoToolbarProps) => {
 
     const classes = useToolbarStyles();
@@ -44,7 +46,7 @@ const GroceriesTodoToolbar = (props: GroceriesTodoToolbarProps) => {
                 [classes.highlight]: selectedItemsCount > 0
             })}
         >
-            <AppMenu />
+            <GroceriesTodoToolbarMenu onPurchaseModeToggle={props.onPurchaseModeToggle} />
             {selectedItemsCount > 0 ? (
                 <Typography
                     className={classes.title}

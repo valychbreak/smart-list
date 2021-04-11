@@ -1,4 +1,4 @@
-import { FormControlLabel, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Switch, withStyles } from "@material-ui/core"
+import { FormControlLabel, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, MenuProps, Switch, withStyles } from "@material-ui/core"
 import MenuIcon from "@material-ui/icons/Menu"
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import BorderInnerIcon from "@material-ui/icons/BorderInner";
@@ -92,7 +92,7 @@ const StyledMenu = withStyles({
     paper: {
         border: "1px solid #d3d4d5"
     }
-})((props: any) => (
+})((props: MenuProps) => (
     <Menu
         elevation={0}
         getContentAnchorEl={null}

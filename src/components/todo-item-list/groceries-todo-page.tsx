@@ -10,21 +10,23 @@ const GroceriesTodoPage = () => {
 
     const controller = useGroceriesTodoController();
 
+    const switchMode = (isPurchaseMode: boolean) => {
+        if (isPurchaseMode) {
+            controller.enablePurchasingMode();
+        } else {
+            controller.enablePlanningMode();
+        }
+    }
+
     return (<>
         <TodoItemListContextProvider>
-            <GroceriesTodoToolbar />
+            <GroceriesTodoToolbar onPurchaseModeToggle={switchMode} />
             {controller.currentMode === Mode.PLANNING && <>
                 <GroceriesTodoPlanningModeView />
-                <div className="myBTN">
-                    <button onClick={controller.enablePurchasingMode}>Purchase mode</button>
-                </div>
             </>}
 
             {controller.currentMode === Mode.PURCHASING && <>
                 <GroceriesTodoPurchasingModeView />
-                <div className="myBTN">
-                    <button onClick={controller.enablePlanningMode}>Exit Purchase mode</button>
-                </div>
             </>}
 
             <div className="myBTN">
