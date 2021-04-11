@@ -10,6 +10,7 @@ import AddNewProduct from './pages/new-product/AddNewProductPage'
 import ScanTest from "./pages/scan-test/ScanTestPage";
 import { GroceriesTodo } from "./routes/groceries-todo";
 import { Login } from "./routes/login";
+import { Profile } from "./routes/profile";
 
 const useStyles = makeStyles((theme) => ({
     root: {},
@@ -49,6 +50,9 @@ export default function App() {
                             </Route>
                             <AuthenticatedRoute path="/groceries-todo">
                               <GroceriesTodo />
+                            </AuthenticatedRoute>
+                            <AuthenticatedRoute path="/profile">
+                              <Profile />
                             </AuthenticatedRoute>
                             <Route path="/scan-test">
                               <ScanTest />

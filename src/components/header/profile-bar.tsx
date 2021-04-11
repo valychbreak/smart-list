@@ -1,20 +1,15 @@
-import { Button, createStyles, makeStyles, Theme, Typography } from "@material-ui/core";
+import { Button, createStyles, FormControlLabel, IconButton, ListItemIcon, ListItemText, makeStyles, MenuItem, Theme, Typography } from "@material-ui/core";
 import React, { useContext } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { AccountBox } from "@material-ui/icons";
+import { AccountBox, AccountCircle } from "@material-ui/icons";
 import AuthenticationContext from "../authentication";
+import { StyledMenu, useMenuController } from "../custom-menu";
+import MenuIcon from "@material-ui/icons/Menu"
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      marginRight: theme.spacing(2)
-    },
-  }),
-);
 
 export function ProfileBar() {
-    const classes = useStyles();
 
+    const { open, anchorElement, openMenu, closeMenu } = useMenuController();
     const authContext = useContext(AuthenticationContext);
     const history = useHistory();
 
@@ -24,8 +19,23 @@ export function ProfileBar() {
 
     return authContext.isAuthenticated() === true
         ? <>
-            <Typography classes={classes}>Welcome, {authContext.user.username}!</Typography>
-            <Button variant="outlined" size="small" color="inherit" onClick={signout}>Sign out</Button>
+            <IconButton
+                aria-label="more"
+                aria-controls="long-menu"
+                aria-haspopup="true"
+                onClick={openMenu}
+                color="inherit"
+            >
+                <AccountCircle />
+            </IconButton>
+            <StyledMenu open={open} anchorEl={anchorElement} onClose={closeMenu}>
+                <MenuItem component={Link} to='/profile' onClick={closeMenu}>
+                    <ListItemText primary="Profile" />
+                </MenuItem>
+                <MenuItem onClick={signout} >
+                    <ListItemText primary="Sign out" />
+                </MenuItem>
+            </StyledMenu>
         </>
         : <Button color="inherit" component={Link} to='/login' startIcon={<AccountBox />}>Login</Button>
 }
