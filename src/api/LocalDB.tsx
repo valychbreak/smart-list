@@ -178,7 +178,7 @@ class LocalDB {
             if (storedPricesJson != null) {
                 try {
                     for (let storedPrice of JSON.parse(storedPricesJson)) {
-                        let parsedPriceEntry = new ProductPriceEntry(storedPrice.barcode, storedPrice.price, storedPrice.counterparty, new Date(storedPrice.date));
+                        let parsedPriceEntry = new ProductPriceEntry(storedPrice.barcode, parseFloat(storedPrice.price), storedPrice.counterparty, new Date(storedPrice.date));
                         storedPriceEntries.push(parsedPriceEntry);
                     }
                 } catch (err) {
