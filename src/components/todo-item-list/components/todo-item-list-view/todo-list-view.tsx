@@ -64,10 +64,6 @@ const TodoListView: React.FC<TodoListViewProps> = ({
     const classes = useStyles();
     const todoItemListContext = useContext(TodoItemListContext);
 
-    // FIXME: copied from groceries-todo-tool-bar component
-    const selectedItemsCount = todoItemListContext.todoItems.filter(todoItem => todoItem.isBought === true).length;
-    const maxItemsCount = todoItemListContext.todoItems.length;
-
     const [order, setOrder] = React.useState("asc");
     const [orderBy, setOrderBy] = React.useState("generalName");
 
@@ -77,14 +73,7 @@ const TodoListView: React.FC<TodoListViewProps> = ({
         setOrderBy(property);
     };
 
-    const clearTodoList = () => {
-        if (window.confirm("Are you sure you want to clear the list? CANNOT BE UNDONE!")) {
-            todoItemListContext.clearItems();
-        }
-    }
-
     return (<>
-        <button onClick={e => clearTodoList()}>CLEAR LIST</button>
         <TableContainer className={classes.container}>
             <Table
                 stickyHeader
