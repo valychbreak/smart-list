@@ -140,7 +140,7 @@ const AddTodoItemForm = (props: RouteComponentProps) => {
             {context => (<>
                 <form onSubmit={(e) => handleSubmit(e, context)} className="MyForm">
                     <Grid container>
-                        <Grid item xs={6}>
+                        <Grid item xs={4}>
                             <ProductSelect
                                 inputValue={productSearchInput}
                                 setInputValue={setProductSearchInput}
@@ -153,7 +153,7 @@ const AddTodoItemForm = (props: RouteComponentProps) => {
                         <Grid item xs={2}>
                             <Button variant="contained" type="submit">Add</Button>
                         </Grid>
-                        <Grid item xs={2}>
+                        <Grid item xs={4}>
                             Total: {ccyFormat(100)}
                         </Grid>
                     </Grid>
