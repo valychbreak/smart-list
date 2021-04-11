@@ -60,12 +60,6 @@ const AppMenu = () => {
                 </ListItemIcon>
                 <ListItemText primary="Test scanner" />
             </MenuItem>
-            <MenuItem component={Link} to='/login' onClick={closeMenu}>
-                <ListItemIcon>
-                    <AccountBox fontSize="small" />
-                </ListItemIcon>
-                <ListItemText primary="Login" />
-            </MenuItem>
         </StyledMenu>
     </>)
 }

@@ -4,8 +4,7 @@ import React from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import AuthenticatedRoute from "./components/authenticated-route";
 import { AuthenticationContextProvider } from "./components/authentication/authentication-provider";
-import AppMenu from "./components/header";
-import { ProfileBar } from "./components/profile";
+import AppHeader from "./components/header";
 import BrowseProductsPage from "./pages/browse-products/BrowseProductsPage";
 import AddNewProduct from './pages/new-product/AddNewProductPage'
 import ScanTest from "./pages/scan-test/ScanTestPage";
@@ -40,8 +39,7 @@ export default function App() {
             <Router>
                 <div className={classes.root}>
                     <Paper className={classes.paper}>
-                        <AppMenu />
-                        <ProfileBar />
+                        <AppHeader />
                         <Switch>
                             <Route path="/browse">
                               <BrowseProductsPage />
