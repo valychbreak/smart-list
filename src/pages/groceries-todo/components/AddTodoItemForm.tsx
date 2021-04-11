@@ -8,13 +8,6 @@ import { TableContainer, Table, TableHead, TableRow, TableCell, TextField, Butto
 import QuantityField from "../../../components/quantity-field";
 import { Autocomplete } from "@material-ui/lab";
 
-
-function ccyFormat(num: number) {
-    // doesn't work
-    // return `${num.toFixed(2)}`;
-    return `${num}`;
-}
-
 type ProductSelectItem = {
     inputValue?: string;
     label: string,
@@ -140,21 +133,18 @@ const AddTodoItemForm = (props: RouteComponentProps) => {
             {context => (<>
                 <form onSubmit={(e) => handleSubmit(e, context)} className="MyForm">
                     <Grid container>
-                        <Grid item xs={4}>
+                        <Grid item xs={7}>
                             <ProductSelect
                                 inputValue={productSearchInput}
                                 setInputValue={setProductSearchInput}
                                 onProductSelect={onProductSelect}
                                 onProductCreateOptionSelect={onProductCreateOptionSelect} />
                         </Grid>
-                        <Grid item xs={2}>
+                        <Grid item xs={3}>
                             <QuantityField defaultQuantity={1} onChange={handleQuantityFieldChange} />
                         </Grid>
                         <Grid item xs={2}>
-                            <Button variant="contained" type="submit">Add</Button>
-                        </Grid>
-                        <Grid item xs={4}>
-                            Total: {ccyFormat(100)}
+                            <Button variant="contained" size="small" type="submit">Add</Button>
                         </Grid>
                     </Grid>
                 </form>

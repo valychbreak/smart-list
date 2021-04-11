@@ -43,17 +43,19 @@ const AddTodoItemComponent = (props: any) => {
     }
 
     return (<>
-        <Grid item xs={1}>
-            <IconButton onClick={() => enableScanner()}>
-                <SettingsOverscanIcon />
-            </IconButton>
+        <Grid container>
+            <Grid item xs={1}>
+                <IconButton onClick={() => enableScanner()}>
+                    <SettingsOverscanIcon />
+                </IconButton>
 
-            <Dialog open={isScannerEnabled} onClose={disableScanner}>
-                <Scanner onDetected={onBarcodeDetected} />
-            </Dialog>
-        </Grid>
-        <Grid item xs={11}>
-            <AddTodoItemForm />
+                <Dialog open={isScannerEnabled} onClose={disableScanner}>
+                    <Scanner onDetected={onBarcodeDetected} />
+                </Dialog>
+            </Grid>
+            <Grid item xs={11}>
+                <AddTodoItemForm />
+            </Grid>
         </Grid>
     </>)
 }
