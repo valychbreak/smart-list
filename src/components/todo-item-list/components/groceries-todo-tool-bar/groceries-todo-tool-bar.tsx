@@ -3,7 +3,6 @@ import FilterListIcon from "@material-ui/icons/FilterList";
 import clsx from 'clsx'
 import React, { useContext } from "react";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
-import AppMenu from "../../../header";
 import GroceriesTodoToolbarMenu from "./tool-bar-menu";
 
 
@@ -58,7 +57,7 @@ const GroceriesTodoToolbar = (props: GroceriesTodoToolbarProps) => {
                 </Typography>
             ) : (
                 <Typography className={classes.title} id="tableTitle" component="div">
-                    List of {Date.now().toLocaleString()} ({maxItemsCount} items)
+                    List of {formatDate(new Date())} ({maxItemsCount} items)
                 </Typography>
             )}
 
@@ -76,5 +75,19 @@ const GroceriesTodoToolbar = (props: GroceriesTodoToolbarProps) => {
         </Toolbar>
     );
 };
+
+function formatDate(date: Date) {
+    var d = new Date(date);
+    var month = '' + (d.getMonth() + 1);
+    var day = '' + d.getDate();
+    var year = d.getFullYear();
+
+    if (month.length < 2) 
+        month = '0' + month;
+    if (day.length < 2) 
+        day = '0' + day;
+
+    return [day, month, year].join('-');
+}
 
 export default GroceriesTodoToolbar;
