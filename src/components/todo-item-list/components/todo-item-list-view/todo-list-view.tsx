@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
     },
     table: {},
     container: {
-        maxHeight: 360
+        
     },
 }));
 
