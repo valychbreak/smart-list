@@ -4,28 +4,10 @@ import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoIt
 import TodoItem from "../../types";
 import AddTodoItemComponent from "../todo-item-add";
 import TodoListView from "../todo-item-list-view";
+import { useTodoItemsTotalPriceController } from "../use-todo-items-total-price-controller";
 
 function ccyFormat(num: number) {
     return `${num.toFixed(2)}`;
-}
-
-const useTodoItemsTotalPriceController = () => {
-    const todoItemListContext = useContext(TodoItemListContext);
-
-    const totalPriceByCounterparty = (counterparty: string): number => {
-        return todoItemListContext.todoItems
-            .map(todoItem => {
-                const priceData = todoItem.priceData.perCounterpartyPrice[counterparty];
-                return priceData ? priceData.price : 0;
-            })
-            .reduce((previousValue: number, currentValue: number) => {
-                return previousValue + currentValue;
-            } , 0);
-    }
-
-    return {
-        totalPriceByCounterparty: totalPriceByCounterparty
-    }
 }
 
 const GroceriesTodoPlanningModeView: React.FC<{}> = () => {
@@ -47,7 +29,7 @@ const GroceriesTodoPlanningModeView: React.FC<{}> = () => {
         </Grid>
         <Grid container>
             <Grid item xs={12}>
-                Total: {ccyFormat(todoItemsTotalPriceController.totalPriceByCounterparty("Auchan"))}
+                Total: {ccyFormat(todoItemsTotalPriceController.totalPriceByCounterparty("Auchan"))} PLN
             </Grid>
         </Grid>
     </>)
