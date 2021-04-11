@@ -28,10 +28,6 @@ const GroceriesTodoPage = () => {
             {controller.currentMode === Mode.PURCHASING && <>
                 <GroceriesTodoPurchasingModeView />
             </>}
-
-            <div className="myBTN">
-                <button>Export to csv</button>
-            </div>
         </TodoItemListContextProvider>
     </>);
 }
