@@ -103,20 +103,22 @@ const TodoListView: React.FC<TodoListViewProps> = ({
                     }
                 </TableBody>
                 <TableFooter>
-                    <TableCell colSpan={showPurchaseAction ? 2 : 1} />
-                    <TableCell align="right">
-                        Total:
-                    </TableCell>
-                    <TableCell>
-                        {ccyFormat(todoItemsTotalPriceController.totalPriceByCounterparty("Auchan"))} PLN
-                    </TableCell>
+                    <TableRow>
+                        <TableCell colSpan={showPurchaseAction ? 2 : 1} />
+                        <TableCell align="right">
+                            Total:
+                        </TableCell>
+                        <TableCell>
+                            {currencyFormat(todoItemsTotalPriceController.totalPriceByCounterparty("Auchan"))} PLN
+                        </TableCell>
+                    </TableRow>
                 </TableFooter>
             </Table>
         </TableContainer>
     </>);
 }
 
-function ccyFormat(num: number) {
+function currencyFormat(num: number) {
     return `${num.toFixed(2)}`;
 }
 
