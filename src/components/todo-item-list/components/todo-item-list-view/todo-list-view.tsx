@@ -3,8 +3,9 @@ import TodoItem from "../../types";
 import TodoListItemView from "../../../../pages/groceries-todo/components/TodoListItemView";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import './todo-list-view.css'
-import { makeStyles, Table, TableBody, TableContainer } from "@material-ui/core";
+import { makeStyles, Table, TableBody, TableCell, TableContainer, TableFooter, TableRow } from "@material-ui/core";
 import { TodoItemListHeader } from "./todo-list-table-head";
+import { useTodoItemsTotalPriceController } from "../use-todo-items-total-price-controller";
 
 const useStyles = makeStyles((theme) => ({
     root: {},
@@ -63,6 +64,7 @@ const TodoListView: React.FC<TodoListViewProps> = ({
 
     const classes = useStyles();
     const todoItemListContext = useContext(TodoItemListContext);
+    const todoItemsTotalPriceController = useTodoItemsTotalPriceController();
 
     const [order, setOrder] = React.useState("asc");
     const [orderBy, setOrderBy] = React.useState("generalName");
@@ -100,9 +102,22 @@ const TodoListView: React.FC<TodoListViewProps> = ({
                         })
                     }
                 </TableBody>
+                <TableFooter>
+                    <TableCell colSpan={showPurchaseAction ? 2 : 1} />
+                    <TableCell align="right">
+                        Total:
+                    </TableCell>
+                    <TableCell>
+                        {ccyFormat(todoItemsTotalPriceController.totalPriceByCounterparty("Auchan"))} PLN
+                    </TableCell>
+                </TableFooter>
             </Table>
         </TableContainer>
     </>);
+}
+
+function ccyFormat(num: number) {
+    return `${num.toFixed(2)}`;
 }
 
 export default TodoListView;
