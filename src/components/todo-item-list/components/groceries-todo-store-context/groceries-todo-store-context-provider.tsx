@@ -1,26 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import StoreApi from "../../../../api/StoreApi";
 import { Store } from "../../types";
 import GroceriesTodoStoreContext from "./groceries-todo-store-context"
 
-const storeNamesList = [
-    "Auchan",
-    "Lidl",
-    "Biedronka",
-    "Carrefour",
-    "Lewiatan",
-    "Zabka",
-    "Groszek",
-    "Piotr i Paweł",
-    "Spar"
-];
-
-const defaultStores = storeNamesList.map((storeName, index) => new Store(index, storeName));
 
 export const GroceriesTodoStoreContextProvider = (props: React.PropsWithChildren<{}>) => {
 
     const [selectedStore, setSelectedStore] = useState<Store | null>(null);
-    const [stores, setStores] = useState<Store[]>(defaultStores);
+    const [stores, setStores] = useState<Store[]>([]);
 
+    useEffect(() => {
+        StoreApi.fetchStores()
+            .then(stores => setStores(stores));
+    }, []);
 
     return (
         <GroceriesTodoStoreContext.Provider value={{
