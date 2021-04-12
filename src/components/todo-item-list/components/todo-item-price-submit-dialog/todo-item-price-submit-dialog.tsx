@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import ProductPriceApi from "../../../../api/ProductPriceApi";
 import ProductPriceEntry from "../../../../entity/ProductPriceEntry";
 import TodoItem from "../../types";
 import ProductPriceForm from "../../../ProductPriceForm";
+import GroceriesTodoStoreContext from "../groceries-todo-store-context/groceries-todo-store-context";
 
 interface TodoItemPriceSubmitDialogProps {
     open: boolean;
@@ -11,6 +12,8 @@ interface TodoItemPriceSubmitDialogProps {
 }
 
 const TodoItemPriceSubmitDialog = (props: TodoItemPriceSubmitDialogProps) => {
+
+    const { selectedStore } = useContext(GroceriesTodoStoreContext);
 
     function onPriceEntrySubmit(priceEntry: ProductPriceEntry) {
         const { selectedItem } = props;
@@ -28,7 +31,10 @@ const TodoItemPriceSubmitDialog = (props: TodoItemPriceSubmitDialogProps) => {
             <>
                 <h3>Add price for {props.selectedItem?.targetProduct?.productFullName}</h3>
                 <button onClick={() => props.handleClose()}>Skip / Cancel</button>
-                <ProductPriceForm targetProduct={props.selectedItem?.targetProduct} onEntrySubmit={onPriceEntrySubmit}/>
+                <ProductPriceForm 
+                    defaultStore={selectedStore} 
+                    targetProduct={props.selectedItem?.targetProduct} 
+                    onEntrySubmit={onPriceEntrySubmit}/>
             </>
         }
     </>)
