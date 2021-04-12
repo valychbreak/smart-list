@@ -1,5 +1,4 @@
 import React, { useContext, useReducer, useState } from "react";
-import COUNTERPARTY_LIST from "../../../api/Constants";
 import PriceData from "../../../entity/PriceData";
 import TodoItemListContext from "../context/TodoItemListContext";
 import TodoItem, { Store } from "../../../components/todo-item-list/types";

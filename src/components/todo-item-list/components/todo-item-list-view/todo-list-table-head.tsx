@@ -1,6 +1,5 @@
 import { TableHead, TableRow, TableCell, Checkbox, TableSortLabel, Select, MenuItem, withStyles, InputBase, makeStyles } from "@material-ui/core";
 import React, { useContext } from "react";
-import COUNTERPARTY_LIST from "../../../../api/Constants";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import GroceriesTodoStoreContext from "../groceries-todo-store-context/groceries-todo-store-context";
 

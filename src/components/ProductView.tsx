@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import COUNTERPARTY_LIST from "../api/Constants";
 import ProductPriceApi from "../api/ProductPriceApi";
+import StoreApi from "../api/StoreApi";
 import Product from "../entity/Product";
+import { Store } from "./todo-item-list/types";
 
 interface ProductViewPros {
     product: Product;
@@ -14,25 +15,32 @@ interface PriceData {
 const ProductView = (props: ProductViewPros) => {
     const [latestPrice, setLatestPrice] = useState(0);
 
-    const [priceData, setPriceData] = useState<{[id: string]: PriceData}>({});
+    const [priceData, setPriceData] = useState<{ [id: string]: PriceData }>({});
+    const [storeList, setStoreList] = useState<Store[]>([]);
 
     useEffect(() => {
-        ProductPriceApi.fetchLatestPrice(props.product).then((entry) => {
-            if (entry) {
-                setLatestPrice(entry.price);
-            }
-        });
+        ProductPriceApi.fetchLatestPrice(props.product)
+            .then((entry) => {
+                if (entry) {
+                    setLatestPrice(entry.price);
+                }
+            });
 
-        COUNTERPARTY_LIST.forEach(counterparty => {
-            ProductPriceApi.fetchLatestPrice(props.product, counterparty)
+        StoreApi.fetchStores()
+            .then(stores => setStoreList(stores));
+    }, []);
+
+    useEffect(() => {
+        storeList.forEach(store => {
+            ProductPriceApi.fetchLatestPrice(props.product, store.name)
                 .then(priceEntry => {
                     if (priceEntry) {
-                        priceData[counterparty] = {price: priceEntry.price}
-                        setPriceData({...priceData});
+                        priceData[store.name] = { price: priceEntry.price }
+                        setPriceData({ ...priceData });
                     }
                 })
         })
-      }, []);
+    }, [storeList])
 
     return (<>
         <ul>
@@ -43,10 +51,12 @@ const ProductView = (props: ProductViewPros) => {
             <li>Release company: {props.product.productCompanyName}</li>
             <li>Latest price: {latestPrice}</li>
             <li>
-                Price per counterparty: 
-                {COUNTERPARTY_LIST.map((counterparty: string, idx: number) => {
-                    return <CounterpartyPriceView key={idx} counterparty={counterparty} priceData={priceData} />
-                })}
+                Price per counterparty:
+                <ul>
+                    {storeList.map((store: Store, idx: number) => {
+                        return <CounterpartyPriceView key={store.id} counterparty={store.name} priceData={priceData} />
+                    })}
+                </ul>
             </li>
             <li>Image: TODO</li>
         </ul>
@@ -56,15 +66,15 @@ const ProductView = (props: ProductViewPros) => {
 
 interface CounterpartyPriceViewProps {
     counterparty: string;
-    priceData: {[id: string]: PriceData};
+    priceData: { [id: string]: PriceData };
 }
 
 const CounterpartyPriceView = (props: CounterpartyPriceViewProps) => {
 
     if (props.priceData[props.counterparty]) {
-        return <span> {props.counterparty} - {props.priceData[props.counterparty].price} PLN |</span>
+        return <li> {props.counterparty} - {props.priceData[props.counterparty].price} PLN</li>
     } else {
-        return <span> {props.counterparty} - No data yet |</span>
+        return <li> {props.counterparty} - No data yet</li>
     }
 }
 

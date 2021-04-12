@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import COUNTERPARTY_LIST from "../../../api/Constants";
 import ProductPriceApi from "../../../api/ProductPriceApi";
+import StoreApi from "../../../api/StoreApi";
 import TodoProductItemsApi from "../../../api/TodoProductItemsApi";
 import TodoItem from "../../../components/todo-item-list/types";
 import TodoItemListContext from "./TodoItemListContext";
@@ -67,13 +67,14 @@ export const TodoItemListContextProvider = (props: React.PropsWithChildren<TodoI
             });
 
             const priceFetchingPromiseList = [latestPricePromise];
-
-            COUNTERPARTY_LIST.forEach(counterparty => {
+            
+            const storeList = await StoreApi.fetchStores();
+            storeList.forEach(store => {
                 if (item.targetProduct) {
-                    let fetchPromise = ProductPriceApi.fetchLatestPrice(item.targetProduct, counterparty)
+                    let fetchPromise = ProductPriceApi.fetchLatestPrice(item.targetProduct, store.name)
                         .then(priceEntry => {
                             if (priceEntry) {
-                                item.priceData.setCounterpartyPrice(counterparty, {price: priceEntry.price});
+                                item.priceData.setCounterpartyPrice(store.name, {price: priceEntry.price});
                             }
                         })
                     priceFetchingPromiseList.push(fetchPromise);
