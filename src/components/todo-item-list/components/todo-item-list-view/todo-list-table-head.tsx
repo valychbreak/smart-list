@@ -2,6 +2,7 @@ import { TableHead, TableRow, TableCell, Checkbox, TableSortLabel, Select, MenuI
 import React, { useContext } from "react";
 import COUNTERPARTY_LIST from "../../../../api/Constants";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
+import GroceriesTodoStoreContext from "../groceries-todo-store-context/groceries-todo-store-context";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -82,10 +83,21 @@ export function EnhancedTableHead(props: any) {
     } = props;
 
     const classes = useStyles();
+    const { selectedStore, storeList, selectStore, clearSelection } = useContext(GroceriesTodoStoreContext);
 
     const createSortHandler = (property: string) => (event: any) => {
         onRequestSort(event, property);
     };
+
+    const onStoreSelect = (event: any) => {
+        const value = event.target.value as string;
+        const store = storeList.find(store => store.name === value);
+        if (store) {
+            selectStore(store);
+        } else {
+            clearSelection();
+        }
+    }
 
     return (
         <TableHead>
@@ -123,21 +135,16 @@ export function EnhancedTableHead(props: any) {
                 ))}
                 <TableCell>
                     <Select
-                        id="price1"
-                        //onChange={handleChange}
-                        value="Auchan"
+                        onChange={onStoreSelect}
+                        value={selectedStore ? selectedStore.name : "None"}
                         input={<BootstrapInput />}
                     >
-                        <MenuItem value="Auchan">
-                            <em>Auchan</em>
+                        <MenuItem value="None">
+                            None
                         </MenuItem>
-                        {COUNTERPARTY_LIST.map((option) => (
-                            <MenuItem
-                                key={option}
-                                selected={option === "Auchan"}
-                            //onClick={handleChange}
-                            >
-                                {option}
+                        {storeList.map((store) => (
+                            <MenuItem key={store.id} value={store.name}>
+                                {store.name}
                             </MenuItem>
                         ))}
                     </Select>

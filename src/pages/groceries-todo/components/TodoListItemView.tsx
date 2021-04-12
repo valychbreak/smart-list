@@ -2,13 +2,14 @@ import React, { useContext, useReducer, useState } from "react";
 import COUNTERPARTY_LIST from "../../../api/Constants";
 import PriceData from "../../../entity/PriceData";
 import TodoItemListContext from "../context/TodoItemListContext";
-import TodoItem from "../../../components/todo-item-list/types";
+import TodoItem, { Store } from "../../../components/todo-item-list/types";
 import CategorySelector from "../../../components/category-selector";
 import Category from "../../../entity/category";
 import UserCategoryAPI from "../../../api/UserCategoryAPI";
 import { TableRow, TableCell, Checkbox, IconButton } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import TodoItemQuantityAdjustmentField from "../../../components/todo-item-list/components/todo-item-quantity-adjustment-field";
+import GroceriesTodoStoreContext from "../../../components/todo-item-list/components/groceries-todo-store-context/groceries-todo-store-context";
 
 
 interface TodoListItemViewProps {
@@ -23,6 +24,7 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
     const [isPurchased, setIsPurchased] = useState(props.item.isBought);
 
     const todoItemListProvider = useContext(TodoItemListContext);
+    const { selectedStore } = useContext(GroceriesTodoStoreContext);
 
     const handleClick = (e: any, todoItem: TodoItem) => {
         // purchase logic
@@ -60,7 +62,7 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
                 <TodoItemQuantityAdjustmentField todoItem={todoItem} />
             </TableCell>
             <TableCell>
-                <CounterpartyPriceView counterparty="Auchan" priceData={todoItem.priceData.perCounterpartyPrice} />
+                <StorePriceView store={selectedStore} priceData={todoItem.priceData.perCounterpartyPrice} />
             </TableCell>
             <TableCell padding="none">
                 <IconButton onClick={deleteTodoItem}>
@@ -71,15 +73,15 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
     );
 }
 
-interface CounterpartyPriceViewProps {
-    counterparty: string;
+interface StorePriceViewProps {
+    store: Store | null;
     priceData: { [id: string]: PriceData };
 }
 
-const CounterpartyPriceView = (props: CounterpartyPriceViewProps) => {
+const StorePriceView = (props: StorePriceViewProps) => {
 
-    if (props.priceData[props.counterparty]) {
-        return <span>{props.priceData[props.counterparty].price} PLN</span>
+    if (props.store && props.priceData[props.store.name]) {
+        return <span>{props.priceData[props.store.name].price} PLN</span>
     } else {
         return <span>No data yet</span>
     }

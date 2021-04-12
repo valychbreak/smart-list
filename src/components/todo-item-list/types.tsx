@@ -15,6 +15,16 @@ export class ProductPriceData {
     }
 }
 
+export class Store {
+    readonly id: number;
+    readonly name: string;
+
+    constructor(id: number, name: string) {
+        this.id = id;
+        this.name = name;
+    }
+}
+
 class TodoItem {
     id: number;
     generalName: string;
