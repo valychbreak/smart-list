@@ -61,7 +61,10 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
                 <TodoItemQuantityAdjustmentField todoItem={todoItem} />
             </TableCell>
             <TableCell>
-                <StorePriceView store={selectedStore} priceData={todoItem.priceData.perCounterpartyPrice} />
+                <StorePriceView 
+                    store={selectedStore}
+                    quantity={todoItem.quantity}
+                    priceData={todoItem.priceData.perCounterpartyPrice} />
             </TableCell>
             <TableCell padding="none">
                 <IconButton onClick={deleteTodoItem}>
@@ -74,13 +77,17 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
 
 interface StorePriceViewProps {
     store: Store | null;
+    quantity: number;
     priceData: { [id: string]: PriceData };
 }
 
 const StorePriceView = (props: StorePriceViewProps) => {
 
-    if (props.store && props.priceData[props.store.name]) {
-        return <span>{props.priceData[props.store.name].price} PLN</span>
+    const { quantity } = props;
+    const storeName = props.store?.name;
+
+    if (storeName && props.priceData[storeName]) {
+        return <span>{props.priceData[storeName].price * quantity} PLN</span>
     } else {
         return <span>No data yet</span>
     }

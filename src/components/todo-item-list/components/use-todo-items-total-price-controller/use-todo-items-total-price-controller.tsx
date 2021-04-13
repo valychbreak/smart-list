@@ -8,7 +8,7 @@ export const useTodoItemsTotalPriceController = () => {
         return todoItemListContext.todoItems
             .map(todoItem => {
                 const priceData = todoItem.priceData.perCounterpartyPrice[counterparty];
-                return priceData ? priceData.price : 0;
+                return priceData ? priceData.price * todoItem.quantity : 0;
             })
             .reduce((previousValue: number, currentValue: number) => {
                 return previousValue + currentValue;
