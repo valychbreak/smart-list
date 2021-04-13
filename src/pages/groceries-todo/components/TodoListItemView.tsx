@@ -19,7 +19,6 @@ interface TodoListItemViewProps {
 
 const TodoListItemView = (props: TodoListItemViewProps) => {
 
-    const [, forceUpdate] = useReducer(x => x + 1, 0);
     const [isPurchased, setIsPurchased] = useState(props.item.isBought);
 
     const todoItemListProvider = useContext(TodoItemListContext);
@@ -81,13 +80,17 @@ interface StorePriceViewProps {
     priceData: { [id: string]: PriceData };
 }
 
+function currencyFormat(amount: number) {
+    return amount.toFixed(2);
+}
+
 const StorePriceView = (props: StorePriceViewProps) => {
 
     const { quantity } = props;
     const storeName = props.store?.name;
 
     if (storeName && props.priceData[storeName]) {
-        return <span>{props.priceData[storeName].price * quantity} PLN</span>
+        return <span>{currencyFormat(props.priceData[storeName].price * quantity)} PLN</span>
     } else {
         return <span>No data yet</span>
     }

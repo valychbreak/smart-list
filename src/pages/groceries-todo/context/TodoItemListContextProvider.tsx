@@ -51,6 +51,7 @@ export const TodoItemListContextProvider = (props: React.PropsWithChildren<TodoI
     const updateItemQuantity = (item: TodoItem, quantity: number) => {
         item.quantity = quantity;
         TodoProductItemsApi.update(item);
+        setTodoItems([...todoItems])
     }
 
     const clearItems = () => {
