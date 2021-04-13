@@ -23,6 +23,12 @@ const AddTodoItemComponent = (props: any) => {
     }
     
     const onBarcodeDetected = (result: any) => {
+        // Before scanner is unmounted, it still able to trigger barcodes detection.
+        // Making sure that we trigger scan only once.
+        if (!isScannerEnabled) {
+            return;
+        }
+
         disableScanner();
 
         let barcode = result.codeResult?.code;
