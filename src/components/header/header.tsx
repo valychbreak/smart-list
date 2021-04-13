@@ -21,7 +21,7 @@ const AppHeader = () => {
     const classes = useStyles();
 
     return (
-        <AppBar position="static">
+        <AppBar position="fixed">
             <Toolbar>
                 <AppMenu />
                 <Typography variant="h6" className={classes.title}>
