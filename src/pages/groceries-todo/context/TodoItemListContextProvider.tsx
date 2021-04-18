@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import COUNTERPARTY_LIST from "../../../api/Constants";
 import ProductPriceApi from "../../../api/ProductPriceApi";
+import StoreApi from "../../../api/StoreApi";
 import TodoProductItemsApi from "../../../api/TodoProductItemsApi";
 import TodoItem from "../../../components/todo-item-list/types";
 import TodoItemListContext from "./TodoItemListContext";
@@ -28,12 +28,23 @@ export const TodoItemListContextProvider = (props: React.PropsWithChildren<TodoI
             })
     }, []);
 
-    const addItem = (item: TodoItem) => {
-        TodoProductItemsApi.add(item).then(_ => {
-            enrichTodoItem(item).then(_ => {
-                setTodoItems(todoItems.concat(item));
-            });
-        })
+    const addItem = async (item: TodoItem) => {
+
+        const existingTodoItem = todoItems.find((addedTodoItem) => {
+            return addedTodoItem.generalName === item.generalName 
+                && addedTodoItem.targetProduct?.productBarcode === item.targetProduct?.productBarcode;
+        });
+
+        if (existingTodoItem) {
+            updateItemQuantity(existingTodoItem, existingTodoItem.quantity + item.quantity);
+            return;
+        }
+
+        await TodoProductItemsApi.add(item);
+        
+        enrichTodoItem(item).then(_ => {
+            setTodoItems(todoItems.concat(item));
+        });
     }
 
     const removeItem = (removeItem: TodoItem) => {
@@ -45,15 +56,18 @@ export const TodoItemListContextProvider = (props: React.PropsWithChildren<TodoI
     const toggleItemPurchased = (item: TodoItem, toggle: boolean) => {
         item.isBought = toggle;
         TodoProductItemsApi.update(item);
+        setTodoItems([...todoItems]);
     }
 
     const updateItemQuantity = (item: TodoItem, quantity: number) => {
         item.quantity = quantity;
         TodoProductItemsApi.update(item);
+        setTodoItems([...todoItems])
     }
 
     const clearItems = () => {
         setTodoItems([]);
+        TodoProductItemsApi.clear();
     }
 
     const enrichTodoItem = async (item: TodoItem): Promise<void> => {
@@ -65,13 +79,14 @@ export const TodoItemListContextProvider = (props: React.PropsWithChildren<TodoI
             });
 
             const priceFetchingPromiseList = [latestPricePromise];
-
-            COUNTERPARTY_LIST.forEach(counterparty => {
+            
+            const storeList = await StoreApi.fetchStores();
+            storeList.forEach(store => {
                 if (item.targetProduct) {
-                    let fetchPromise = ProductPriceApi.fetchLatestPrice(item.targetProduct, counterparty)
+                    let fetchPromise = ProductPriceApi.fetchLatestPrice(item.targetProduct, store.name)
                         .then(priceEntry => {
                             if (priceEntry) {
-                                item.priceData.setCounterpartyPrice(counterparty, {price: priceEntry.price});
+                                item.priceData.setCounterpartyPrice(store.name, {price: priceEntry.price});
                             }
                         })
                     priceFetchingPromiseList.push(fetchPromise);

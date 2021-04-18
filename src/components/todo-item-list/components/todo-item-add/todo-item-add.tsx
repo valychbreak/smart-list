@@ -4,10 +4,9 @@ import AddTodoItemForm from "../../../../pages/groceries-todo/components/AddTodo
 import TodoItem from "../../types";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import Scanner from "../../../../Scanner";
-import CustomDialog from "../../../custom-dialog";
-import scan from '../../../icons/scan.png';
 import { useHistory } from "react-router";
-
+import { Button, Dialog, Grid, IconButton } from "@material-ui/core";
+import SettingsOverscanIcon from "@material-ui/icons/SettingsOverscan";
 
 
 const AddTodoItemComponent = (props: any) => {
@@ -24,6 +23,12 @@ const AddTodoItemComponent = (props: any) => {
     }
     
     const onBarcodeDetected = (result: any) => {
+        // Before scanner is unmounted, it still able to trigger barcodes detection.
+        // Making sure that we trigger scan only once.
+        if (!isScannerEnabled) {
+            return;
+        }
+
         disableScanner();
 
         let barcode = result.codeResult?.code;
@@ -43,26 +48,22 @@ const AddTodoItemComponent = (props: any) => {
         }
     }
 
-    return (
-        <tr>
-            <td className="T_action_button">
-                <div className="center">
-                    <label htmlFor="show" className="show-btn" title="Enable scanner">
-                        <img src={scan} onClick={() => enableScanner()} alt="remove" className="icon_scan" />
-                    </label>
+    return (<>
+        <Grid container>
+            <Grid item xs={1}>
+                <IconButton onClick={() => enableScanner()}>
+                    <SettingsOverscanIcon />
+                </IconButton>
 
-                    <CustomDialog open={isScannerEnabled} handleClose={disableScanner}>
-                        <Scanner onDetected={onBarcodeDetected} />
-                    </CustomDialog>
-                </div>
-            </td>
-            <td colSpan={2}>
+                <Dialog open={isScannerEnabled} onClose={disableScanner}>
+                    <Scanner onDetected={onBarcodeDetected} />
+                </Dialog>
+            </Grid>
+            <Grid item xs={11}>
                 <AddTodoItemForm />
-            </td>
-            <td colSpan={3}>
-            </td>
-        </tr>
-    )
+            </Grid>
+        </Grid>
+    </>)
 }
 
 export default AddTodoItemComponent;

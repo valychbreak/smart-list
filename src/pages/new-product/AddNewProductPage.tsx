@@ -3,6 +3,7 @@ import Product from '../../entity/Product';
 import AddProductInfo from '../../components/AddProductInfo';
 import ProductView from '../../components/ProductView';
 import ProductApi from '../../api/ProductApi';
+import { Container } from '@material-ui/core';
 
 
 const AddNewProduct = () => {
@@ -11,10 +12,14 @@ const AddNewProduct = () => {
   const [productError, setProductError] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
 
-  function _startAddingProduct() {
+  function startAddingProduct() {
     setAddingProduct(true);
     setSuccessMessage("");
   }
+
+  function cancelAddingProduct() {
+    setAddingProduct(false);
+  } 
 
   const onProductSubmit = async (product: Product) => {
     try {
@@ -28,16 +33,18 @@ const AddNewProduct = () => {
   }
 
   return (
-    <div>
+    <Container>
 
       <h2>Actions</h2>
-      <button onClick={_startAddingProduct}>{addingProduct ? 'Cancel' : 'Add Product'}</button>
+      {addingProduct
+        ? <button onClick={cancelAddingProduct}>Cancel</button> 
+        : <button onClick={startAddingProduct}>Add Product</button>}
       <hr />
       {successMessage && <p>{successMessage}</p>}
       {productError && <p>{productError}</p>}
       {addingProduct && <AddProductInfo onProductSubmit={onProductSubmit} />}
 
-    </div>
+    </Container>
   )
 }
 

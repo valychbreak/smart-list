@@ -1,100 +1,97 @@
-import { useContext, useReducer, useState } from "react";
-import COUNTERPARTY_LIST from "../../../api/Constants";
+import React, { useContext, useReducer, useState } from "react";
 import PriceData from "../../../entity/PriceData";
 import TodoItemListContext from "../context/TodoItemListContext";
-import TodoItem from "../../../components/todo-item-list/types";
+import TodoItem, { Store } from "../../../components/todo-item-list/types";
 import CategorySelector from "../../../components/category-selector";
 import Category from "../../../entity/category";
 import UserCategoryAPI from "../../../api/UserCategoryAPI";
+import { TableRow, TableCell, Checkbox, IconButton } from "@material-ui/core";
+import DeleteIcon from "@material-ui/icons/Delete";
+import TodoItemQuantityAdjustmentField from "../../../components/todo-item-list/components/todo-item-quantity-adjustment-field";
+import GroceriesTodoStoreContext from "../../../components/todo-item-list/components/groceries-todo-store-context/groceries-todo-store-context";
 
 
 interface TodoListItemViewProps {
-    item: TodoItem; 
+    item: TodoItem;
     showPurchaseAction: boolean;
     onTodoItemPurchaseToggle(todoItem: TodoItem, isBought: boolean): void;
 }
 
 const TodoListItemView = (props: TodoListItemViewProps) => {
 
-    const [, forceUpdate] = useReducer(x => x + 1, 0);
     const [isPurchased, setIsPurchased] = useState(props.item.isBought);
 
     const todoItemListProvider = useContext(TodoItemListContext);
+    const { selectedStore } = useContext(GroceriesTodoStoreContext);
 
     function togglePurchase(toggle: boolean) {
         setIsPurchased(toggle);
         props.onTodoItemPurchaseToggle(props.item, toggle);
     }
 
-    const increaseQuantity = () => {
-        const { item } = props;
-        todoItemListProvider.updateItemQuantity(item, item.quantity + 1);
-        forceUpdate();
+    const deleteTodoItem = () => {
+        todoItemListProvider.removeItem(props.item);
     }
 
-    const decreaseQuantity = () => {
-        const { item } = props;
-
-        if (item.quantity > 1) {
-            todoItemListProvider.updateItemQuantity(item, item.quantity - 1);
-            forceUpdate();
-        }
-    }
+    const todoItem = props.item;
 
     return (
-        <tr>
-            <td hidden={!props.showPurchaseAction}>
-                <input
-                    type="checkbox"
-                    defaultChecked={isPurchased}
-                    onChange={() => togglePurchase(!isPurchased)}
-                    id={props.item.id.toString()}
-                    name='MyItem'
-                />
-            </td>
-            <td className="ItemName">
-                <label htmlFor={props.item.id.toString()}>
-                    {props.item.generalName} ({props.item.targetProduct && props.item.targetProduct.productFullName})
-                </label>
-                <ProductCategorySelector item={props.item} />
-            </td>
-            <td>
-                <button onClick={increaseQuantity}>+</button>
-                <label htmlFor={props.item.id.toString()}>
-                    {props.item.quantity}
-                </label>
-                <button onClick={decreaseQuantity}>-</button>
-            </td>
-            <td>
-                {props.item.priceData.latestPrice}
-            </td>
-            {COUNTERPARTY_LIST.map((counterparty: string, idx: number) => {
-                return <td className="cpty" key={idx}>
-                    <CounterpartyPriceView counterparty={counterparty} priceData={props.item.priceData.perCounterpartyPrice} />
-                </td>
-            })}
-            <td>
-                <button onClick={() => todoItemListProvider.removeItem(props.item)}>Remove</button>
-            </td>
-        </tr>
-    )
+        <TableRow
+            hover
+            role="checkbox"
+            aria-checked={isPurchased}
+            tabIndex={-1}
+            selected={isPurchased}
+        >
+            {props.showPurchaseAction && 
+                <TableCell padding="none">
+                    <Checkbox checked={isPurchased} onChange={() => togglePurchase(!isPurchased)} inputProps={{ "aria-labelledby": "todo-item-name" }}/>
+                </TableCell>
+            }
+            <TableCell component="th" id="todo-item-name" scope="row">
+                {todoItem.generalName}
+            </TableCell>
+            <TableCell>
+                <TodoItemQuantityAdjustmentField todoItem={todoItem} />
+            </TableCell>
+            <TableCell>
+                <StorePriceView 
+                    store={selectedStore}
+                    quantity={todoItem.quantity}
+                    priceData={todoItem.priceData.perCounterpartyPrice} />
+            </TableCell>
+            <TableCell padding="none">
+                <IconButton onClick={deleteTodoItem}>
+                    <DeleteIcon />
+                </IconButton>
+            </TableCell>
+        </TableRow>
+    );
 }
 
-interface CounterpartyPriceViewProps {
-    counterparty: string;
-    priceData: {[id: string]: PriceData};
+interface StorePriceViewProps {
+    store: Store | null;
+    quantity: number;
+    priceData: { [id: string]: PriceData };
 }
 
-const CounterpartyPriceView = (props: CounterpartyPriceViewProps) => {
+function currencyFormat(amount: number) {
+    return amount.toFixed(2);
+}
 
-    if (props.priceData[props.counterparty]) {
-        return <span>{props.priceData[props.counterparty].price} PLN</span>
+const StorePriceView = (props: StorePriceViewProps) => {
+
+    const { quantity } = props;
+    const storeName = props.store?.name;
+
+    if (storeName && props.priceData[storeName]) {
+        return <span>{currencyFormat(props.priceData[storeName].price * quantity)} PLN</span>
     } else {
         return <span>No data yet</span>
     }
 }
 
-const ProductCategorySelector = (props: {item: TodoItem}) => {
+const ProductCategorySelector = (props: { item: TodoItem }) => {
 
     const onCategorySelect = (category: Category) => {
         const product = props.item.targetProduct;
@@ -105,7 +102,7 @@ const ProductCategorySelector = (props: {item: TodoItem}) => {
     }
 
     return (
-        <CategorySelector defaultCategory={props.item.targetProduct?.category} onCategorySelect={onCategorySelect}/>
+        <CategorySelector defaultCategory={props.item.targetProduct?.category} onCategorySelect={onCategorySelect} />
     )
 }
 

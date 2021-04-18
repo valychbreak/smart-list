@@ -1,28 +1,38 @@
+import { Container, makeStyles, Paper } from "@material-ui/core";
 import React from "react";
 import TodoItem from "../../types";
 import AddTodoItemComponent from "../todo-item-add";
 import TodoListView from "../todo-item-list-view";
 
+
+const useStyles = makeStyles(theme => ({
+    root: {
+        width: '100%',
+        [theme.breakpoints.down('sm')]: {
+            position: 'fixed',
+            bottom: 0,
+            // height: 60
+        },
+    }
+}));
+
+
 const GroceriesTodoPlanningModeView: React.FC<{}> = () => {
+    const classes = useStyles();
 
     const onTodoItemPurchaseToggle = (todoItem: TodoItem, isBought: boolean) => {
         throw Error("Purchasing is disabled")
     }
 
     return (<>
-        <TodoListView showPurchaseAction={false} 
-                      onTodoItemPurchaseToggle={onTodoItemPurchaseToggle} />
-        <hr />
-        <table>
-            <tbody>
+        <TodoListView showPurchaseAction={false}
+            onTodoItemPurchaseToggle={onTodoItemPurchaseToggle} />
+
+        <Container maxWidth="lg" disableGutters classes={classes}>
+            <Paper>
                 <AddTodoItemComponent />
-                <tr>
-                    <td colSpan={4}>
-                        <p>You are currently in the list preparation mode. Add items you are planning to buy by scanning barcode or typing Product General Name (e.g. milk, tea, bread).</p>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+            </Paper>
+        </Container>
     </>)
 }
 

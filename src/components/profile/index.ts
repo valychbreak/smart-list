@@ -1,1 +1,1 @@
-export { ProfileBar } from './profile-bar'
+export * from './profile'

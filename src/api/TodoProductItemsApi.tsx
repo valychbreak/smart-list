@@ -6,6 +6,7 @@ interface TodoProductItemsApi {
     add(todoItem: TodoItem): Promise<void>;
     remove(todoItem: TodoItem): Promise<TodoItem>;
     update(todoItem: TodoItem): Promise<void>;
+    clear(): Promise<void>;
 }
 
 class LocalStorageTodoProductItemsApi implements TodoProductItemsApi {
@@ -23,6 +24,10 @@ class LocalStorageTodoProductItemsApi implements TodoProductItemsApi {
 
     update(todoItem: TodoItem): Promise<void> {
         return LocalDB.updateTodoProductItem(todoItem);
+    }
+
+    clear(): Promise<void> {
+        return LocalDB.clearTodoProductItems();
     }
 }
 
