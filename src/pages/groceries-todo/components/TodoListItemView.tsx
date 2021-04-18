@@ -24,10 +24,6 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
     const todoItemListProvider = useContext(TodoItemListContext);
     const { selectedStore } = useContext(GroceriesTodoStoreContext);
 
-    const handleClick = (e: any, todoItem: TodoItem) => {
-        // purchase logic
-    }
-
     function togglePurchase(toggle: boolean) {
         setIsPurchased(toggle);
         props.onTodoItemPurchaseToggle(props.item, toggle);
@@ -42,7 +38,6 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
     return (
         <TableRow
             hover
-            onClick={(event) => handleClick(event, todoItem)}
             role="checkbox"
             aria-checked={isPurchased}
             tabIndex={-1}
