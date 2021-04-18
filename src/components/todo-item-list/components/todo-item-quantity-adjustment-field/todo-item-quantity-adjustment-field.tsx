@@ -9,12 +9,10 @@ type TodoItemQuantityAdjustmentFieldProps = {
 
 const TodoItemQuantityAdjustmentField: React.FC<TodoItemQuantityAdjustmentFieldProps> = (props: TodoItemQuantityAdjustmentFieldProps) => {
     
-    const [, forceUpdate] = useReducer(x => x + 1, 0);
     const todoItemListContext = useContext(TodoItemListContext);
 
     const changeItemQuantity = (todoItem: TodoItem, quantity: number) => {
         todoItemListContext.updateItemQuantity(todoItem, quantity);
-        forceUpdate();
     }
 
     return (

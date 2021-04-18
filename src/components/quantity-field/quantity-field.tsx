@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type QuantityFieldProps = {
     defaultQuantity: number;
@@ -7,7 +7,12 @@ type QuantityFieldProps = {
 
 const QuantityField = (props: QuantityFieldProps) => {
 
-    const [itemQuantity, setItemQuantity] = useState<string>(props.defaultQuantity.toString());
+    const [itemQuantity, setItemQuantity] = useState<string>("");
+
+    // Using useEffect in order to change displayed value when default is changed
+    useEffect(() => {
+        setItemQuantity(props.defaultQuantity.toString());
+    }, [props.defaultQuantity])
 
     const increaseQuantity = () => {
         const quantity = parseInt(itemQuantity);

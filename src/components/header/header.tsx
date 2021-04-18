@@ -20,8 +20,10 @@ const useStyles = makeStyles((theme: Theme) =>
 const AppHeader = () => {
     const classes = useStyles();
 
-    return (
-        <AppBar position="static">
+    return (<>
+        {/* This fake "static" tool bar is needed to occupy space under "fixed" app bar */}
+        <AppBar position="static"><Toolbar /></AppBar>
+        <AppBar position="fixed">
             <Toolbar>
                 <AppMenu />
                 <Typography variant="h6" className={classes.title}>
@@ -30,7 +32,7 @@ const AppHeader = () => {
                 <ProfileBar />
             </Toolbar>
         </AppBar>
-    )
+    </>)
 }
 
 export default AppHeader;

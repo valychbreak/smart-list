@@ -19,15 +19,10 @@ interface TodoListItemViewProps {
 
 const TodoListItemView = (props: TodoListItemViewProps) => {
 
-    const [, forceUpdate] = useReducer(x => x + 1, 0);
     const [isPurchased, setIsPurchased] = useState(props.item.isBought);
 
     const todoItemListProvider = useContext(TodoItemListContext);
     const { selectedStore } = useContext(GroceriesTodoStoreContext);
-
-    const handleClick = (e: any, todoItem: TodoItem) => {
-        // purchase logic
-    }
 
     function togglePurchase(toggle: boolean) {
         setIsPurchased(toggle);
@@ -43,7 +38,6 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
     return (
         <TableRow
             hover
-            onClick={(event) => handleClick(event, todoItem)}
             role="checkbox"
             aria-checked={isPurchased}
             tabIndex={-1}
@@ -61,7 +55,10 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
                 <TodoItemQuantityAdjustmentField todoItem={todoItem} />
             </TableCell>
             <TableCell>
-                <StorePriceView store={selectedStore} priceData={todoItem.priceData.perCounterpartyPrice} />
+                <StorePriceView 
+                    store={selectedStore}
+                    quantity={todoItem.quantity}
+                    priceData={todoItem.priceData.perCounterpartyPrice} />
             </TableCell>
             <TableCell padding="none">
                 <IconButton onClick={deleteTodoItem}>
@@ -74,13 +71,21 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
 
 interface StorePriceViewProps {
     store: Store | null;
+    quantity: number;
     priceData: { [id: string]: PriceData };
+}
+
+function currencyFormat(amount: number) {
+    return amount.toFixed(2);
 }
 
 const StorePriceView = (props: StorePriceViewProps) => {
 
-    if (props.store && props.priceData[props.store.name]) {
-        return <span>{props.priceData[props.store.name].price} PLN</span>
+    const { quantity } = props;
+    const storeName = props.store?.name;
+
+    if (storeName && props.priceData[storeName]) {
+        return <span>{currencyFormat(props.priceData[storeName].price * quantity)} PLN</span>
     } else {
         return <span>No data yet</span>
     }

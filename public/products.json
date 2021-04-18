@@ -1,4 +1,77 @@
 [
-    {"id":1,"productGeneralName":"Bread","productBarcode":"5900864782829","productBarcodeType":"ean_13","productFullName":"Chleb PANO Tost PELNOZIARNISTY","image":null},
-    {"id":2,"productGeneralName":"Coca cola","productBarcode":"5449000000439","productBarcodeType":"ean_13","productFullName":"Coca cola 1.5","productCountry":"Belgium and Luxembourg","productCompanyName":"","image":null}
+  {
+    "id": 1,
+    "productGeneralName": "Bread",
+    "productBarcode": "5900864782829",
+    "productBarcodeType": "ean_13",
+    "productFullName": "Chleb PANO Tost PELNOZIARNISTY",
+    "image": null,
+    "category": null
+  },
+  {
+    "id": 2,
+    "productGeneralName": "Coca cola",
+    "productBarcode": "5449000000439",
+    "productBarcodeType": "ean_13",
+    "productFullName": "Coca cola 1.5",
+    "productCountry": "Belgium and Luxembourg",
+    "productCompanyName": "",
+    "image": null,
+    "category": null
+  },
+  {
+    "id": 3,
+    "productGeneralName": "Пенка для бритья",
+    "productBarcode": "5900017068411",
+    "productBarcodeType": "ean_13",
+    "productFullName": "Nivea men sensitive foam",
+    "productCountry": "Germany",
+    "productCompanyName": "Nivea",
+    "image": null,
+    "category": null
+  },
+  {
+    "id": 4,
+    "productGeneralName": "Молоко",
+    "productBarcode": "5901939000770",
+    "productBarcodeType": "ean_13",
+    "productFullName": "",
+    "productCountry": "Poland",
+    "productCompanyName": "",
+    "image": null,
+    "category": null
+  },
+  {
+    "id": 5,
+    "productGeneralName": "Молоко",
+    "productBarcode": "5904215145301",
+    "productBarcodeType": "ean_13",
+    "productFullName": "Mleko codzienne 2.0",
+    "productCountry": "Poland",
+    "productCompanyName": "Auchan",
+    "image": null,
+    "category": null
+  },
+  {
+    "id": 6,
+    "productGeneralName": "Сок мультивитамин",
+    "productBarcode": "3608580873471",
+    "productBarcodeType": "ean_13",
+    "productFullName": "Sok z owoców Egzotycznych",
+    "productCountry": "France",
+    "productCompanyName": "Andros",
+    "image": null,
+    "category": null
+  },
+  {
+    "id": 7,
+    "productGeneralName": "Сок грейпфрут",
+    "productBarcode": "3608580776406",
+    "productBarcodeType": "ean_13",
+    "productFullName": "Sok z czerwonych grejpfrutów",
+    "productCountry": "France",
+    "productCompanyName": "Andros",
+    "image": null,
+    "category": null
+  }
 ]

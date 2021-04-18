@@ -28,12 +28,23 @@ export const TodoItemListContextProvider = (props: React.PropsWithChildren<TodoI
             })
     }, []);
 
-    const addItem = (item: TodoItem) => {
-        TodoProductItemsApi.add(item).then(_ => {
-            enrichTodoItem(item).then(_ => {
-                setTodoItems(todoItems.concat(item));
-            });
-        })
+    const addItem = async (item: TodoItem) => {
+
+        const existingTodoItem = todoItems.find((addedTodoItem) => {
+            return addedTodoItem.generalName === item.generalName 
+                && addedTodoItem.targetProduct?.productBarcode === item.targetProduct?.productBarcode;
+        });
+
+        if (existingTodoItem) {
+            updateItemQuantity(existingTodoItem, existingTodoItem.quantity + item.quantity);
+            return;
+        }
+
+        await TodoProductItemsApi.add(item);
+        
+        enrichTodoItem(item).then(_ => {
+            setTodoItems(todoItems.concat(item));
+        });
     }
 
     const removeItem = (removeItem: TodoItem) => {
@@ -51,6 +62,7 @@ export const TodoItemListContextProvider = (props: React.PropsWithChildren<TodoI
     const updateItemQuantity = (item: TodoItem, quantity: number) => {
         item.quantity = quantity;
         TodoProductItemsApi.update(item);
+        setTodoItems([...todoItems])
     }
 
     const clearItems = () => {
