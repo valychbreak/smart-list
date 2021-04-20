@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { Store } from "../../types";
 
@@ -7,7 +8,7 @@ type GroceriesTodoStoreContextType = {
 
     selectStore(store: Store): void;
     clearSelection(): void;
-}
+};
 
 const GroceriesTodoStoreContext = React.createContext<GroceriesTodoStoreContextType>({
     selectedStore: null,
@@ -19,7 +20,7 @@ const GroceriesTodoStoreContext = React.createContext<GroceriesTodoStoreContextT
 
     clearSelection: () => {
         throw new Error("No implementation");
-    }
+    },
 });
 
 export default GroceriesTodoStoreContext;

@@ -1,7 +1,7 @@
-import axios from 'axios';
-import React, { Component, useEffect, useState } from 'react';
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import Product from '../entity/Product';
+import Product from "../entity/Product";
 
 interface ProductFormFields {
     productBarcode: string;
@@ -22,16 +22,16 @@ interface ProductFormProps {
 }
 
 function isCountryCodeMatching(productCountryPrefix: string, recordCountryCode: string): boolean {
-    if (recordCountryCode.includes('-')) {
-        let prefixRange = recordCountryCode.split('-');
-        let codeLowerLimit = parseInt(prefixRange[0].trim());
-        let codeUpperLimit = parseInt(prefixRange[1].trim());
+    if (recordCountryCode.includes("-")) {
+        const prefixRange = recordCountryCode.split("-");
+        const codeLowerLimit = parseInt(prefixRange[0].trim(), 10);
+        const codeUpperLimit = parseInt(prefixRange[1].trim(), 10);
 
-        let productCountryCode = parseInt(productCountryPrefix);
+        const productCountryCode = parseInt(productCountryPrefix, 10);
         if (productCountryCode >= codeLowerLimit && productCountryCode <= codeUpperLimit) {
             return true;
         }
-    } else if (recordCountryCode == productCountryPrefix) {
+    } else if (recordCountryCode === productCountryPrefix) {
         return true;
     }
 
@@ -39,100 +39,102 @@ function isCountryCodeMatching(productCountryPrefix: string, recordCountryCode: 
 }
 
 const ProductForm = (props: ProductFormProps) => {
-
-    const {register, handleSubmit, errors, getValues} = useForm<ProductFormFields>();
+    const {
+        register, handleSubmit, errors,
+    } = useForm<ProductFormFields>();
 
     const [suggestedCountry, setSuggestedCountry] = useState(undefined);
 
+    function updatedSuggestedCountry(barcode: string) {
+        const countryPrefix = barcode.substring(0, 3);
 
-    const onBarcodeChange = function (event: any) {
+        axios.get("barcode_country_mapping.json")
+            .then((response) => {
+                if (!response.data) {
+                    return;
+                }
+                const countryRecord = response.data
+                    .find((record: any) => isCountryCodeMatching(countryPrefix, record.barcode));
+
+                setSuggestedCountry(countryRecord.country);
+            });
+    }
+
+    function onBarcodeChange(event: any) {
         const newBarcodeValue = event.target.value;
         updatedSuggestedCountry(newBarcodeValue);
     }
 
-    const updatedSuggestedCountry = function (barcode: string) {
-        let countryPrefix = barcode.substring(0, 3);
-
-        axios.get('barcode_country_mapping.json')
-            .then((response) => {
-                if (response.data) {
-                    for (let record of response.data) {
-
-                        if (isCountryCodeMatching(countryPrefix, record.barcode)) {
-                            setSuggestedCountry(record.country);
-                            break;
-                        }
-                    }
-                }
-            })
-    }
-
     useEffect(() => {
-        let barcode = props.productBarcode;
+        const barcode = props.productBarcode;
 
-        if (!!!barcode) {
+        if (!barcode) {
             return;
         }
 
         updatedSuggestedCountry(barcode);
     }, []);
 
-    const createProduct= (formData: ProductFormFields) => {
-        let product = new Product(formData.productGeneralName, formData.productBarcode, formData.productBarcodeType);
-        
+    const createProduct = (formData: ProductFormFields) => {
+        const product = new Product(
+            formData.productGeneralName,
+            formData.productBarcode,
+            formData.productBarcodeType,
+        );
+
         product.productFullName = formData.productFullName;
         product.productCompanyName = formData.productCompanyName;
         product.productCountry = formData.productCountry;
         return product;
-    }
+    };
+
     const addItemInfo = (formData: ProductFormFields) => {
-        console.log(formData);
-        let product = createProduct(formData);
+        const product = createProduct(formData);
         props.onProductSubmit(product);
-    }
+    };
 
     return (
         <>
-            <div> 
+            <div>
                 <p>Barcode: {props.productBarcode}</p>
                 <p>Barcode format: {props.productBarcodeType}</p>
             </div>
             <form onSubmit={handleSubmit(addItemInfo)}>
 
                 <label>Barcode and barcode format (change if scanned incorrectly): </label>
-                <input name="productBarcode" defaultValue={props.productBarcode} onChange={(e) => onBarcodeChange(e)} ref={register({required: true, maxLength: 64})}/>
-                <input name="productBarcodeType" defaultValue={props.productBarcodeType} ref={register({required: true, maxLength: 64})}/>
-                {(errors.productBarcode || errors.productBarcodeType) && 'Barcode and barcode format are required and max length is 64.'}
+                <input name="productBarcode" defaultValue={props.productBarcode} onChange={(e) => onBarcodeChange(e)} ref={register({ required: true, maxLength: 64 })}/>
+                <input name="productBarcodeType" defaultValue={props.productBarcodeType} ref={register({ required: true, maxLength: 64 })}/>
+                {(errors.productBarcode || errors.productBarcodeType) && "Barcode and barcode format are required and max length is 64."}
                 <br/>
 
                 <label>General product name (e.g. Milk, Bread, Butter): </label>
-                <input name="productGeneralName" ref={register({required: true, maxLength: 64})}/>
-                {errors.productGeneralName && 'Required and max length is 64.'}
+                <input name="productGeneralName" ref={register({ required: true, maxLength: 64 })}/>
+                {errors.productGeneralName && "Required and max length is 64."}
                 <br/>
 
                 <label>Full product name: </label>
-                <input name="productFullName" ref={register({maxLength: 128})}/>
-                {errors.productFullName && 'Max length is 128.'}
+                <input name="productFullName" ref={register({ maxLength: 128 })}/>
+                {errors.productFullName && "Max length is 128."}
                 <br/>
 
                 <label>Release country: </label>
-                <input name="productCountry" defaultValue={suggestedCountry} ref={register({maxLength: 64})}/>
-                {errors.productCountry && 'Max length is 64.'}
+                <input name="productCountry" defaultValue={suggestedCountry} ref={register({ maxLength: 64 })}/>
+                {errors.productCountry && "Max length is 64."}
                 <br/>
-                
+
                 <label>Release company: </label>
-                <input name="productCompanyName" ref={register({maxLength: 64})}/>
-                {errors.productCompanyName && 'Max length is 64.'}
+                <input name="productCompanyName" ref={register({ maxLength: 64 })}/>
+                {errors.productCompanyName && "Max length is 64."}
                 <br/>
 
                 <label>Product image (optional): </label>
                 <button>Take a picture (TODO)</button>
                 <br/>
-                
+
                 <button type="submit">Submit</button>
             </form>
         </>
-    )
-}
+    );
+};
 
 export default ProductForm;

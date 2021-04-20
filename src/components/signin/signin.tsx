@@ -1,36 +1,36 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Redirect, useLocation } from "react-router-dom"
-import AuthenticationContext from "../authentication"
+import { Redirect, useLocation } from "react-router-dom";
+import { AuthenticationContext } from "../authentication";
 
 type SigninFormFields = {
     username: string,
     password: string
-}
+};
 
-export const Signin = () => {
+const Signin = () => {
+    const { register, handleSubmit, errors } = useForm<SigninFormFields>();
 
-    const {register, handleSubmit, errors} = useForm<SigninFormFields>();
-    
-    const authContext = useContext(AuthenticationContext)
+    const authContext = useContext(AuthenticationContext);
 
-    const [redirectToReferrer, setRedirectToReferrer] = useState(false)
-    const { state } = useLocation<any>()
+    const [redirectToReferrer, setRedirectToReferrer] = useState(false);
+    const { state } = useLocation<any>();
 
     const handleLogin = (formData: SigninFormFields) => {
-        authContext.authenticate({username: formData.username, password: formData.password}).then(_ => setRedirectToReferrer(true));
-    }
+        authContext.authenticate({ username: formData.username, password: formData.password })
+            .then(() => setRedirectToReferrer(true));
+    };
 
     if (redirectToReferrer === true) {
-        return <Redirect to={state?.from || '/'} />
+        return <Redirect to={state?.from || "/"} />;
     }
 
     return (<>
         <p>Type username of mocked user (temporary)</p>
         <form onSubmit={handleSubmit(handleLogin)}>
             <label>Username: </label>
-            <input name="username" ref={register({required: true, maxLength: 64})}/>
-            {errors.username && 'Required and max length is 64.'}
+            <input name="username" ref={register({ required: true, maxLength: 64 })}/>
+            {errors.username && "Required and max length is 64."}
             <br/>
 
             {/* <label>Password: </label>
@@ -40,5 +40,7 @@ export const Signin = () => {
 
             <button type="submit">Sign-in</button>
         </form>
-    </>)
-}
+    </>);
+};
+
+export default Signin;

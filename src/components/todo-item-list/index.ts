@@ -1,1 +1,1 @@
-export { default } from './groceries-todo-page'
+export { default } from "./groceries-todo-page";

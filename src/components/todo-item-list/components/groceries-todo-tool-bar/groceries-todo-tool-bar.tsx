@@ -1,48 +1,63 @@
-import { IconButton, lighten, makeStyles, Toolbar, Tooltip, Typography } from "@material-ui/core";
+import {
+    IconButton, lighten, makeStyles, Toolbar, Tooltip, Typography,
+} from "@material-ui/core";
 import FilterListIcon from "@material-ui/icons/FilterList";
-import clsx from 'clsx'
+import clsx from "clsx";
 import React, { useContext } from "react";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import GroceriesTodoToolbarMenu from "./tool-bar-menu";
 
-
 const useToolbarStyles = makeStyles((theme) => ({
     root: {
         paddingLeft: theme.spacing(2),
-        paddingRight: theme.spacing(1)
+        paddingRight: theme.spacing(1),
     },
     highlight:
         theme.palette.type === "light"
             ? {
                 color: theme.palette.secondary.main,
-                backgroundColor: lighten(theme.palette.secondary.light, 0.85)
+                backgroundColor: lighten(theme.palette.secondary.light, 0.85),
             }
             : {
                 color: theme.palette.text.primary,
-                backgroundColor: theme.palette.secondary.dark
+                backgroundColor: theme.palette.secondary.dark,
             },
     title: {
-        flex: "1 1 100%"
-    }
+        flex: "1 1 100%",
+    },
 }));
+
+function formatDate(date: Date) {
+    const d = new Date(date);
+    let month = `${d.getMonth() + 1}`;
+    let day = `${d.getDate()}`;
+    const year = d.getFullYear();
+
+    if (month.length < 2) { month = `0${month}`; }
+    if (day.length < 2) { day = `0${day}`; }
+
+    return [day, month, year].join("-");
+}
 
 type GroceriesTodoToolbarProps = {
     onPurchaseModeToggle(toggle: boolean): void;
-}
+};
 
 const GroceriesTodoToolbar = (props: GroceriesTodoToolbarProps) => {
-
     const classes = useToolbarStyles();
 
     const todoItemListContext = useContext(TodoItemListContext);
     // const { selectedItemsCount, maxItemsCount } = props;
-    const selectedItemsCount = todoItemListContext.todoItems.filter(todoItem => todoItem.isBought === true).length;
+    const selectedItemsCount = todoItemListContext.todoItems
+        .filter((todoItem) => todoItem.isBought === true)
+        .length;
+
     const maxItemsCount = todoItemListContext.todoItems.length;
 
     return (
         <Toolbar
             className={clsx(classes.root, {
-                [classes.highlight]: selectedItemsCount > 0
+                [classes.highlight]: selectedItemsCount > 0,
             })}
         >
             <GroceriesTodoToolbarMenu onPurchaseModeToggle={props.onPurchaseModeToggle} />
@@ -75,19 +90,5 @@ const GroceriesTodoToolbar = (props: GroceriesTodoToolbarProps) => {
         </Toolbar>
     );
 };
-
-function formatDate(date: Date) {
-    var d = new Date(date);
-    var month = '' + (d.getMonth() + 1);
-    var day = '' + d.getDate();
-    var year = d.getFullYear();
-
-    if (month.length < 2) 
-        month = '0' + month;
-    if (day.length < 2) 
-        day = '0' + day;
-
-    return [day, month, year].join('-');
-}
 
 export default GroceriesTodoToolbar;

@@ -1,6 +1,6 @@
-import React from "react"
-import ProfileView from "../components/profile/profile"
+import React from "react";
+import ProfileView from "../components/profile";
 
-export const Profile = () => {
-    return <ProfileView />
-}
+const Profile = () => <ProfileView />;
+
+export default Profile;

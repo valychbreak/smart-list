@@ -7,7 +7,6 @@ import { BarcodeScanResult } from "../../../barcode-scanner/types";
 import useExtendedState from "../../../use-extended-state";
 import TodoItem from "../../types";
 
-
 const useGroceriesTodoPurchasingController = () => {
     const [isScanning, setScanning] = useState(false);
 
@@ -17,26 +16,22 @@ const useGroceriesTodoPurchasingController = () => {
 
     const todoItemListContext = useContext(TodoItemListContext);
 
+    const enableScanner = () => setScanning(true);
 
-    function toggleTodoItemPurchaseStatus(item: TodoItem, isChecked: boolean) {
-        todoItemListContext.toggleItemPurchased(item, isChecked);
-        
-        if (isChecked) {
-            purchasedTodoItem.setValue(item);
-        } else {
-            cancelAddingPrice();
-        }
-    }
+    const disableScanner = () => setScanning(false);
 
     function cancelAddingPrice() {
         purchasedTodoItem.clearValue();
     }
 
-    const onBarcodeScan = (result: QuaggaJSResultObject) => {
-        onBarcodeScanAdapter({
-            code: result.codeResult.code,
-            format: result.codeResult.format
-        });
+    function toggleTodoItemPurchaseStatus(item: TodoItem, isChecked: boolean) {
+        todoItemListContext.toggleItemPurchased(item, isChecked);
+
+        if (isChecked) {
+            purchasedTodoItem.setValue(item);
+        } else {
+            cancelAddingPrice();
+        }
     }
 
     const onBarcodeScanAdapter = (result: BarcodeScanResult) => {
@@ -46,8 +41,8 @@ const useGroceriesTodoPurchasingController = () => {
 
         disableScanner();
 
-        const foundItem: TodoItem | undefined = todoItemListContext.todoItems.find(todoItem => {
-            const targetProduct = todoItem.targetProduct;
+        const foundItem: TodoItem | undefined = todoItemListContext.todoItems.find((todoItem) => {
+            const { targetProduct } = todoItem;
             return targetProduct?.productBarcode === result.code
                 && targetProduct?.productBarcodeType === result.format;
         });
@@ -56,27 +51,30 @@ const useGroceriesTodoPurchasingController = () => {
             toggleTodoItemPurchaseStatus(foundItem, true);
             return;
         }
-        
+
         ProductApi.findByBarcode(result.code, result.format)
-            .then(foundProduct => {
+            .then((foundProduct) => {
                 if (foundProduct === null) {
                     notExistingProductScanResult.setValue(result);
                     return;
                 }
 
                 newScannedProduct.setValue(foundProduct);
-            })
-    }
+            });
+    };
+
+    const onBarcodeScan = (result: QuaggaJSResultObject) => {
+        onBarcodeScanAdapter({
+            code: result.codeResult.code,
+            format: result.codeResult.format,
+        });
+    };
 
     function addPurchasedProduct(product: Product) {
         const newItem = TodoItem.fromProduct(product);
         todoItemListContext.addItem(newItem);
         toggleTodoItemPurchaseStatus(newItem, true);
     }
-
-    const enableScanner = () => setScanning(true);
-
-    const disableScanner = () => setScanning(false);
 
     return {
         openScanner: isScanning,
@@ -89,19 +87,19 @@ const useGroceriesTodoPurchasingController = () => {
         openAddProductConfirmation: newScannedProduct.isSet,
         productToAdd: newScannedProduct.value,
 
-        toggleTodoItemPurchaseStatus: toggleTodoItemPurchaseStatus,
+        toggleTodoItemPurchaseStatus,
         onPriceSubmissionClose: cancelAddingPrice,
-        onBarcodeScan: onBarcodeScan,
-        onBarcodeScanAdapter: onBarcodeScanAdapter,
-        
-        addPurchasedProduct: addPurchasedProduct,
+        onBarcodeScan,
+        onBarcodeScanAdapter,
+
+        addPurchasedProduct,
 
         dismissSubmitingNewProduct: () => notExistingProductScanResult.clearValue(),
         dismissAddingProduct: () => newScannedProduct.clearValue(),
 
-        enableScanner: enableScanner,
-        disableScanner: disableScanner
-    }
-}
+        enableScanner,
+        disableScanner,
+    };
+};
 
 export default useGroceriesTodoPurchasingController;

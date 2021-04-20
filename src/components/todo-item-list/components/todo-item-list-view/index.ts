@@ -1,2 +1,1 @@
-
-export {default} from './todo-list-view'
+export { default } from "./todo-list-view";

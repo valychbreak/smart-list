@@ -12,7 +12,6 @@ interface TodoItemPriceSubmitDialogProps {
 }
 
 const TodoItemPriceSubmitDialog = (props: TodoItemPriceSubmitDialogProps) => {
-
     const { selectedStore } = useContext(GroceriesTodoStoreContext);
 
     function onPriceEntrySubmit(priceEntry: ProductPriceEntry) {
@@ -20,24 +19,24 @@ const TodoItemPriceSubmitDialog = (props: TodoItemPriceSubmitDialogProps) => {
 
         if (selectedItem?.targetProduct) {
             ProductPriceApi.addPriceEntry(selectedItem.targetProduct, priceEntry)
-                .then(_ => {
+                .then(() => {
                     props.handleClose();
                 });
         }
     }
 
     return (<>
-        {props.open && props.selectedItem && 
-            <>
+        {props.open && props.selectedItem
+            && <>
                 <h3>Add price for {props.selectedItem?.targetProduct?.productFullName}</h3>
                 <button onClick={() => props.handleClose()}>Skip / Cancel</button>
-                <ProductPriceForm 
-                    defaultStore={selectedStore} 
-                    targetProduct={props.selectedItem?.targetProduct} 
+                <ProductPriceForm
+                    defaultStore={selectedStore}
+                    targetProduct={props.selectedItem?.targetProduct}
                     onEntrySubmit={onPriceEntrySubmit}/>
             </>
         }
-    </>)
-}
+    </>);
+};
 
 export default TodoItemPriceSubmitDialog;

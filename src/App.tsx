@@ -1,21 +1,22 @@
-
-import { makeStyles, Paper, Typography } from "@material-ui/core";
+import { makeStyles, Paper } from "@material-ui/core";
 import React from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import {
+    BrowserRouter as Router, Switch, Route,
+} from "react-router-dom";
 import AuthenticatedRoute from "./components/authenticated-route";
-import { AuthenticationContextProvider } from "./components/authentication/authentication-provider";
+import { AuthenticationContextProvider } from "./components/authentication";
 import AppHeader from "./components/header";
 import BrowseProductsPage from "./pages/browse-products/BrowseProductsPage";
-import AddNewProduct from './pages/new-product/AddNewProductPage'
+import AddNewProduct from "./pages/new-product/AddNewProductPage";
 import ScanTest from "./pages/scan-test/ScanTestPage";
-import { GroceriesTodo } from "./routes/groceries-todo";
-import { Login } from "./routes/login";
-import { Profile } from "./routes/profile";
+import GroceriesTodo from "./routes/groceries-todo";
+import Login from "./routes/login";
+import Profile from "./routes/profile";
 
 const useStyles = makeStyles((theme) => ({
     root: {},
     paper: {
-        marginBottom: theme.spacing(2)
+        marginBottom: theme.spacing(2),
     },
     table: {},
     visuallyHidden: {
@@ -25,12 +26,16 @@ const useStyles = makeStyles((theme) => ({
         margin: -1,
         overflow: "hidden",
         padding: 0,
-        position: "absolute"
+        position: "absolute",
     },
     container: {
-        maxHeight: 360
-    }
+        maxHeight: 360,
+    },
 }));
+
+function Home() {
+    return <h2>Home</h2>;
+}
 
 export default function App() {
     const classes = useStyles();
@@ -43,25 +48,25 @@ export default function App() {
                         <AppHeader />
                         <Switch>
                             <Route path="/browse">
-                              <BrowseProductsPage />
+                                <BrowseProductsPage />
                             </Route>
                             <Route path="/new-product">
-                              <AddNewProduct />
+                                <AddNewProduct />
                             </Route>
                             <AuthenticatedRoute path="/groceries-todo">
-                              <GroceriesTodo />
+                                <GroceriesTodo />
                             </AuthenticatedRoute>
                             <AuthenticatedRoute path="/profile">
-                              <Profile />
+                                <Profile />
                             </AuthenticatedRoute>
                             <Route path="/scan-test">
-                              <ScanTest />
+                                <ScanTest />
                             </Route>
                             <Route path="/login">
-                              <Login />
+                                <Login />
                             </Route>
                             <Route path="/">
-                              <Home />
+                                <Home />
                             </Route>
                         </Switch>
                     </Paper>
@@ -69,8 +74,4 @@ export default function App() {
             </Router>
         </AuthenticationContextProvider>
     );
-}
-
-function Home() {
-    return <h2>Home</h2>;
 }

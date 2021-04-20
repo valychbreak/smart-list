@@ -1,1 +1,1 @@
-export { default } from './quantity-field'
+export { default } from "./quantity-field";

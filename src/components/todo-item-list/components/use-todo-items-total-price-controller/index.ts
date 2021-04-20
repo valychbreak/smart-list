@@ -1,1 +1,1 @@
-export * from './use-todo-items-total-price-controller'
+export { default } from "./use-todo-items-total-price-controller";

@@ -1,1 +1,1 @@
-export { default } from './use-extended-state'
+export { default } from "./use-extended-state";

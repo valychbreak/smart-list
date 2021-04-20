@@ -1,8 +1,10 @@
-
 export default class ProductPriceEntry {
     barcode: string;
+
     price: number;
+
     counterparty: string;
+
     date: Date;
 
     constructor(barcode: string, price: number, counterparty: string, date: Date) {

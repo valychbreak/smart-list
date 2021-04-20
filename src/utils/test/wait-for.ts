@@ -1,4 +1,3 @@
-
 async function waitFor(callback: any, timeout = 500) {
     const step = 10;
     let timeSpent = 0;
@@ -6,9 +5,11 @@ async function waitFor(callback: any, timeout = 500) {
 
     let occurredError;
 
+    // eslint-disable-next-line no-constant-condition
     while (true) {
         try {
-            await new Promise(r => setTimeout(r, step));
+            // eslint-disable-next-line no-await-in-loop
+            await new Promise((r) => setTimeout(r, step));
             timeSpent += step;
             callback();
             break;
@@ -22,7 +23,7 @@ async function waitFor(callback: any, timeout = 500) {
     }
 
     if (timedOut) {
-        throw occurredError ? occurredError : new Error("Timeout: unknow error");
+        throw occurredError || new Error("Timeout: unknow error");
     }
 }
 
