@@ -4,25 +4,23 @@ import TodoItem from "../../types";
 import AddTodoItemComponent from "../todo-item-add";
 import TodoListView from "../todo-item-list-view";
 
-
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
     root: {
-        width: '100%',
-        [theme.breakpoints.down('sm')]: {
-            position: 'fixed',
+        width: "100%",
+        [theme.breakpoints.down("sm")]: {
+            position: "fixed",
             bottom: 0,
             // height: 60
         },
-    }
+    },
 }));
-
 
 const GroceriesTodoPlanningModeView: React.FC<{}> = () => {
     const classes = useStyles();
 
     const onTodoItemPurchaseToggle = (todoItem: TodoItem, isBought: boolean) => {
-        throw Error("Purchasing is disabled")
-    }
+        throw Error("Purchasing is disabled");
+    };
 
     return (<>
         <TodoListView showPurchaseAction={false}
@@ -33,7 +31,7 @@ const GroceriesTodoPlanningModeView: React.FC<{}> = () => {
                 <AddTodoItemComponent />
             </Paper>
         </Container>
-    </>)
-}
+    </>);
+};
 
 export default GroceriesTodoPlanningModeView;

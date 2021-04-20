@@ -1,1 +1,1 @@
-export { default } from './authentication-context'
+export { default } from "./authentication-context";

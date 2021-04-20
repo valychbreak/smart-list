@@ -1,1 +1,1 @@
-export {default} from './todo-item-price-submit-dialog'
+export { default } from "./todo-item-price-submit-dialog";

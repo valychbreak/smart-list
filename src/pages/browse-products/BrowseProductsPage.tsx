@@ -7,59 +7,56 @@ import ProductView from "../../components/ProductView";
 import Product from "../../entity/Product";
 
 const BrowseProductsPage = () => {
-
     const [products, setProducts] = useState<Product[]>([]);
-    
+
     const [selectedProduct, setSelectedProduct] = useState<Product>();
     const [addingPrice, setAddingPrice] = useState(false);
 
-    const [copySuccess, setCopySuccess] = useState('');
+    const [copySuccess, setCopySuccess] = useState("");
     const textAreaRef = useRef<any>(null);
 
     function copyToClipboard(e: any) {
         textAreaRef.current.select();
-        document.execCommand('copy');
+        document.execCommand("copy");
         e.target.focus();
-        setCopySuccess('Copied!');
-    };
-    
+        setCopySuccess("Copied!");
+    }
+
     useEffect(() => {
-      ProductApi.getProducts().then(products => {
-        setProducts(products);
-      });
+        ProductApi.getProducts().then((products) => {
+            setProducts(products);
+        });
     }, []);
 
     function showProductPriceForm(e: any, product: Product) {
-      setSelectedProduct(product);
-      setAddingPrice(true);
+        setSelectedProduct(product);
+        setAddingPrice(true);
     }
 
     function onPriceEntrySubmit(productPriceEntry: ProductPriceEntry) {
-      if (selectedProduct) {
-        ProductPriceApi.addPriceEntry(selectedProduct, productPriceEntry)
-            .then((priceEntry) => {
-              console.log(priceEntry);
-            });
-      }
+        if (selectedProduct) {
+            ProductPriceApi.addPriceEntry(selectedProduct, productPriceEntry)
+                .then((priceEntry) => {
+                    console.log(priceEntry);
+                });
+        }
     }
 
     return (
         <>
-            {addingPrice && 
-              <>
-                <h3>Add price for {selectedProduct?.productFullName}</h3>
-                <ProductPriceForm targetProduct={selectedProduct} onEntrySubmit={onPriceEntrySubmit}/>
+            {addingPrice
+              && <>
+                  <h3>Add price for {selectedProduct?.productFullName}</h3>
+                  <ProductPriceForm targetProduct={selectedProduct} onEntrySubmit={onPriceEntrySubmit}/>
               </>
             }
             <h2>Existing products:</h2>
             <div>
-                {products.map((product: Product, idx: number) => {
-                  return (<div key={idx}>
+                {products.map((product: Product, idx: number) => (<div key={idx}>
                     <button onClick={(e) => showProductPriceForm(e, product)} >Add price entry</button>
                     <br />
                     <ProductView product={product} />
-                  </div>)
-                })}
+                </div>))}
             </div>
             <hr />
 
@@ -67,10 +64,10 @@ const BrowseProductsPage = () => {
             <button onClick={(e) => copyToClipboard(e)}>Copy JSON data to clipboard</button>
             {copySuccess}
             <form>
-                <textarea readOnly ref={textAreaRef} value={JSON.stringify(products)} style={{width: "60%", height: 100}} />
+                <textarea readOnly ref={textAreaRef} value={JSON.stringify(products)} style={{ width: "60%", height: 100 }} />
             </form>
         </>
-    )
-}
+    );
+};
 
 export default BrowseProductsPage;

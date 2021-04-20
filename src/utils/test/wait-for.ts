@@ -1,4 +1,3 @@
-
 async function waitFor(callback: any, timeout = 500) {
     const step = 10;
     let timeSpent = 0;
@@ -8,7 +7,7 @@ async function waitFor(callback: any, timeout = 500) {
 
     while (true) {
         try {
-            await new Promise(r => setTimeout(r, step));
+            await new Promise((r) => setTimeout(r, step));
             timeSpent += step;
             callback();
             break;
@@ -22,7 +21,7 @@ async function waitFor(callback: any, timeout = 500) {
     }
 
     if (timedOut) {
-        throw occurredError ? occurredError : new Error("Timeout: unknow error");
+        throw occurredError || new Error("Timeout: unknow error");
     }
 }
 

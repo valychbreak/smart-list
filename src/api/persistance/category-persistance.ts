@@ -1,8 +1,10 @@
-
 export default class CategoryPersistance {
     readonly id: number;
+
     readonly name: string;
+
     readonly productBarcode: string;
+
     readonly username: string;
 
     private constructor(id: number, name: string, productBarcode: string, username: string) {

@@ -1,10 +1,8 @@
 import { Store } from "../components/todo-item-list/types";
 
-
 interface StoreApi {
     fetchStores(): Promise<Store[]>;
 }
-
 
 const storeNamesList = [
     "Auchan",
@@ -15,7 +13,7 @@ const storeNamesList = [
     "Zabka",
     "Groszek",
     "Piotr i Paweł",
-    "Spar"
+    "Spar",
 ];
 
 const defaultStores = storeNamesList.map((storeName, index) => new Store(index, storeName));

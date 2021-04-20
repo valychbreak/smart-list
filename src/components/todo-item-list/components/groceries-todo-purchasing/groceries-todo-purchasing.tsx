@@ -1,37 +1,37 @@
 import React, { useEffect, useState } from "react";
+import { QuaggaJSResultObject } from "@ericblade/quagga2";
+import { useHistory } from "react-router-dom";
+import {
+    Button, Container, Dialog, Grid, IconButton, makeStyles, Paper, Typography,
+} from "@material-ui/core";
+import SettingsOverscanIcon from "@material-ui/icons/SettingsOverscan";
 import Scanner from "../../../../Scanner";
 import TodoListView from "../todo-item-list-view";
 import TodoItemPriceSubmitDialog from "../todo-item-price-submit-dialog";
 import useGroceriesTodoPurchasingController from "./use-groceries-todo-purchasing-controller";
-import { QuaggaJSResultObject } from "@ericblade/quagga2";
-import { useHistory } from "react-router-dom";
-import { Button, Container, Dialog, Grid, IconButton, makeStyles, Paper, Typography } from "@material-ui/core";
-import SettingsOverscanIcon from "@material-ui/icons/SettingsOverscan";
 
-
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
     root: {
-        width: '100%',
-        [theme.breakpoints.down('sm')]: {
-            position: 'fixed',
+        width: "100%",
+        [theme.breakpoints.down("sm")]: {
+            position: "fixed",
             bottom: 0,
             // height: 60
         },
-    }
+    },
 }));
 
 const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
-
     const classes = useStyles();
     const purchasingController = useGroceriesTodoPurchasingController();
     const history = useHistory();
 
     useEffect(() => {
-        let scannedResult = purchasingController.scannedProductResult;
-        let productToAdd = purchasingController.productToAdd;
+        const scannedResult = purchasingController.scannedProductResult;
+        const { productToAdd } = purchasingController;
         if (purchasingController.openAddNewProductForm && scannedResult !== null) {
             if (window.confirm(`There is no product with barcode ${scannedResult.code} in the list and in database.\nDo you want to go to 'Add new item' page?`)) {
-                history.push('new-product');
+                history.push("new-product");
             } else {
                 purchasingController.dismissSubmitingNewProduct();
             }
@@ -46,9 +46,9 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
     }, [purchasingController.scannedProductResult, purchasingController.productToAdd]);
 
     return (<>
-        <TodoItemPriceSubmitDialog open={purchasingController.openPriceSubmission} 
-                                   selectedItem={purchasingController.selectedItem} 
-                                   handleClose={purchasingController.onPriceSubmissionClose} />
+        <TodoItemPriceSubmitDialog open={purchasingController.openPriceSubmission}
+            selectedItem={purchasingController.selectedItem}
+            handleClose={purchasingController.onPriceSubmissionClose} />
 
         <TodoListView showPurchaseAction={true} onTodoItemPurchaseToggle={purchasingController.toggleTodoItemPurchaseStatus}/>
 
@@ -62,7 +62,7 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
                 </Dialog>
             </Paper>
         </Container>
-    </>)
-}
+    </>);
+};
 
 export default GroceriesTodoPurchasingModeView;

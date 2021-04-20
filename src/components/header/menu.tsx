@@ -1,17 +1,20 @@
-import { FormControlLabel, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, MenuProps, Switch, withStyles } from "@material-ui/core"
-import MenuIcon from "@material-ui/icons/Menu"
+import {
+    FormControlLabel, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, MenuProps, Switch, withStyles,
+} from "@material-ui/core";
+import MenuIcon from "@material-ui/icons/Menu";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import BorderInnerIcon from "@material-ui/icons/BorderInner";
 import SearchIcon from "@material-ui/icons/Search";
 import VideocamIcon from "@material-ui/icons/Videocam";
-import React from "react"
+import React from "react";
 import { AccountBox, Home } from "@material-ui/icons";
 import { Link } from "react-router-dom";
 import { StyledMenu, useMenuController } from "../custom-menu";
 
 const AppMenu = () => {
-
-    const { open, anchorElement, openMenu, closeMenu } = useMenuController();
+    const {
+        open, anchorElement, openMenu, closeMenu,
+    } = useMenuController();
 
     return (<>
         <IconButton
@@ -61,7 +64,7 @@ const AppMenu = () => {
                 <ListItemText primary="Test scanner" />
             </MenuItem>
         </StyledMenu>
-    </>)
-}
+    </>);
+};
 
 export default AppMenu;

@@ -1,5 +1,4 @@
-
-const USERNAME_KEY = 'usernameTmp';
+const USERNAME_KEY = "usernameTmp";
 
 class UsernameLocalDB {
     save(username: string) {

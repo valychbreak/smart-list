@@ -3,8 +3,7 @@ import Product from "../../entity/Product";
 import CategoryPersistance from "./category-persistance";
 import localDbUsername from "./local-db-username";
 
-
-const CATEGORIES_KEY = 'productCategories';
+const CATEGORIES_KEY = "productCategories";
 
 class CategoryLocalDB {
     private _categoriesCache: CategoryPersistance[] = [];
@@ -13,11 +12,8 @@ class CategoryLocalDB {
         await this.initCategoriesCacheIfNeeded();
 
         const username = this.getUsername();
-        const foundCategories = this._categoriesCache.filter(category => {
-            return category.name.toLowerCase().includes(name.toLowerCase())
-                && category.username === username
-
-        });
+        const foundCategories = this._categoriesCache.filter((category) => category.name.toLowerCase().includes(name.toLowerCase())
+                && category.username === username);
         return foundCategories.filter((category, idx) => foundCategories.indexOf(category) === idx);
     }
 
@@ -28,12 +24,11 @@ class CategoryLocalDB {
         const existingCategory = this.findCategory(product);
 
         if (existingCategory) {
-            this._categoriesCache = this._categoriesCache.map(categoryPeristance => {
+            this._categoriesCache = this._categoriesCache.map((categoryPeristance) => {
                 if (categoryPeristance.id === existingCategory.id) {
-                    return CategoryPersistance.from(existingCategory.id, category.name, existingCategory.productBarcode, existingCategory.username)
-                } else {
-                    return categoryPeristance;
+                    return CategoryPersistance.from(existingCategory.id, category.name, existingCategory.productBarcode, existingCategory.username);
                 }
+                return categoryPeristance;
             });
         } else {
             const newCategory = CategoryPersistance.from(Date.now(), category.name, product.productBarcode, username);
@@ -47,15 +42,13 @@ class CategoryLocalDB {
         await this.initCategoriesCacheIfNeeded();
 
         const existingCategory = this.findCategory(product);
-        return existingCategory ? existingCategory : null;
+        return existingCategory || null;
     }
 
     private findCategory(product: Product) {
         const username = this.getUsername();
-        const existingCategory = this._categoriesCache.find(categoryPersistance => {
-            return categoryPersistance.productBarcode === product.productBarcode
-                && categoryPersistance.username === username;
-        });
+        const existingCategory = this._categoriesCache.find((categoryPersistance) => categoryPersistance.productBarcode === product.productBarcode
+                && categoryPersistance.username === username);
         return existingCategory;
     }
 
@@ -65,18 +58,17 @@ class CategoryLocalDB {
 
     private async initCategoriesCacheIfNeeded() {
         if (this._categoriesCache.length === 0) {
-            let storedCategories = localStorage.getItem(CATEGORIES_KEY);
+            const storedCategories = localStorage.getItem(CATEGORIES_KEY);
             if (storedCategories !== null) {
                 try {
-                    for (let categoryJson of JSON.parse(storedCategories)) {
-                        let parsedCategory = CategoryPersistance.fromJson(categoryJson);
+                    for (const categoryJson of JSON.parse(storedCategories)) {
+                        const parsedCategory = CategoryPersistance.fromJson(categoryJson);
                         this._categoriesCache.push(parsedCategory);
                     }
                 } catch (error) {
                     console.error(error);
                 }
             }
-            
         }
     }
 }

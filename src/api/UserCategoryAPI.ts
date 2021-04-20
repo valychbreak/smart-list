@@ -1,6 +1,6 @@
 import Category from "../entity/category";
 import Product from "../entity/Product";
-import CategoryLocalDB from "./persistance/local-db-category"
+import CategoryLocalDB from "./persistance/local-db-category";
 
 interface UserCategoryAPI {
     changeCategory(product: Product, category: Category): Promise<void>;
@@ -25,7 +25,6 @@ class MockedUserCategoryAPI implements UserCategoryAPI {
     fetchCategoriesBy(name: string): Promise<Category[]> {
         return CategoryLocalDB.findCategoriesBy(name);
     }
-
 }
 
-export default new MockedUserCategoryAPI;
+export default new MockedUserCategoryAPI();

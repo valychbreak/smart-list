@@ -6,9 +6,7 @@ import GroceriesTodoPurchasingModeView from "./components/groceries-todo-purchas
 import GroceriesTodoToolbar from "./components/groceries-todo-tool-bar";
 import { GroceriesTodoStoreContextProvider } from "./components/groceries-todo-store-context";
 
-
 const GroceriesTodoPage = () => {
-
     const controller = useGroceriesTodoController();
 
     const switchMode = (isPurchaseMode: boolean) => {
@@ -17,7 +15,7 @@ const GroceriesTodoPage = () => {
         } else {
             controller.enablePlanningMode();
         }
-    }
+    };
 
     return (<>
         <TodoItemListContextProvider>
@@ -33,7 +31,6 @@ const GroceriesTodoPage = () => {
             </GroceriesTodoStoreContextProvider>
         </TodoItemListContextProvider>
     </>);
-}
-
+};
 
 export default GroceriesTodoPage;

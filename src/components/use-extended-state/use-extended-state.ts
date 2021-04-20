@@ -5,7 +5,7 @@ export default function useExtendedState<T>() {
 
     const setValueStrict = (newValue: T) => {
         setValue(newValue);
-    }
+    };
 
     const getValueOrThrow = (): T => {
         if (value === null) {
@@ -13,16 +13,16 @@ export default function useExtendedState<T>() {
         }
 
         return value;
-    }
+    };
 
     const clearValue = () => {
         setValue(null);
-    }
+    };
 
     return {
-        value: value,
+        value,
         isSet: value !== null,
         setValue: setValueStrict,
-        clearValue: clearValue
-    }
+        clearValue,
+    };
 }

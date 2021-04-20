@@ -1,5 +1,5 @@
-import React from "react"
-import { AuthenticationData, User } from "./types"
+import React from "react";
+import { AuthenticationData, User } from "./types";
 
 type AuthenticationContextType = {
     user: User,
@@ -8,10 +8,10 @@ type AuthenticationContextType = {
     authenticate(authenticationData: AuthenticationData): Promise<void>,
     signout(): Promise<void>,
     register(): Promise<void>
-}
+};
 
 const AuthenticationContext = React.createContext<AuthenticationContextType>({
-    user: { username: 'No implementation' },
+    user: { username: "No implementation" },
 
     isAuthenticated: (): boolean => {
         throw new Error("No implementation");
@@ -25,7 +25,7 @@ const AuthenticationContext = React.createContext<AuthenticationContextType>({
     },
     register: (): Promise<void> => {
         throw new Error("No implementation");
-    }
+    },
 });
 
 export default AuthenticationContext;

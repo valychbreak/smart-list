@@ -4,7 +4,7 @@ import TodoItem from "../../types";
 
 export enum Mode {
     PLANNING,
-    PURCHASING
+    PURCHASING,
 }
 
 const useGroceriesTodoController = () => {
@@ -12,21 +12,21 @@ const useGroceriesTodoController = () => {
 
     useEffect(() => {
         UserApi.fetchGroceriesTodoMode()
-            .then(mode => setMode(mode))
-    }, [])
+            .then((mode) => setMode(mode));
+    }, []);
 
     const switchMode = (mode: Mode) => {
         UserApi.saveGroceriesTodoMode(mode)
-            .then(_ => setMode(mode));
-    }
+            .then((_) => setMode(mode));
+    };
 
     return {
         currentMode: mode,
         showPurchaseAction: mode === Mode.PURCHASING,
-        
+
         enablePurchasingMode: () => switchMode(Mode.PURCHASING),
         enablePlanningMode: () => switchMode(Mode.PLANNING),
-    }
-}
+    };
+};
 
 export default useGroceriesTodoController;

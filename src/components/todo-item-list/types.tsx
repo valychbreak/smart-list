@@ -3,9 +3,10 @@ import Product from "../../entity/Product";
 
 export class ProductPriceData {
     latestPrice: number;
-    perCounterpartyPrice: {[id: string]: PriceData};
 
-    constructor () {
+    perCounterpartyPrice: { [id: string]: PriceData };
+
+    constructor() {
         this.latestPrice = 0;
         this.perCounterpartyPrice = {};
     }
@@ -17,6 +18,7 @@ export class ProductPriceData {
 
 export class Store {
     readonly id: number;
+
     readonly name: string;
 
     constructor(id: number, name: string) {
@@ -27,13 +29,18 @@ export class Store {
 
 class TodoItem {
     id: number;
+
     generalName: string;
+
     quantity: number;
+
     targetProduct?: Product;
+
     isBought: boolean;
+
     priceData: ProductPriceData;
 
-    constructor (id: number, generalName: string) {
+    constructor(id: number, generalName: string) {
         this.id = id;
         this.generalName = generalName;
         this.quantity = 1;
@@ -42,16 +49,16 @@ class TodoItem {
     }
 
     static fromProduct(product: Product, quantity?: number): TodoItem {
-        let todoItem = new TodoItem(Date.now(), product.productGeneralName);
+        const todoItem = new TodoItem(Date.now(), product.productGeneralName);
 
-        todoItem.quantity = quantity? quantity : 1;
+        todoItem.quantity = quantity || 1;
         todoItem.targetProduct = product;
         todoItem.isBought = false;
         return todoItem;
     }
 
     static from(json: any): TodoItem {
-        let todoItem = new TodoItem(json.id, json.generalName);
+        const todoItem = new TodoItem(json.id, json.generalName);
 
         todoItem.quantity = json.quantity;
         todoItem.targetProduct = Product.from(json.targetProduct);

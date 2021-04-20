@@ -27,20 +27,20 @@ const ProductView = (props: ProductViewPros) => {
             });
 
         StoreApi.fetchStores()
-            .then(stores => setStoreList(stores));
+            .then((stores) => setStoreList(stores));
     }, []);
 
     useEffect(() => {
-        storeList.forEach(store => {
+        storeList.forEach((store) => {
             ProductPriceApi.fetchLatestPrice(props.product, store.name)
-                .then(priceEntry => {
+                .then((priceEntry) => {
                     if (priceEntry) {
-                        priceData[store.name] = { price: priceEntry.price }
+                        priceData[store.name] = { price: priceEntry.price };
                         setPriceData({ ...priceData });
                     }
-                })
-        })
-    }, [storeList])
+                });
+        });
+    }, [storeList]);
 
     return (<>
         <ul>
@@ -53,16 +53,19 @@ const ProductView = (props: ProductViewPros) => {
             <li>
                 Price per counterparty:
                 <ul>
-                    {storeList.map((store: Store, idx: number) => {
-                        return <CounterpartyPriceView key={store.id} counterparty={store.name} priceData={priceData} />
-                    })}
+                    {storeList.map((store: Store) => (
+                        <CounterpartyPriceView 
+                            key={store.id}
+                            counterparty={store.name}
+                            priceData={priceData} />
+                    ))}
                 </ul>
             </li>
             <li>Image: TODO</li>
         </ul>
         <hr />
-    </>)
-}
+    </>);
+};
 
 interface CounterpartyPriceViewProps {
     counterparty: string;
@@ -70,12 +73,11 @@ interface CounterpartyPriceViewProps {
 }
 
 const CounterpartyPriceView = (props: CounterpartyPriceViewProps) => {
-
-    if (props.priceData[props.counterparty]) {
-        return <li> {props.counterparty} - {props.priceData[props.counterparty].price} PLN</li>
-    } else {
-        return <li> {props.counterparty} - No data yet</li>
+    if (!props.priceData[props.counterparty]) {
+        return <li> {props.counterparty} - No data yet</li>;
     }
-}
+
+    return <li> {props.counterparty} - {props.priceData[props.counterparty].price} PLN</li>;
+};
 
 export default ProductView;

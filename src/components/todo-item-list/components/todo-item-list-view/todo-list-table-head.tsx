@@ -1,8 +1,9 @@
-import { TableHead, TableRow, TableCell, Checkbox, TableSortLabel, Select, MenuItem, withStyles, InputBase, makeStyles } from "@material-ui/core";
+import {
+    TableHead, TableRow, TableCell, Checkbox, TableSortLabel, Select, MenuItem, withStyles, InputBase, makeStyles,
+} from "@material-ui/core";
 import React, { useContext } from "react";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import GroceriesTodoStoreContext from "../groceries-todo-store-context/groceries-todo-store-context";
-
 
 const useStyles = makeStyles((theme) => ({
     visuallyHidden: {
@@ -12,15 +13,19 @@ const useStyles = makeStyles((theme) => ({
         margin: -1,
         overflow: "hidden",
         padding: 0,
-        position: "absolute"
-    }
+        position: "absolute",
+    },
 }));
 
 const BootstrapInput = withStyles((theme) => ({}))(InputBase);
 
 const headCells = [
-    { id: "generalName", numeric: false, disablePadding: true, label: "Name" },
-    { id: "quantity", numeric: true, disablePadding: false, label: "Quantity" }
+    {
+        id: "generalName", numeric: false, disablePadding: true, label: "Name",
+    },
+    {
+        id: "quantity", numeric: true, disablePadding: false, label: "Quantity",
+    },
 ];
 
 type EnhancedTableHeadProps = {
@@ -31,7 +36,7 @@ type EnhancedTableHeadProps = {
     rowCount: number;
     onRequestSort(event: any, property: string): void;
     onSelectAllClick(): void;
-}
+};
 
 type TodoItemListHeaderProps = {
     showPurchaseAction: boolean;
@@ -40,26 +45,26 @@ type TodoItemListHeaderProps = {
     onRequestSort(event: any, property: string): void;
 };
 
-export const TodoItemListHeader: React.FC<TodoItemListHeaderProps> = ({...props}) => {
+export const TodoItemListHeader: React.FC<TodoItemListHeaderProps> = ({ ...props }) => {
     const {
-        order, orderBy, onRequestSort
+        order, orderBy, onRequestSort,
     } = props;
 
     const todoItemListContext = useContext(TodoItemListContext);
 
     // FIXME: copied from groceries-todo-tool-bar component
-    const selectedItemsCount = todoItemListContext.todoItems.filter(todoItem => todoItem.isBought === true).length;
+    const selectedItemsCount = todoItemListContext.todoItems.filter((todoItem) => todoItem.isBought === true).length;
     const maxItemsCount = todoItemListContext.todoItems.length;
 
     const handleSelectAllClick = (event: any) => {
         const isPurchased = selectedItemsCount != maxItemsCount;
-        for (let todoItem of todoItemListContext.todoItems) {
+        for (const todoItem of todoItemListContext.todoItems) {
             todoItemListContext.toggleItemPurchased(todoItem, isPurchased);
         }
     };
 
     return (
-        <EnhancedTableHead 
+        <EnhancedTableHead
             numSelected={selectedItemsCount}
             order={order}
             orderBy={orderBy}
@@ -67,8 +72,8 @@ export const TodoItemListHeader: React.FC<TodoItemListHeaderProps> = ({...props}
             onRequestSort={onRequestSort}
             rowCount={maxItemsCount}
             showPurchaseAction={props.showPurchaseAction} />
-    )
-}
+    );
+};
 
 export function EnhancedTableHead(props: any) {
     const {
@@ -82,7 +87,9 @@ export function EnhancedTableHead(props: any) {
     } = props;
 
     const classes = useStyles();
-    const { selectedStore, storeList, selectStore, clearSelection } = useContext(GroceriesTodoStoreContext);
+    const {
+        selectedStore, storeList, selectStore, clearSelection,
+    } = useContext(GroceriesTodoStoreContext);
 
     const createSortHandler = (property: string) => (event: any) => {
         onRequestSort(event, property);
@@ -90,19 +97,19 @@ export function EnhancedTableHead(props: any) {
 
     const onStoreSelect = (event: any) => {
         const value = event.target.value as string;
-        const store = storeList.find(store => store.name === value);
+        const store = storeList.find((store) => store.name === value);
         if (store) {
             selectStore(store);
         } else {
             clearSelection();
         }
-    }
+    };
 
     return (
         <TableHead>
             <TableRow>
-                {showPurchaseAction && 
-                    <TableCell padding="none">
+                {showPurchaseAction
+                    && <TableCell padding="none">
                         <Checkbox
                             // disabling due to issue with re-rendering not happening
                             disabled

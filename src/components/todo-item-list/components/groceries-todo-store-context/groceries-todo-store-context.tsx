@@ -7,7 +7,7 @@ type GroceriesTodoStoreContextType = {
 
     selectStore(store: Store): void;
     clearSelection(): void;
-}
+};
 
 const GroceriesTodoStoreContext = React.createContext<GroceriesTodoStoreContextType>({
     selectedStore: null,
@@ -19,7 +19,7 @@ const GroceriesTodoStoreContext = React.createContext<GroceriesTodoStoreContextT
 
     clearSelection: () => {
         throw new Error("No implementation");
-    }
+    },
 });
 
 export default GroceriesTodoStoreContext;

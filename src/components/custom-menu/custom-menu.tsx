@@ -14,30 +14,27 @@ export const useMenuController = () => {
 
     return {
         open: Boolean(anchorElement),
-        anchorElement: anchorElement,
-        openMenu: openMenu,
-        closeMenu: closeMenu
-    }
-}
+        anchorElement,
+        openMenu,
+        closeMenu,
+    };
+};
 
 export const StyledMenu = withStyles({
     paper: {
-        border: "1px solid #d3d4d5"
-    }
-})((props: MenuProps) => {
-
-    return (
-        <Menu
-            elevation={0}
-            getContentAnchorEl={null}
-            anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "center"
-            }}
-            transformOrigin={{
-                vertical: "top",
-                horizontal: "center"
-            }}
-            {...props} />
-    )
-});
+        border: "1px solid #d3d4d5",
+    },
+})((props: MenuProps) => (
+    <Menu
+        elevation={0}
+        getContentAnchorEl={null}
+        anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center",
+        }}
+        transformOrigin={{
+            vertical: "top",
+            horizontal: "center",
+        }}
+        {...props} />
+));

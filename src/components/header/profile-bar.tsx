@@ -1,20 +1,22 @@
-import { Button, createStyles, FormControlLabel, IconButton, ListItemIcon, ListItemText, makeStyles, MenuItem, Theme, Typography } from "@material-ui/core";
+import {
+    Button, createStyles, FormControlLabel, IconButton, ListItemIcon, ListItemText, makeStyles, MenuItem, Theme, Typography,
+} from "@material-ui/core";
 import React, { useContext } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { AccountBox, AccountCircle } from "@material-ui/icons";
+import MenuIcon from "@material-ui/icons/Menu";
 import AuthenticationContext from "../authentication";
 import { StyledMenu, useMenuController } from "../custom-menu";
-import MenuIcon from "@material-ui/icons/Menu"
-
 
 export function ProfileBar() {
-
-    const { open, anchorElement, openMenu, closeMenu } = useMenuController();
+    const {
+        open, anchorElement, openMenu, closeMenu,
+    } = useMenuController();
     const authContext = useContext(AuthenticationContext);
     const history = useHistory();
 
     function signout() {
-        authContext.signout().then(_ => history.push('/'));
+        authContext.signout().then((_) => history.push("/"));
     }
 
     return authContext.isAuthenticated() === true
@@ -37,5 +39,5 @@ export function ProfileBar() {
                 </MenuItem>
             </StyledMenu>
         </>
-        : <Button color="inherit" component={Link} to='/login' startIcon={<AccountBox />}>Login</Button>
+        : <Button color="inherit" component={Link} to='/login' startIcon={<AccountBox />}>Login</Button>;
 }
