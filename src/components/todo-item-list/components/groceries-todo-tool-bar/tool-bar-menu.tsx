@@ -1,5 +1,5 @@
 import {
-    FormControlLabel, IconButton, ListItemText, Menu, MenuItem, Switch, ListItemIcon, MenuProps, withStyles, Button,
+    FormControlLabel, IconButton, ListItemText, MenuItem, Switch,
 } from "@material-ui/core";
 import React, { useContext } from "react";
 import MenuIcon from "@material-ui/icons/Menu";
@@ -24,6 +24,7 @@ const GroceriesTodoToolbarMenu = (props: GroceriesTodoToolbarMenuProps) => {
 
     const clearTodoList = () => {
         closeMenu();
+        // eslint-disable-next-line no-alert
         if (window.confirm("Are you sure you want to clear the list? CANNOT BE UNDONE!")) {
             todoItemListContext.clearItems();
         }

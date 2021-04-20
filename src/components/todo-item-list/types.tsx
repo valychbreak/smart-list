@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import PriceData from "../../entity/PriceData";
 import Product from "../../entity/Product";
 

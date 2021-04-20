@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { Component, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Product from "../entity/Product";
 
@@ -24,14 +24,14 @@ interface ProductFormProps {
 function isCountryCodeMatching(productCountryPrefix: string, recordCountryCode: string): boolean {
     if (recordCountryCode.includes("-")) {
         const prefixRange = recordCountryCode.split("-");
-        const codeLowerLimit = parseInt(prefixRange[0].trim());
-        const codeUpperLimit = parseInt(prefixRange[1].trim());
+        const codeLowerLimit = parseInt(prefixRange[0].trim(), 10);
+        const codeUpperLimit = parseInt(prefixRange[1].trim(), 10);
 
-        const productCountryCode = parseInt(productCountryPrefix);
+        const productCountryCode = parseInt(productCountryPrefix, 10);
         if (productCountryCode >= codeLowerLimit && productCountryCode <= codeUpperLimit) {
             return true;
         }
-    } else if (recordCountryCode == productCountryPrefix) {
+    } else if (recordCountryCode === productCountryPrefix) {
         return true;
     }
 
@@ -40,31 +40,30 @@ function isCountryCodeMatching(productCountryPrefix: string, recordCountryCode: 
 
 const ProductForm = (props: ProductFormProps) => {
     const {
-        register, handleSubmit, errors, getValues,
+        register, handleSubmit, errors,
     } = useForm<ProductFormFields>();
 
     const [suggestedCountry, setSuggestedCountry] = useState(undefined);
 
-    const onBarcodeChange = function (event: any) {
-        const newBarcodeValue = event.target.value;
-        updatedSuggestedCountry(newBarcodeValue);
-    };
-
-    const updatedSuggestedCountry = function (barcode: string) {
+    function updatedSuggestedCountry(barcode: string) {
         const countryPrefix = barcode.substring(0, 3);
 
         axios.get("barcode_country_mapping.json")
             .then((response) => {
-                if (response.data) {
-                    for (const record of response.data) {
-                        if (isCountryCodeMatching(countryPrefix, record.barcode)) {
-                            setSuggestedCountry(record.country);
-                            break;
-                        }
-                    }
+                if (!response.data) {
+                    return;
                 }
+                const countryRecord = response.data
+                    .find((record: any) => isCountryCodeMatching(countryPrefix, record.barcode));
+
+                setSuggestedCountry(countryRecord.country);
             });
-    };
+    }
+
+    function onBarcodeChange(event: any) {
+        const newBarcodeValue = event.target.value;
+        updatedSuggestedCountry(newBarcodeValue);
+    }
 
     useEffect(() => {
         const barcode = props.productBarcode;
@@ -77,15 +76,19 @@ const ProductForm = (props: ProductFormProps) => {
     }, []);
 
     const createProduct = (formData: ProductFormFields) => {
-        const product = new Product(formData.productGeneralName, formData.productBarcode, formData.productBarcodeType);
+        const product = new Product(
+            formData.productGeneralName,
+            formData.productBarcode,
+            formData.productBarcodeType,
+        );
 
         product.productFullName = formData.productFullName;
         product.productCompanyName = formData.productCompanyName;
         product.productCountry = formData.productCountry;
         return product;
     };
+
     const addItemInfo = (formData: ProductFormFields) => {
-        console.log(formData);
         const product = createProduct(formData);
         props.onProductSubmit(product);
     };

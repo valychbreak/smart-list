@@ -1,17 +1,17 @@
-import { makeStyles, Paper, Typography } from "@material-ui/core";
+import { makeStyles, Paper } from "@material-ui/core";
 import React from "react";
 import {
-    BrowserRouter as Router, Switch, Route, Link,
+    BrowserRouter as Router, Switch, Route,
 } from "react-router-dom";
 import AuthenticatedRoute from "./components/authenticated-route";
-import { AuthenticationContextProvider } from "./components/authentication/authentication-provider";
+import { AuthenticationContextProvider } from "./components/authentication";
 import AppHeader from "./components/header";
 import BrowseProductsPage from "./pages/browse-products/BrowseProductsPage";
 import AddNewProduct from "./pages/new-product/AddNewProductPage";
 import ScanTest from "./pages/scan-test/ScanTestPage";
-import { GroceriesTodo } from "./routes/groceries-todo";
-import { Login } from "./routes/login";
-import { Profile } from "./routes/profile";
+import GroceriesTodo from "./routes/groceries-todo";
+import Login from "./routes/login";
+import Profile from "./routes/profile";
 
 const useStyles = makeStyles((theme) => ({
     root: {},
@@ -32,6 +32,10 @@ const useStyles = makeStyles((theme) => ({
         maxHeight: 360,
     },
 }));
+
+function Home() {
+    return <h2>Home</h2>;
+}
 
 export default function App() {
     const classes = useStyles();
@@ -70,8 +74,4 @@ export default function App() {
             </Router>
         </AuthenticationContextProvider>
     );
-}
-
-function Home() {
-    return <h2>Home</h2>;
 }

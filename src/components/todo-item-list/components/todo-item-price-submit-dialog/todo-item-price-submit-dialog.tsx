@@ -19,7 +19,7 @@ const TodoItemPriceSubmitDialog = (props: TodoItemPriceSubmitDialogProps) => {
 
         if (selectedItem?.targetProduct) {
             ProductPriceApi.addPriceEntry(selectedItem.targetProduct, priceEntry)
-                .then((_) => {
+                .then(() => {
                     props.handleClose();
                 });
         }

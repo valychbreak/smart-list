@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useState } from "react";
 import localDbUsername from "../../api/persistance/local-db-username";
 import AuthenticationContext from "./authentication-context";
 import { AuthenticationData, User } from "./types";
@@ -11,15 +11,20 @@ type AuthenticationContextProviderProps = {
 };
 
 // This "container" component is required because of re-rendering when user logs in or out
-export const AuthenticationContextProvider = (props: React.PropsWithChildren<{}>) => {
+const AuthenticationContextProvider = (props: React.PropsWithChildren<{}>) => {
     const [isLoggedIn, setLoggedIn] = useState(localDbUsername.hasUsername());
 
     return (
-        <AuthenticationContextProviderImpl isLoggedIn={isLoggedIn} setLoggedIn={setLoggedIn} {...props} />
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+        <AuthenticationContextProviderImpl
+            isLoggedIn={isLoggedIn}
+            setLoggedIn={setLoggedIn} {...props} />
     );
 };
 
-const AuthenticationContextProviderImpl = (props: React.PropsWithChildren<AuthenticationContextProviderProps>) => {
+const AuthenticationContextProviderImpl = (
+    props: React.PropsWithChildren<AuthenticationContextProviderProps>,
+) => {
     const [user, setUser] = useState<User>(GUEST);
 
     useEffect(() => {
@@ -28,6 +33,7 @@ const AuthenticationContextProviderImpl = (props: React.PropsWithChildren<Authen
                 const username = localDbUsername.getUsername();
                 setUser({ username });
             } catch (error) {
+                // eslint-disable-next-line @typescript-eslint/no-use-before-define
                 signout();
             }
         }
@@ -35,15 +41,17 @@ const AuthenticationContextProviderImpl = (props: React.PropsWithChildren<Authen
 
     const isAuthenticated = (): boolean => props.isLoggedIn;
 
-    const authenticate = (authenticationData: AuthenticationData): Promise<void> => new Promise((resolve) => {
-        setUser({ username: authenticationData.username });
+    const authenticate = (authenticationData: AuthenticationData): Promise<void> => new Promise(
+        (resolve) => {
+            setUser({ username: authenticationData.username });
 
-        // Saving to share data with TEMP local dbs
-        localDbUsername.save(authenticationData.username);
+            // Saving to share data with TEMP local dbs
+            localDbUsername.save(authenticationData.username);
 
-        props.setLoggedIn(true);
-        return resolve();
-    });
+            props.setLoggedIn(true);
+            return resolve();
+        },
+    );
 
     const signout = (): Promise<void> => new Promise((resolve) => {
         setUser(GUEST);
@@ -66,3 +74,5 @@ const AuthenticationContextProviderImpl = (props: React.PropsWithChildren<Authen
         </AuthenticationContext.Provider>
     );
 };
+
+export default AuthenticationContextProvider;

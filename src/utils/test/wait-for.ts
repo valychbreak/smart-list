@@ -5,8 +5,10 @@ async function waitFor(callback: any, timeout = 500) {
 
     let occurredError;
 
+    // eslint-disable-next-line no-constant-condition
     while (true) {
         try {
+            // eslint-disable-next-line no-await-in-loop
             await new Promise((r) => setTimeout(r, step));
             timeSpent += step;
             callback();

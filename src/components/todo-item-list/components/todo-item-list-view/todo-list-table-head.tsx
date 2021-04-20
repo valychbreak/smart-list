@@ -1,11 +1,12 @@
 import {
-    TableHead, TableRow, TableCell, Checkbox, TableSortLabel, Select, MenuItem, withStyles, InputBase, makeStyles,
+    TableHead, TableRow, TableCell, Checkbox, TableSortLabel,
+    Select, MenuItem, withStyles, InputBase, makeStyles, SortDirection,
 } from "@material-ui/core";
 import React, { useContext } from "react";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import GroceriesTodoStoreContext from "../groceries-todo-store-context/groceries-todo-store-context";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
     visuallyHidden: {
         border: 0,
         clip: "rect(0 0 0 0)",
@@ -17,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const BootstrapInput = withStyles((theme) => ({}))(InputBase);
+const BootstrapInput = withStyles(() => ({}))(InputBase);
 
 const headCells = [
     {
@@ -30,17 +31,17 @@ const headCells = [
 
 type EnhancedTableHeadProps = {
     showPurchaseAction: boolean;
-    order: string;
+    order: SortDirection;
     orderBy: string;
     numSelected: number;
     rowCount: number;
     onRequestSort(event: any, property: string): void;
-    onSelectAllClick(): void;
+    onSelectAllClick(event: any): void;
 };
 
 type TodoItemListHeaderProps = {
     showPurchaseAction: boolean;
-    order: string;
+    order: SortDirection;
     orderBy: string;
     onRequestSort(event: any, property: string): void;
 };
@@ -53,17 +54,19 @@ export const TodoItemListHeader: React.FC<TodoItemListHeaderProps> = ({ ...props
     const todoItemListContext = useContext(TodoItemListContext);
 
     // FIXME: copied from groceries-todo-tool-bar component
-    const selectedItemsCount = todoItemListContext.todoItems.filter((todoItem) => todoItem.isBought === true).length;
+    const selectedItemsCount = todoItemListContext.todoItems
+        .filter((todoItem) => todoItem.isBought === true).length;
+
     const maxItemsCount = todoItemListContext.todoItems.length;
 
-    const handleSelectAllClick = (event: any) => {
-        const isPurchased = selectedItemsCount != maxItemsCount;
-        for (const todoItem of todoItemListContext.todoItems) {
-            todoItemListContext.toggleItemPurchased(todoItem, isPurchased);
-        }
+    const handleSelectAllClick = () => {
+        const isPurchased = selectedItemsCount !== maxItemsCount;
+        todoItemListContext.todoItems
+            .forEach((todoItem) => todoItemListContext.toggleItemPurchased(todoItem, isPurchased));
     };
 
     return (
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
         <EnhancedTableHead
             numSelected={selectedItemsCount}
             order={order}
@@ -75,7 +78,7 @@ export const TodoItemListHeader: React.FC<TodoItemListHeaderProps> = ({ ...props
     );
 };
 
-export function EnhancedTableHead(props: any) {
+export function EnhancedTableHead(props: EnhancedTableHeadProps) {
     const {
         onSelectAllClick,
         order,
@@ -97,7 +100,7 @@ export function EnhancedTableHead(props: any) {
 
     const onStoreSelect = (event: any) => {
         const value = event.target.value as string;
-        const store = storeList.find((store) => store.name === value);
+        const store = storeList.find((existingStore) => existingStore.name === value);
         if (store) {
             selectStore(store);
         } else {
@@ -127,7 +130,7 @@ export function EnhancedTableHead(props: any) {
                     >
                         <TableSortLabel
                             active={orderBy === headCell.id}
-                            direction={orderBy === headCell.id ? order : "asc"}
+                            direction={orderBy === headCell.id ? order as "asc" | "desc" : "asc"}
                             onClick={createSortHandler(headCell.id)}
                         >
                             {headCell.label}

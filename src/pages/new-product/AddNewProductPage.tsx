@@ -1,10 +1,7 @@
-import React, {
-    Component, useEffect, useRef, useState,
-} from "react";
+import React, { useState } from "react";
 import { Container } from "@material-ui/core";
 import Product from "../../entity/Product";
 import AddProductInfo from "../../components/AddProductInfo";
-import ProductView from "../../components/ProductView";
 import ProductApi from "../../api/ProductApi";
 
 const AddNewProduct = () => {

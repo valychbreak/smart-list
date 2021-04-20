@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 
-export const useTodoItemsTotalPriceController = () => {
+const useTodoItemsTotalPriceController = () => {
     const todoItemListContext = useContext(TodoItemListContext);
 
     const totalPriceByCounterparty = (counterparty: string): number => todoItemListContext.todoItems
@@ -15,3 +15,5 @@ export const useTodoItemsTotalPriceController = () => {
         totalPriceByCounterparty,
     };
 };
+
+export default useTodoItemsTotalPriceController;

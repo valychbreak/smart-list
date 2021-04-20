@@ -1,14 +1,14 @@
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Redirect, useLocation } from "react-router-dom";
-import AuthenticationContext from "../authentication";
+import { AuthenticationContext } from "../authentication";
 
 type SigninFormFields = {
     username: string,
     password: string
 };
 
-export const Signin = () => {
+const Signin = () => {
     const { register, handleSubmit, errors } = useForm<SigninFormFields>();
 
     const authContext = useContext(AuthenticationContext);
@@ -17,7 +17,8 @@ export const Signin = () => {
     const { state } = useLocation<any>();
 
     const handleLogin = (formData: SigninFormFields) => {
-        authContext.authenticate({ username: formData.username, password: formData.password }).then((_) => setRedirectToReferrer(true));
+        authContext.authenticate({ username: formData.username, password: formData.password })
+            .then(() => setRedirectToReferrer(true));
     };
 
     if (redirectToReferrer === true) {
@@ -41,3 +42,5 @@ export const Signin = () => {
         </form>
     </>);
 };
+
+export default Signin;

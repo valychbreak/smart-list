@@ -13,13 +13,20 @@ const QuantityField = (props: QuantityFieldProps) => {
         setItemQuantity(props.defaultQuantity.toString());
     }, [props.defaultQuantity]);
 
+    const changeItemQuantity = (quantity: number) => {
+        setItemQuantity(quantity.toString());
+        if (props.onChange) {
+            props.onChange(quantity);
+        }
+    };
+
     const increaseQuantity = () => {
-        const quantity = parseInt(itemQuantity);
+        const quantity = parseInt(itemQuantity, 10);
         changeItemQuantity(quantity + 1);
     };
 
     const decreaseQuantity = () => {
-        const quantity = parseInt(itemQuantity);
+        const quantity = parseInt(itemQuantity, 10);
         if (quantity > 1) {
             changeItemQuantity(quantity - 1);
         }
@@ -29,16 +36,9 @@ const QuantityField = (props: QuantityFieldProps) => {
         const inputValue = e.target.value as string;
         setItemQuantity(inputValue);
 
-        const quantity = parseInt(inputValue);
+        const quantity = parseInt(inputValue, 10);
         if (quantity > 0) {
             changeItemQuantity(quantity);
-        }
-    };
-
-    const changeItemQuantity = (quantity: number) => {
-        setItemQuantity(quantity.toString());
-        if (props.onChange) {
-            props.onChange(quantity);
         }
     };
 

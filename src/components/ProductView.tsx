@@ -4,6 +4,19 @@ import StoreApi from "../api/StoreApi";
 import Product from "../entity/Product";
 import { Store } from "./todo-item-list/types";
 
+interface CounterpartyPriceViewProps {
+    counterparty: string;
+    priceData: { [id: string]: PriceData };
+}
+
+const CounterpartyPriceView = (props: CounterpartyPriceViewProps) => {
+    if (!props.priceData[props.counterparty]) {
+        return <li> {props.counterparty} - No data yet</li>;
+    }
+
+    return <li> {props.counterparty} - {props.priceData[props.counterparty].price} PLN</li>;
+};
+
 interface ProductViewPros {
     product: Product;
 }
@@ -54,7 +67,7 @@ const ProductView = (props: ProductViewPros) => {
                 Price per counterparty:
                 <ul>
                     {storeList.map((store: Store) => (
-                        <CounterpartyPriceView 
+                        <CounterpartyPriceView
                             key={store.id}
                             counterparty={store.name}
                             priceData={priceData} />
@@ -65,19 +78,6 @@ const ProductView = (props: ProductViewPros) => {
         </ul>
         <hr />
     </>);
-};
-
-interface CounterpartyPriceViewProps {
-    counterparty: string;
-    priceData: { [id: string]: PriceData };
-}
-
-const CounterpartyPriceView = (props: CounterpartyPriceViewProps) => {
-    if (!props.priceData[props.counterparty]) {
-        return <li> {props.counterparty} - No data yet</li>;
-    }
-
-    return <li> {props.counterparty} - {props.priceData[props.counterparty].price} PLN</li>;
 };
 
 export default ProductView;

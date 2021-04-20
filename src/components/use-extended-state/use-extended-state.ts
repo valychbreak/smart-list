@@ -7,14 +7,6 @@ export default function useExtendedState<T>() {
         setValue(newValue);
     };
 
-    const getValueOrThrow = (): T => {
-        if (value === null) {
-            throw new Error("Value is not present");
-        }
-
-        return value;
-    };
-
     const clearValue = () => {
         setValue(null);
     };

@@ -23,9 +23,10 @@ const BrowseProductsPage = () => {
     }
 
     useEffect(() => {
-        ProductApi.getProducts().then((products) => {
-            setProducts(products);
-        });
+        ProductApi.getProducts()
+            .then((loadedProducts) => {
+                setProducts(loadedProducts);
+            });
     }, []);
 
     function showProductPriceForm(e: any, product: Product) {
@@ -35,36 +36,45 @@ const BrowseProductsPage = () => {
 
     function onPriceEntrySubmit(productPriceEntry: ProductPriceEntry) {
         if (selectedProduct) {
-            ProductPriceApi.addPriceEntry(selectedProduct, productPriceEntry)
-                .then((priceEntry) => {
-                    console.log(priceEntry);
-                });
+            ProductPriceApi.addPriceEntry(selectedProduct, productPriceEntry);
         }
     }
 
     return (
         <>
-            {addingPrice
-              && <>
-                  <h3>Add price for {selectedProduct?.productFullName}</h3>
-                  <ProductPriceForm targetProduct={selectedProduct} onEntrySubmit={onPriceEntrySubmit}/>
-              </>
-            }
+            {addingPrice && (<>
+                <h3>Add price for {selectedProduct?.productFullName}</h3>
+                <ProductPriceForm
+                    targetProduct={selectedProduct}
+                    onEntrySubmit={onPriceEntrySubmit}
+                />
+            </>)}
             <h2>Existing products:</h2>
             <div>
-                {products.map((product: Product, idx: number) => (<div key={idx}>
-                    <button onClick={(e) => showProductPriceForm(e, product)} >Add price entry</button>
-                    <br />
-                    <ProductView product={product} />
-                </div>))}
+                {products.map((product: Product, idx: number) => (
+                    <div key={idx}>
+                        <button onClick={(e) => showProductPriceForm(e, product)}>
+                            Add price entry
+                        </button>
+                        <br />
+                        <ProductView product={product} />
+                    </div>
+                ))}
             </div>
             <hr />
 
             <h2>JSON Data (for export):</h2>
-            <button onClick={(e) => copyToClipboard(e)}>Copy JSON data to clipboard</button>
+            <button onClick={(e) => copyToClipboard(e)}>
+                Copy JSON data to clipboard
+            </button>
             {copySuccess}
             <form>
-                <textarea readOnly ref={textAreaRef} value={JSON.stringify(products)} style={{ width: "60%", height: 100 }} />
+                <textarea
+                    readOnly
+                    ref={textAreaRef}
+                    value={JSON.stringify(products)}
+                    style={{ width: "60%", height: 100 }}
+                />
             </form>
         </>
     );

@@ -1,3 +1,5 @@
-import { Signin } from "../components/signin";
+import Signin from "../components/signin";
 
-export const Login = () => <Signin />;
+const Login = () => <Signin />;
+
+export default Login;

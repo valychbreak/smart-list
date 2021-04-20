@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { Redirect, Route, RouteProps } from "react-router-dom";
-import AuthenticationContext from "../authentication";
+import { AuthenticationContext } from "../authentication";
 
 type ProtectedRouteProps = {
     isAuthenticated: boolean;

@@ -1,13 +1,13 @@
 import React, { useContext } from "react";
-import TodoItem from "../../types";
+import {
+    makeStyles, SortDirection, Table, TableBody, TableCell, TableContainer, TableFooter, TableRow,
+} from "@material-ui/core";
 import TodoListItemView from "../../../../pages/groceries-todo/components/TodoListItemView";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import "./todo-list-view.css";
-import {
-    makeStyles, Table, TableBody, TableCell, TableContainer, TableFooter, TableRow,
-} from "@material-ui/core";
 import { TodoItemListHeader } from "./todo-list-table-head";
-import { useTodoItemsTotalPriceController } from "../use-todo-items-total-price-controller";
+import useTodoItemsTotalPriceController from "../use-todo-items-total-price-controller";
+import TodoItem from "../../types";
 
 const useStyles = makeStyles((theme) => ({
     root: {},
@@ -35,12 +35,6 @@ function stableSort(array: TodoItem[], comparator: any): TodoItem[] {
     return stabilizedThis.map((el) => el.todoItem);
 }
 
-function getComparator(order: string, orderBy: string) {
-    return order === "desc"
-        ? (a: any, b: any) => descendingComparator(a, b, orderBy)
-        : (a: any, b: any) => -descendingComparator(a, b, orderBy);
-}
-
 function descendingComparator(a: any, b: any, orderBy: string) {
     if (b[orderBy] < a[orderBy]) {
         return -1;
@@ -49,6 +43,16 @@ function descendingComparator(a: any, b: any, orderBy: string) {
         return 1;
     }
     return 0;
+}
+
+function getComparator(order: SortDirection, orderBy: string) {
+    return order === "desc"
+        ? (a: any, b: any) => descendingComparator(a, b, orderBy)
+        : (a: any, b: any) => -descendingComparator(a, b, orderBy);
+}
+
+function currencyFormat(num: number) {
+    return `${num.toFixed(2)}`;
 }
 
 interface TodoListViewProps {
@@ -64,7 +68,7 @@ const TodoListView: React.FC<TodoListViewProps> = ({
     const todoItemListContext = useContext(TodoItemListContext);
     const todoItemsTotalPriceController = useTodoItemsTotalPriceController();
 
-    const [order, setOrder] = React.useState("asc");
+    const [order, setOrder] = React.useState<SortDirection>("asc");
     const [orderBy, setOrderBy] = React.useState("generalName");
 
     const handleRequestSort = (event: any, property: string) => {
@@ -90,7 +94,7 @@ const TodoListView: React.FC<TodoListViewProps> = ({
                 />
                 <TableBody>
                     {stableSort(todoItemListContext.todoItems, getComparator(order, orderBy))
-                        .map((todoItem: TodoItem, idx: number) => (
+                        .map((todoItem: TodoItem) => (
                             <TodoListItemView item={todoItem}
                                 showPurchaseAction={showPurchaseAction}
                                 onTodoItemPurchaseToggle={props.onTodoItemPurchaseToggle}
@@ -113,9 +117,5 @@ const TodoListView: React.FC<TodoListViewProps> = ({
         </TableContainer>
     </>);
 };
-
-function currencyFormat(num: number) {
-    return `${num.toFixed(2)}`;
-}
 
 export default TodoListView;

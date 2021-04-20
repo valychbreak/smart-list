@@ -1,8 +1,8 @@
 import {
-    AppBar, Button, createStyles, makeStyles, Theme, Toolbar, Typography,
+    AppBar, createStyles, makeStyles, Theme, Toolbar, Typography,
 } from "@material-ui/core";
 import React from "react";
-import { ProfileBar } from "./profile-bar";
+import ProfileBar from "./profile-bar";
 import AppMenu from "./menu";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({

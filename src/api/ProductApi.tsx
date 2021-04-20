@@ -1,4 +1,4 @@
-import axios from "axios";
+/* eslint-disable class-methods-use-this */
 import Product from "../entity/Product";
 import LocalDB from "./LocalDB";
 
@@ -27,7 +27,10 @@ class MockedProductApi implements ProductApi {
 
     async findByBarcode(barcode: string, barcodeType: string): Promise<Product | null> {
         const products = await LocalDB.loadProducts();
-        const product = products.find((product) => product.productBarcode === barcode && product.productBarcodeType === barcodeType);
+        const product = products.find(
+            (cachedProducts) => cachedProducts.productBarcode === barcode
+                && cachedProducts.productBarcodeType === barcodeType,
+        );
         return product || null;
     }
 

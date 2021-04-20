@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import {
-    TableContainer, Table, TableHead, TableRow, TableCell, TextField, Button, CircularProgress, Grid,
+    TextField, Button, CircularProgress, Grid,
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import Product from "../../../entity/Product";
@@ -35,10 +35,17 @@ const ProductSelect = (props: ProductSelectProps) => {
         setOptions([]);
         if (inputValue.length > 0) {
             const loadedProducts = await ProductApi.findMatchingBy(inputValue);
-            const foundProducts: ProductSelectItem[] = loadedProducts.map((product) => ({ label: product.productFullName as string, product }));
+            const foundProducts: ProductSelectItem[] = loadedProducts.map((product) => (
+                { label: product.productFullName as string, product }
+            ));
+
             foundProducts.push({ inputValue, label: `Add '${inputValue}' product`, product: NEW_PRODUCT });
             setOptions(foundProducts);
         }
+    };
+
+    const onProductOptionCreate = (inputValue: string) => {
+        props.onProductCreateOptionSelect(inputValue);
     };
 
     const onProductSelect = (selectedProduct: ProductSelectItem | null) => {
@@ -51,10 +58,6 @@ const ProductSelect = (props: ProductSelectProps) => {
         } else {
             props.onProductSelect(null);
         }
-    };
-
-    const onProductOptionCreate = (inputValue: string) => {
-        props.onProductCreateOptionSelect(inputValue);
     };
 
     return (<>
@@ -107,7 +110,7 @@ const AddTodoItemForm = (props: RouteComponentProps) => {
     const handleSubmit = (e: any, context: TodoItemListContextType) => {
         e.preventDefault();
 
-        const quantity = parseInt(newItemQuantity);
+        const quantity = parseInt(newItemQuantity, 10);
         if (selectedProduct && quantity > 0) {
             const newItem = TodoItem.fromProduct(selectedProduct, quantity);
             context.addItem(newItem);
@@ -121,6 +124,7 @@ const AddTodoItemForm = (props: RouteComponentProps) => {
     };
 
     const onProductCreateOptionSelect = (inputValue: string) => {
+        // eslint-disable-next-line no-alert
         if (window.confirm(`No product matching '${inputValue}' was added. \nDo you want to go to product adding page?`)) {
             props.history.push("new-product");
         }
@@ -139,7 +143,9 @@ const AddTodoItemForm = (props: RouteComponentProps) => {
                                 onProductCreateOptionSelect={onProductCreateOptionSelect} />
                         </Grid>
                         <Grid item xs={3}>
-                            <QuantityField defaultQuantity={1} onChange={handleQuantityFieldChange} />
+                            <QuantityField
+                                defaultQuantity={1}
+                                onChange={handleQuantityFieldChange} />
                         </Grid>
                         <Grid item xs={2}>
                             <Button variant="contained" size="small" type="submit">Add</Button>

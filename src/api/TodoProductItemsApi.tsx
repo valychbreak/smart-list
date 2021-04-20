@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import TodoItem from "../components/todo-item-list/types";
 import LocalDB from "./LocalDB";
 

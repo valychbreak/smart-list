@@ -1,19 +1,32 @@
+/* eslint-disable class-methods-use-this */
 import ProductPriceEntry from "../entity/ProductPriceEntry";
 import Product from "../entity/Product";
 import LocalDB from "./LocalDB";
 
 interface ProductPriceApi {
-    addPriceEntry(product: Product, productPriceEntry: ProductPriceEntry): Promise<ProductPriceEntry>;
-    fetchLatestPrice(product: Product, counterparty: string): Promise<ProductPriceEntry | null>;
+    addPriceEntry(
+        product: Product,
+        productPriceEntry: ProductPriceEntry
+    ): Promise<ProductPriceEntry>;
+    fetchLatestPrice(
+        product: Product,
+        counterparty: string
+    ): Promise<ProductPriceEntry | null>;
     fetchLatestPrice(product: Product): Promise<ProductPriceEntry | null>;
 }
 
 class MockedProductPriceApi implements ProductPriceApi {
-    addPriceEntry(product: Product, productPriceEntry: ProductPriceEntry): Promise<ProductPriceEntry> {
+    addPriceEntry(
+        product: Product,
+        productPriceEntry: ProductPriceEntry,
+    ): Promise<ProductPriceEntry> {
         return LocalDB.saveNewPriceEntry(productPriceEntry);
     }
 
-    fetchLatestPrice(product: Product, counterparty?: string): Promise<ProductPriceEntry | null> {
+    fetchLatestPrice(
+        product: Product,
+        counterparty?: string,
+    ): Promise<ProductPriceEntry | null> {
         if (counterparty) {
             return LocalDB.fetchLatestPriceEntryBy(product, counterparty);
         }

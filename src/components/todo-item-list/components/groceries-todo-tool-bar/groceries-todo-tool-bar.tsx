@@ -27,6 +27,18 @@ const useToolbarStyles = makeStyles((theme) => ({
     },
 }));
 
+function formatDate(date: Date) {
+    const d = new Date(date);
+    let month = `${d.getMonth() + 1}`;
+    let day = `${d.getDate()}`;
+    const year = d.getFullYear();
+
+    if (month.length < 2) { month = `0${month}`; }
+    if (day.length < 2) { day = `0${day}`; }
+
+    return [day, month, year].join("-");
+}
+
 type GroceriesTodoToolbarProps = {
     onPurchaseModeToggle(toggle: boolean): void;
 };
@@ -36,7 +48,10 @@ const GroceriesTodoToolbar = (props: GroceriesTodoToolbarProps) => {
 
     const todoItemListContext = useContext(TodoItemListContext);
     // const { selectedItemsCount, maxItemsCount } = props;
-    const selectedItemsCount = todoItemListContext.todoItems.filter((todoItem) => todoItem.isBought === true).length;
+    const selectedItemsCount = todoItemListContext.todoItems
+        .filter((todoItem) => todoItem.isBought === true)
+        .length;
+
     const maxItemsCount = todoItemListContext.todoItems.length;
 
     return (
@@ -75,17 +90,5 @@ const GroceriesTodoToolbar = (props: GroceriesTodoToolbarProps) => {
         </Toolbar>
     );
 };
-
-function formatDate(date: Date) {
-    const d = new Date(date);
-    let month = `${d.getMonth() + 1}`;
-    let day = `${d.getDate()}`;
-    const year = d.getFullYear();
-
-    if (month.length < 2) { month = `0${month}`; }
-    if (day.length < 2) { day = `0${day}`; }
-
-    return [day, month, year].join("-");
-}
 
 export default GroceriesTodoToolbar;

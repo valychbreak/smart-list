@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import Category from "../entity/category";
 import Product from "../entity/Product";
 import CategoryLocalDB from "./persistance/local-db-category";

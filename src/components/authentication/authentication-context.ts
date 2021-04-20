@@ -17,7 +17,7 @@ const AuthenticationContext = React.createContext<AuthenticationContextType>({
         throw new Error("No implementation");
     },
 
-    authenticate: (authenticationData: AuthenticationData): Promise<void> => {
+    authenticate: (): Promise<void> => {
         throw new Error("No implementation");
     },
     signout: (): Promise<void> => {

@@ -1,6 +1,5 @@
 import { Container, makeStyles, Paper } from "@material-ui/core";
 import React from "react";
-import TodoItem from "../../types";
 import AddTodoItemComponent from "../todo-item-add";
 import TodoListView from "../todo-item-list-view";
 
@@ -18,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
 const GroceriesTodoPlanningModeView: React.FC<{}> = () => {
     const classes = useStyles();
 
-    const onTodoItemPurchaseToggle = (todoItem: TodoItem, isBought: boolean) => {
+    const onTodoItemPurchaseToggle = () => {
         throw Error("Purchasing is disabled");
     };
 

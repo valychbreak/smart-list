@@ -27,7 +27,11 @@ export default class Product {
     }
 
     static from(productJson: any): Product {
-        const parsedProduct = new Product(productJson.productGeneralName, productJson.productBarcode, productJson.productBarcodeType);
+        const parsedProduct = new Product(
+            productJson.productGeneralName,
+            productJson.productBarcode,
+            productJson.productBarcodeType,
+        );
 
         parsedProduct.id = productJson.id;
         parsedProduct.productFullName = productJson.productFullName;

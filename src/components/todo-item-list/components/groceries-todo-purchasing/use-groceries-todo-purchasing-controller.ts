@@ -16,6 +16,14 @@ const useGroceriesTodoPurchasingController = () => {
 
     const todoItemListContext = useContext(TodoItemListContext);
 
+    const enableScanner = () => setScanning(true);
+
+    const disableScanner = () => setScanning(false);
+
+    function cancelAddingPrice() {
+        purchasedTodoItem.clearValue();
+    }
+
     function toggleTodoItemPurchaseStatus(item: TodoItem, isChecked: boolean) {
         todoItemListContext.toggleItemPurchased(item, isChecked);
 
@@ -25,17 +33,6 @@ const useGroceriesTodoPurchasingController = () => {
             cancelAddingPrice();
         }
     }
-
-    function cancelAddingPrice() {
-        purchasedTodoItem.clearValue();
-    }
-
-    const onBarcodeScan = (result: QuaggaJSResultObject) => {
-        onBarcodeScanAdapter({
-            code: result.codeResult.code,
-            format: result.codeResult.format,
-        });
-    };
 
     const onBarcodeScanAdapter = (result: BarcodeScanResult) => {
         if (result.code === null) {
@@ -66,15 +63,18 @@ const useGroceriesTodoPurchasingController = () => {
             });
     };
 
+    const onBarcodeScan = (result: QuaggaJSResultObject) => {
+        onBarcodeScanAdapter({
+            code: result.codeResult.code,
+            format: result.codeResult.format,
+        });
+    };
+
     function addPurchasedProduct(product: Product) {
         const newItem = TodoItem.fromProduct(product);
         todoItemListContext.addItem(newItem);
         toggleTodoItemPurchaseStatus(newItem, true);
     }
-
-    const enableScanner = () => setScanning(true);
-
-    const disableScanner = () => setScanning(false);
 
     return {
         openScanner: isScanning,

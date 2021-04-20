@@ -5,16 +5,25 @@ import GroceriesTodoStoreContext from "./groceries-todo-store-context";
 
 const SELECTED_STORE_KEY = "userSelectedStoreName";
 
-export const GroceriesTodoStoreContextProvider = (props: React.PropsWithChildren<{}>) => {
+function findStoreByName(stores: Store[]): Store | undefined {
+    const savedSelectedStoreName = localStorage.getItem(SELECTED_STORE_KEY);
+    if (!savedSelectedStoreName) {
+        return undefined;
+    }
+
+    return stores.find((store) => store.name === savedSelectedStoreName);
+}
+
+const GroceriesTodoStoreContextProvider = (props: React.PropsWithChildren<{}>) => {
     const [selectedStore, setSelectedStore] = useState<Store | null>(null);
     const [stores, setStores] = useState<Store[]>([]);
 
     useEffect(() => {
         StoreApi.fetchStores()
-            .then((stores) => {
-                setStores(stores);
+            .then((fetchedStores) => {
+                setStores(fetchedStores);
 
-                const foundStore = findStoreByName(stores);
+                const foundStore = findStoreByName(fetchedStores);
                 if (foundStore) {
                     setSelectedStore(foundStore);
                 }
@@ -43,11 +52,4 @@ export const GroceriesTodoStoreContextProvider = (props: React.PropsWithChildren
     );
 };
 
-function findStoreByName(stores: Store[]) {
-    const savedSelectedStoreName = localStorage.getItem(SELECTED_STORE_KEY);
-    if (!savedSelectedStoreName) {
-        return;
-    }
-
-    return stores.find((store) => store.name === savedSelectedStoreName);
-}
+export default GroceriesTodoStoreContextProvider;

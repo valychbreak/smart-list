@@ -1,4 +1,4 @@
-import React, { useContext, useReducer, useState } from "react";
+import React, { useContext, useState } from "react";
 import {
     TableRow, TableCell, Checkbox, IconButton,
 } from "@material-ui/core";
@@ -11,6 +11,26 @@ import Category from "../../../entity/category";
 import UserCategoryAPI from "../../../api/UserCategoryAPI";
 import TodoItemQuantityAdjustmentField from "../../../components/todo-item-list/components/todo-item-quantity-adjustment-field";
 import GroceriesTodoStoreContext from "../../../components/todo-item-list/components/groceries-todo-store-context/groceries-todo-store-context";
+
+interface StorePriceViewProps {
+    store: Store | null;
+    quantity: number;
+    priceData: { [id: string]: PriceData };
+}
+
+function currencyFormat(amount: number) {
+    return amount.toFixed(2);
+}
+
+const StorePriceView = (props: StorePriceViewProps) => {
+    const { quantity } = props;
+    const storeName = props.store?.name;
+
+    if (storeName && props.priceData[storeName]) {
+        return <span>{currencyFormat(props.priceData[storeName].price * quantity)} PLN</span>;
+    }
+    return <span>No data yet</span>;
+};
 
 interface TodoListItemViewProps {
     item: TodoItem;
@@ -69,26 +89,7 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
     );
 };
 
-interface StorePriceViewProps {
-    store: Store | null;
-    quantity: number;
-    priceData: { [id: string]: PriceData };
-}
-
-function currencyFormat(amount: number) {
-    return amount.toFixed(2);
-}
-
-const StorePriceView = (props: StorePriceViewProps) => {
-    const { quantity } = props;
-    const storeName = props.store?.name;
-
-    if (storeName && props.priceData[storeName]) {
-        return <span>{currencyFormat(props.priceData[storeName].price * quantity)} PLN</span>;
-    }
-    return <span>No data yet</span>;
-};
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ProductCategorySelector = (props: { item: TodoItem }) => {
     const onCategorySelect = (category: Category) => {
         const product = props.item.targetProduct;
@@ -99,7 +100,9 @@ const ProductCategorySelector = (props: { item: TodoItem }) => {
     };
 
     return (
-        <CategorySelector defaultCategory={props.item.targetProduct?.category} onCategorySelect={onCategorySelect} />
+        <CategorySelector
+            defaultCategory={props.item.targetProduct?.category}
+            onCategorySelect={onCategorySelect} />
     );
 };
 

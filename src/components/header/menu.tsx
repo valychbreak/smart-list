@@ -1,13 +1,12 @@
 import {
-    FormControlLabel, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, MenuProps, Switch, withStyles,
+    IconButton, ListItemIcon, ListItemText, MenuItem,
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import BorderInnerIcon from "@material-ui/icons/BorderInner";
 import SearchIcon from "@material-ui/icons/Search";
 import VideocamIcon from "@material-ui/icons/Videocam";
-import React from "react";
-import { AccountBox, Home } from "@material-ui/icons";
+import { Home } from "@material-ui/icons";
 import { Link } from "react-router-dom";
 import { StyledMenu, useMenuController } from "../custom-menu";
 

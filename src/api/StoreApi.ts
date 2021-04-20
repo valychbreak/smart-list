@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import { Store } from "../components/todo-item-list/types";
 
 interface StoreApi {

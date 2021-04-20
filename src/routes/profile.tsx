@@ -1,4 +1,6 @@
 import React from "react";
-import ProfileView from "../components/profile/profile";
+import ProfileView from "../components/profile";
 
-export const Profile = () => <ProfileView />;
+const Profile = () => <ProfileView />;
+
+export default Profile;

@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import { Mode } from "../components/todo-item-list/components/use-groceries-todo-controller";
 
 const GROCERIES_TODO_MODE_KEY = "groceriesTodoMode";

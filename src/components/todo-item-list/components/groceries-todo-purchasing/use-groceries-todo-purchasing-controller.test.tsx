@@ -1,4 +1,5 @@
-import { renderHook, RenderHookResult, WrapperComponent } from "@testing-library/react-hooks";
+/* eslint-disable @typescript-eslint/no-use-before-define */
+import { renderHook, WrapperComponent } from "@testing-library/react-hooks";
 import React from "react";
 import {
     anyOfClass, instance, mock, reset, verify, when,
@@ -148,10 +149,12 @@ describe("useGroceriesTodoPurchasingController", () => {
             ${"12345678"}   | ${"87654321"}  | ${true}     | ${"When barcodes don't match and product is in DB"}
             ${"12345678"}   | ${"87654321"}  | ${true}     | ${"When barcodes don't match and product is not in DB"}
         `("should disable scanner $description", async ({
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             todoItemBarcode, scannedBarcode, productInDb, description,
         }) => {
             // given
-            ProductApiMocked.findByBarcode.mockResolvedValue(productInDb ? createAnyProduct() : null);
+            ProductApiMocked.findByBarcode
+                .mockResolvedValue(productInDb ? createAnyProduct() : null);
 
             const todoItem = createTodoItem(todoItemBarcode, "ean8");
             const { result } = renderGroceriesTodoPurchasingController([todoItem]);

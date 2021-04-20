@@ -1,8 +1,6 @@
 import React, { useContext, useState } from "react";
-import { useHistory } from "react-router";
-import {
-    Button, Dialog, Grid, IconButton,
-} from "@material-ui/core";
+import { useHistory } from "react-router-dom";
+import { Dialog, Grid, IconButton } from "@material-ui/core";
 import SettingsOverscanIcon from "@material-ui/icons/SettingsOverscan";
 import ProductApi from "../../../../api/ProductApi";
 import AddTodoItemForm from "../../../../pages/groceries-todo/components/AddTodoItemForm";
@@ -10,7 +8,7 @@ import TodoItem from "../../types";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import Scanner from "../../../../Scanner";
 
-const AddTodoItemComponent = (props: any) => {
+const AddTodoItemComponent = () => {
     const [isScannerEnabled, setScannerEnabled] = useState(false);
     const todoItemListContext = useContext(TodoItemListContext);
     const history = useHistory();
@@ -38,6 +36,7 @@ const AddTodoItemComponent = (props: any) => {
         if (barcode && barcodeType) {
             ProductApi.findByBarcode(barcode, barcodeType).then((product) => {
                 if (product == null) {
+                    // eslint-disable-next-line no-alert
                     if (window.confirm(`Scanned barcode  ${barcode} (${barcodeType}) does not exist in our database. \nDo you want to go to 'Add new item' page?`)) {
                         history.push("new-product");
                     }

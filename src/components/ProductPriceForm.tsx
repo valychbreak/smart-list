@@ -16,13 +16,18 @@ interface ProductPriceFormProps {
 }
 
 const ProductPriceForm = (props: ProductPriceFormProps) => {
-    const { register, handleSubmit, errors } = useForm<ProductPriceFormFields>();
+    const { register, handleSubmit } = useForm<ProductPriceFormFields>();
 
     const defaultStoreName = props.defaultStore?.name;
 
-    const submitPriceEntry = function (formData: ProductPriceFormFields) {
+    const submitPriceEntry = (formData: ProductPriceFormFields) => {
         if (props.targetProduct) {
-            const priceEntry = new ProductPriceEntry(props.targetProduct.productBarcode, formData.price, formData.counterparty, new Date());
+            const priceEntry = new ProductPriceEntry(
+                props.targetProduct.productBarcode,
+                formData.price,
+                formData.counterparty,
+                new Date(),
+            );
             props.onEntrySubmit(priceEntry);
         }
     };

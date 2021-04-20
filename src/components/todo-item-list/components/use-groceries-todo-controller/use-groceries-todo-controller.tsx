@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import UserApi from "../../../../api/UserApi";
-import TodoItem from "../../types";
 
 export enum Mode {
     PLANNING,
@@ -12,12 +11,12 @@ const useGroceriesTodoController = () => {
 
     useEffect(() => {
         UserApi.fetchGroceriesTodoMode()
-            .then((mode) => setMode(mode));
+            .then((fetchedMode: Mode) => setMode(fetchedMode));
     }, []);
 
-    const switchMode = (mode: Mode) => {
-        UserApi.saveGroceriesTodoMode(mode)
-            .then((_) => setMode(mode));
+    const switchMode = (fetchedMode: Mode) => {
+        UserApi.saveGroceriesTodoMode(fetchedMode)
+            .then(() => setMode(fetchedMode));
     };
 
     return {

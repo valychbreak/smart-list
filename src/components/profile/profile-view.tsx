@@ -1,6 +1,6 @@
 import { Typography } from "@material-ui/core";
 import { useContext } from "react";
-import AuthenticationContext from "../authentication";
+import { AuthenticationContext } from "../authentication";
 
 const ProfileView = () => {
     const { user } = useContext(AuthenticationContext);
