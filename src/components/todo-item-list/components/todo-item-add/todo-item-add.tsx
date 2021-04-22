@@ -49,8 +49,8 @@ const AddTodoItemComponent = () => {
     };
 
     return (<>
-        <Grid container>
-            <Grid item xs={1}>
+        <Grid container justify="center" alignItems="center">
+            <Grid item xs>
                 <IconButton onClick={() => enableScanner()}>
                     <SettingsOverscanIcon />
                 </IconButton>
@@ -59,7 +59,7 @@ const AddTodoItemComponent = () => {
                     <Scanner onDetected={onBarcodeDetected} />
                 </Dialog>
             </Grid>
-            <Grid item xs={11}>
+            <Grid item xs={10}>
                 <AddTodoItemForm />
             </Grid>
         </Grid>
