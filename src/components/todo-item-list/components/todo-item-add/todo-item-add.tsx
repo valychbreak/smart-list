@@ -1,6 +1,9 @@
 import React, { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { Dialog, Grid, IconButton } from "@material-ui/core";
+import {
+    createStyles,
+    Dialog, Fab, Grid, makeStyles,
+} from "@material-ui/core";
 import SettingsOverscanIcon from "@material-ui/icons/SettingsOverscan";
 import ProductApi from "../../../../api/ProductApi";
 import AddTodoItemForm from "../../../../pages/groceries-todo/components/AddTodoItemForm";
@@ -8,10 +11,23 @@ import TodoItem from "../../types";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import Scanner from "../../../../Scanner";
 
+const useStyles = makeStyles((theme) => createStyles({
+    fab: {
+        position: "fixed",
+        bottom: theme.spacing(8),
+        right: theme.spacing(2),
+    },
+    fabIcon: {
+        marginRight: theme.spacing(1),
+    },
+}));
+
 const AddTodoItemComponent = () => {
     const [isScannerEnabled, setScannerEnabled] = useState(false);
     const todoItemListContext = useContext(TodoItemListContext);
     const history = useHistory();
+
+    const classes = useStyles();
 
     const enableScanner = () => {
         setScannerEnabled(true);
@@ -50,7 +66,7 @@ const AddTodoItemComponent = () => {
 
     return (<>
         <Grid container justify="center" alignItems="center">
-            <Grid item xs>
+            {/* <Grid item xs>
                 <IconButton onClick={() => enableScanner()}>
                     <SettingsOverscanIcon />
                 </IconButton>
@@ -58,11 +74,19 @@ const AddTodoItemComponent = () => {
                 <Dialog open={isScannerEnabled} onClose={disableScanner}>
                     <Scanner onDetected={onBarcodeDetected} />
                 </Dialog>
-            </Grid>
-            <Grid item xs={10}>
+            </Grid> */}
+            <Grid item xs={11}>
                 <AddTodoItemForm />
             </Grid>
         </Grid>
+        <Fab color="inherit" size="medium" variant="extended" className={classes.fab} onClick={() => enableScanner()}>
+            <SettingsOverscanIcon className={classes.fabIcon} />
+            Scan
+        </Fab>
+
+        <Dialog open={isScannerEnabled} onClose={disableScanner}>
+            <Scanner onDetected={onBarcodeDetected} />
+        </Dialog>
     </>);
 };
 
