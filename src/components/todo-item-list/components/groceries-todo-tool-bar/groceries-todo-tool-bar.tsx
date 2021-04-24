@@ -5,7 +5,7 @@ import FilterListIcon from "@material-ui/icons/FilterList";
 import clsx from "clsx";
 import React, { useContext } from "react";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
-import GroceriesTodoToolbarMenu from "./tool-bar-menu";
+import GroceriesTodoToolbarMenu, { GroceriesTodoToolbarMenuProps } from "./tool-bar-menu";
 
 const useToolbarStyles = makeStyles((theme) => ({
     root: {
@@ -39,15 +39,13 @@ function formatDate(date: Date) {
     return [day, month, year].join("-");
 }
 
-type GroceriesTodoToolbarProps = {
-    onPurchaseModeToggle(toggle: boolean): void;
-};
+type GroceriesTodoToolbarProps = {} & GroceriesTodoToolbarMenuProps;
 
 const GroceriesTodoToolbar = (props: GroceriesTodoToolbarProps) => {
     const classes = useToolbarStyles();
 
     const todoItemListContext = useContext(TodoItemListContext);
-    // const { selectedItemsCount, maxItemsCount } = props;
+
     const selectedItemsCount = todoItemListContext.todoItems
         .filter((todoItem) => todoItem.isBought === true)
         .length;
@@ -60,7 +58,10 @@ const GroceriesTodoToolbar = (props: GroceriesTodoToolbarProps) => {
                 [classes.highlight]: selectedItemsCount > 0,
             })}
         >
-            <GroceriesTodoToolbarMenu onPurchaseModeToggle={props.onPurchaseModeToggle} />
+            <GroceriesTodoToolbarMenu
+                currentMode={props.currentMode}
+                onPurchaseModeToggle={props.onPurchaseModeToggle} />
+
             {selectedItemsCount > 0 ? (
                 <Typography
                     className={classes.title}

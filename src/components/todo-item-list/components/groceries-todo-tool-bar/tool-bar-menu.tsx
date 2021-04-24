@@ -1,20 +1,27 @@
 import {
     FormControlLabel, IconButton, ListItemText, MenuItem, Switch,
 } from "@material-ui/core";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import MenuIcon from "@material-ui/icons/Menu";
 import { StyledMenu, useMenuController } from "../../../custom-menu";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
+import { Mode } from "../use-groceries-todo-controller";
 
-type GroceriesTodoToolbarMenuProps = {
+export type GroceriesTodoToolbarMenuProps = {
+    currentMode: Mode;
     onPurchaseModeToggle(toggle: boolean): void;
 };
+
 const GroceriesTodoToolbarMenu = (props: GroceriesTodoToolbarMenuProps) => {
     const [mode, setMode] = React.useState(false);
     const {
         open, anchorElement, openMenu, closeMenu,
     } = useMenuController();
     const todoItemListContext = useContext(TodoItemListContext);
+
+    useEffect(() => {
+        setMode(props.currentMode === Mode.PURCHASING);
+    }, [props.currentMode]);
 
     const handleChangemode = (event: any) => {
         const { checked } = event.target;
