@@ -1,6 +1,8 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { Dialog, Grid, IconButton } from "@material-ui/core";
+import {
+    Dialog, Fab, Grid,
+} from "@material-ui/core";
 import SettingsOverscanIcon from "@material-ui/icons/SettingsOverscan";
 import ProductApi from "../../../../api/ProductApi";
 import AddTodoItemForm from "../../../../pages/groceries-todo/components/AddTodoItemForm";
@@ -49,17 +51,16 @@ const AddTodoItemComponent = () => {
     };
 
     return (<>
-        <Grid container>
-            <Grid item xs={1}>
-                <IconButton onClick={() => enableScanner()}>
-                    <SettingsOverscanIcon />
-                </IconButton>
-
+        <Grid container justify="center" alignItems="center">
+            <Grid item xs>
+                <Fab color="inherit" size="medium" onClick={() => enableScanner()}>
+                    <SettingsOverscanIcon/>
+                </Fab>
                 <Dialog open={isScannerEnabled} onClose={disableScanner}>
                     <Scanner onDetected={onBarcodeDetected} />
                 </Dialog>
             </Grid>
-            <Grid item xs={11}>
+            <Grid item xs={10}>
                 <AddTodoItemForm />
             </Grid>
         </Grid>

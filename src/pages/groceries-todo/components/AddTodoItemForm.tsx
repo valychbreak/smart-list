@@ -63,7 +63,6 @@ const ProductSelect = (props: ProductSelectProps) => {
     return (<>
         <Autocomplete
             open={open}
-            size="small"
             inputValue={props.inputValue}
             onOpen={() => setOpen(true)}
             onClose={() => setOpen(false)}
@@ -79,10 +78,11 @@ const ProductSelect = (props: ProductSelectProps) => {
             renderInput={(params) => (
                 <TextField
                     {...params}
-                    label="Select product..."
-                    size="small"
+                    size="medium"
+                    placeholder="Select product..."
                     variant="standard"
                     margin="none"
+                    InputLabelProps={{ shrink: false }}
                     InputProps={{
                         ...params.InputProps,
                         endAdornment: (
@@ -133,22 +133,22 @@ const AddTodoItemForm = (props: RouteComponentProps) => {
     return (
         <TodoItemListContext.Consumer>
             {(context) => (<>
-                <form onSubmit={(e) => handleSubmit(e, context)} className="MyForm">
-                    <Grid container>
-                        <Grid item xs={5}>
+                <form onSubmit={(e) => handleSubmit(e, context)}>
+                    <Grid container spacing={1}>
+                        <Grid item xs={6}>
                             <ProductSelect
                                 inputValue={productSearchInput}
                                 setInputValue={setProductSearchInput}
                                 onProductSelect={onProductSelect}
                                 onProductCreateOptionSelect={onProductCreateOptionSelect} />
                         </Grid>
-                        <Grid item xs={3}>
+                        <Grid item xs>
                             <QuantityField
                                 defaultQuantity={1}
                                 onChange={handleQuantityFieldChange} />
                         </Grid>
-                        <Grid item xs={2}>
-                            <Button variant="contained" size="small" type="submit">Add</Button>
+                        <Grid item xs>
+                            <Button size="small" variant="outlined" type="submit">Add</Button>
                         </Grid>
                     </Grid>
                 </form>
