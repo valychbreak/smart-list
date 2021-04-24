@@ -79,9 +79,12 @@ const GroceriesTodoToolbar = (props: GroceriesTodoToolbarProps) => {
 
             {selectedItemsCount > 0 ? (
                 <Tooltip title="Hide selected">
-                    <IconButton disabled aria-label="Hide selected">
-                        <FilterListIcon />
-                    </IconButton>
+                    {/* span is required for the tool tip until IconButton is enabled again */}
+                    <span>
+                        <IconButton disabled>
+                            <FilterListIcon />
+                        </IconButton>
+                    </span>
                 </Tooltip>
             ) : (
                 <Tooltip title="Filter list">
