@@ -142,12 +142,12 @@ const AddTodoItemForm = (props: RouteComponentProps) => {
                                 onProductSelect={onProductSelect}
                                 onProductCreateOptionSelect={onProductCreateOptionSelect} />
                         </Grid>
-                        <Grid item xs={3}>
+                        <Grid item xs>
                             <QuantityField
                                 defaultQuantity={1}
                                 onChange={handleQuantityFieldChange} />
                         </Grid>
-                        <Grid item xs={2}>
+                        <Grid item xs>
                             <Button size="small" variant="outlined" type="submit">Add</Button>
                         </Grid>
                     </Grid>
