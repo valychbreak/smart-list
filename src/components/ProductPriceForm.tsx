@@ -3,7 +3,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import Product from "../entity/Product";
 import ProductPriceEntry from "../entity/ProductPriceEntry";
-import { ProductSelect } from "../pages/groceries-todo/components/AddTodoItemForm";
+import ProductSelect from "./todo-item-list/components/product-select";
 import { Store } from "./todo-item-list/types";
 
 interface ProductPriceFormFields {
