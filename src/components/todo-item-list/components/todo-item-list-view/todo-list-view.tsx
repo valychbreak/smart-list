@@ -111,6 +111,7 @@ const TodoListView: React.FC<TodoListViewProps> = ({
                         <TableCell>
                             {currencyFormat(todoItemsTotalPriceController.totalPriceByCounterparty("Auchan"))} PLN
                         </TableCell>
+                        <TableCell />
                     </TableRow>
                 </TableFooter>
             </Table>
