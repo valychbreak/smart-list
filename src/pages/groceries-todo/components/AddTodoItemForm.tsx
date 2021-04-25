@@ -21,11 +21,17 @@ interface ProductSelectProps {
     setInputValue(newValue: string): void;
     onProductSelect(selectedProduct: Product | null): void;
     onProductCreateOptionSelect(inputValue: string): void;
+
+    defaultProduct?: Product;
 }
 
 const NEW_PRODUCT = new Product("", "", "");
 
-const ProductSelect = (props: ProductSelectProps) => {
+function asProductSelectItem(product: Product): ProductSelectItem {
+    return { label: product.productFullName as string, product };
+}
+
+export const ProductSelect = (props: ProductSelectProps) => {
     const [open, setOpen] = React.useState(false);
     const [options, setOptions] = React.useState<ProductSelectItem[]>([]);
     const loading = open && options.length === 0 && props.inputValue.length > 0;
@@ -36,7 +42,7 @@ const ProductSelect = (props: ProductSelectProps) => {
         if (inputValue.length > 0) {
             const loadedProducts = await ProductApi.findMatchingBy(inputValue);
             const foundProducts: ProductSelectItem[] = loadedProducts.map((product) => (
-                { label: product.productFullName as string, product }
+                asProductSelectItem(product)
             ));
 
             foundProducts.push({ inputValue, label: `Add '${inputValue}' product`, product: NEW_PRODUCT });
@@ -64,6 +70,7 @@ const ProductSelect = (props: ProductSelectProps) => {
         <Autocomplete
             open={open}
             inputValue={props.inputValue}
+            defaultValue={props.defaultProduct ? asProductSelectItem(props.defaultProduct) : null}
             onOpen={() => setOpen(true)}
             onClose={() => setOpen(false)}
             options={options}
