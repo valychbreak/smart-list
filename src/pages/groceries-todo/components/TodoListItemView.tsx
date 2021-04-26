@@ -3,9 +3,8 @@ import {
     TableRow, TableCell, Checkbox, IconButton,
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
-import PriceData from "../../../entity/PriceData";
 import TodoItemListContext from "../context/TodoItemListContext";
-import TodoItem, { Store } from "../../../components/todo-item-list/types";
+import TodoItem, { ProductPriceData, Store } from "../../../components/todo-item-list/types";
 import CategorySelector from "../../../components/category-selector";
 import Category from "../../../entity/category";
 import UserCategoryAPI from "../../../api/UserCategoryAPI";
@@ -15,7 +14,7 @@ import GroceriesTodoStoreContext from "../../../components/todo-item-list/compon
 interface StorePriceViewProps {
     store: Store | null;
     quantity: number;
-    priceData: { [id: string]: PriceData };
+    priceData: ProductPriceData;
 }
 
 function currencyFormat(amount: number) {
@@ -23,11 +22,13 @@ function currencyFormat(amount: number) {
 }
 
 const StorePriceView = (props: StorePriceViewProps) => {
-    const { quantity } = props;
+    const { quantity, priceData } = props;
     const storeName = props.store?.name;
 
-    if (storeName && props.priceData[storeName]) {
-        return <span>{currencyFormat(props.priceData[storeName].price * quantity)} PLN</span>;
+    const storePriceData = storeName ? priceData.getCounterpartyPrice(storeName) : undefined;
+    if (storePriceData) {
+        const storePrice = storePriceData.price;
+        return <span>{currencyFormat(storePrice * quantity)} PLN</span>;
     }
     return <span>No data yet</span>;
 };
@@ -78,7 +79,7 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
                 <StorePriceView
                     store={selectedStore}
                     quantity={todoItem.quantity}
-                    priceData={todoItem.priceData.perCounterpartyPrice} />
+                    priceData={todoItem.priceData} />
             </TableCell>
             <TableCell padding="none">
                 <IconButton onClick={deleteTodoItem}>

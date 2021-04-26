@@ -5,15 +5,19 @@ import Product from "../../entity/Product";
 export class ProductPriceData {
     latestPrice: number;
 
-    perCounterpartyPrice: { [id: string]: PriceData };
+    private perCounterpartyPrice: Map<string, PriceData>;
 
     constructor() {
         this.latestPrice = 0;
-        this.perCounterpartyPrice = {};
+        this.perCounterpartyPrice = new Map();
+    }
+
+    getCounterpartyPrice(counterparty: string): PriceData | undefined {
+        return this.perCounterpartyPrice.get(counterparty);
     }
 
     setCounterpartyPrice(counterparty: string, priceData: PriceData) {
-        this.perCounterpartyPrice[counterparty] = priceData;
+        this.perCounterpartyPrice.set(counterparty, priceData);
     }
 }
 
