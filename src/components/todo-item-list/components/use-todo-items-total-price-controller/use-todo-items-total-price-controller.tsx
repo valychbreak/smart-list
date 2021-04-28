@@ -1,8 +1,7 @@
-import { useContext } from "react";
-import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
+import { useTodoItemListContext } from "../../../../pages/groceries-todo/context/TodoItemListContext";
 
 const useTodoItemsTotalPriceController = () => {
-    const todoItemListContext = useContext(TodoItemListContext);
+    const todoItemListContext = useTodoItemListContext();
 
     const totalPriceByCounterparty = (counterparty: string): number => todoItemListContext.todoItems
         .map((todoItem) => {

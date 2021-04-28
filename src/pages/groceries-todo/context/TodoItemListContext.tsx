@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React from "react";
+import React, { useContext } from "react";
 import TodoItem from "../../../components/todo-item-list/types";
 
 export type TodoItemListContextType = {
@@ -35,5 +35,7 @@ const TodoItemListContext = React.createContext<TodoItemListContextType>({
         throw new Error("No implementation");
     },
 });
+
+export const useTodoItemListContext = () => useContext(TodoItemListContext);
 
 export default TodoItemListContext;
