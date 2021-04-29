@@ -9,6 +9,7 @@ import AddTodoItemForm from "../../../../pages/groceries-todo/components/AddTodo
 import TodoItem from "../../types";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import Scanner from "../../../../Scanner";
+import TodoItemAddForm from "./todo-item-add-form";
 
 const AddTodoItemComponent = () => {
     const [isScannerEnabled, setScannerEnabled] = useState(false);
@@ -62,6 +63,9 @@ const AddTodoItemComponent = () => {
             </Grid>
             <Grid item xs={10}>
                 <AddTodoItemForm />
+            </Grid>
+            <Grid item xs={12}>
+                <TodoItemAddForm />
             </Grid>
         </Grid>
     </>);
