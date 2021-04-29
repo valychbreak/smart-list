@@ -18,8 +18,10 @@ class MockedProductApi implements ProductApi {
         this.productCache = [];
     }
 
-    findGeneralNamesBy(query: string): Promise<string[]> {
-        return Promise.resolve([]);
+    async findGeneralNamesBy(query: string): Promise<string[]> {
+        const matchingProducts = await LocalDB.findByGeneralNameOrFullName(query);
+        return matchingProducts.map((product) => product.productGeneralName)
+            .slice(0, 5);
     }
 
     findMatchingBy(query: string): Promise<Product[]> {
