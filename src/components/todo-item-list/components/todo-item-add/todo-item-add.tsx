@@ -5,7 +5,6 @@ import {
 } from "@material-ui/core";
 import SettingsOverscanIcon from "@material-ui/icons/SettingsOverscan";
 import ProductApi from "../../../../api/ProductApi";
-import AddTodoItemForm from "../../../../pages/groceries-todo/components/AddTodoItemForm";
 import TodoItem from "../../types";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import Scanner from "../../../../Scanner";
@@ -62,9 +61,6 @@ const AddTodoItemComponent = () => {
                 </Dialog>
             </Grid>
             <Grid item xs={10}>
-                <AddTodoItemForm />
-            </Grid>
-            <Grid item xs={12}>
                 <TodoItemAddForm />
             </Grid>
         </Grid>

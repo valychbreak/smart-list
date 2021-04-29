@@ -1,4 +1,4 @@
-import { Button } from "@material-ui/core";
+import { Button, Grid } from "@material-ui/core";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTodoItemListContext } from "../../../../pages/groceries-todo/context/TodoItemListContext";
@@ -37,36 +37,44 @@ const TodoItemAddForm = () => {
 
     return (
         <form onSubmit={handleSubmit(onFormSubmit)}>
-            <Controller
-                name="name"
-                control={control}
-                rules={{ required: true }}
-                defaultValue=""
-                render={({ onChange }) => (
-                    <TodoItemNameSelect
-                        loading={loading}
-                        open={open}
-                        inputValue={inputValue}
-                        options={options}
-                        setOpen={setOpen}
-                        setInputValue={setInputValue}
-                        onTodoItemNameSelect={(todoItemName) => onChange(todoItemName)}
+            <Grid container spacing={1}>
+                <Grid item xs={6}>
+                    <Controller
+                        name="name"
+                        control={control}
+                        rules={{ required: true }}
+                        defaultValue=""
+                        render={({ onChange }) => (
+                            <TodoItemNameSelect
+                                loading={loading}
+                                open={open}
+                                inputValue={inputValue}
+                                options={options}
+                                setOpen={setOpen}
+                                setInputValue={setInputValue}
+                                onTodoItemNameSelect={(todoItemName) => onChange(todoItemName)}
+                            />
+                        )}
                     />
-                )}
-            />
-            <Controller
-                name="quantity"
-                control={control}
-                rules={{ required: true }}
-                defaultValue={1}
-                render={({ onChange }) => (
-                    <QuantityField
-                        defaultQuantity={1}
-                        onChange={(newQuantity) => onChange(newQuantity)}
+                </Grid>
+                <Grid item xs>
+                    <Controller
+                        name="quantity"
+                        control={control}
+                        rules={{ required: true }}
+                        defaultValue={1}
+                        render={({ onChange }) => (
+                            <QuantityField
+                                defaultQuantity={1}
+                                onChange={(newQuantity) => onChange(newQuantity)}
+                            />
+                        )}
                     />
-                )}
-            />
-            <Button type="submit">Add</Button>
+                </Grid>
+                <Grid item xs>
+                    <Button type="submit">Add</Button>
+                </Grid>
+            </Grid>
         </form>
     );
 };
