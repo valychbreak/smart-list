@@ -17,6 +17,7 @@ const TodoItemAddForm = () => {
         open,
         inputValue,
         options,
+        loading,
         setOpen,
         setInputValue,
         clear,
@@ -43,6 +44,7 @@ const TodoItemAddForm = () => {
                 defaultValue=""
                 render={({ onChange }) => (
                     <TodoItemNameSelect
+                        loading={loading}
                         open={open}
                         inputValue={inputValue}
                         options={options}

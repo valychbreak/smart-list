@@ -10,7 +10,10 @@ function createTodoItemNameItem(name: string): TodoItemNameItem {
 describe("useTodoItemNameSelectController", () => {
     const controller = () => useTodoItemNameSelectController();
 
-    beforeEach(() => {});
+    beforeEach(() => {
+        jest.spyOn(ProductApi, "findGeneralNamesBy")
+            .mockImplementation(() => Promise.resolve([]));
+    });
 
     it("should set open", () => {
         const { result } = renderHook(controller);
@@ -30,6 +33,35 @@ describe("useTodoItemNameSelectController", () => {
         });
 
         expect(result.current.inputValue).toBe("Milk");
+    });
+
+    it("should have loading as false by default", () => {
+        const { result } = renderHook(controller);
+
+        expect(result.current.loading).toBe(false);
+    });
+
+    it("should set loading to false after loading options", async () => {
+        const { result } = renderHook(controller);
+
+        await act(async () => {
+            result.current.setInputValue("Milk");
+        });
+
+        expect(result.current.loading).toBe(false);
+    });
+
+    it("should set loading to false when there's an error in API call", async () => {
+        jest.spyOn(ProductApi, "findGeneralNamesBy")
+            .mockImplementation(() => Promise.reject(new Error()));
+
+        const { result } = renderHook(controller);
+
+        await act(async () => {
+            result.current.setInputValue("Milk");
+        });
+
+        expect(result.current.loading).toBe(false);
     });
 
     it("should load options when input value changes", async () => {

@@ -11,6 +11,7 @@ type TodoItemNameSelectProps = {
     open: boolean;
     inputValue: string;
     options: TodoItemNameItem[];
+    loading: boolean;
     setOpen(isOpened: boolean): void;
     setInputValue(newValue: string): void;
     onTodoItemNameSelect(todoItemName: string): void;
@@ -25,7 +26,7 @@ const TodoItemNameSelect = (props: TodoItemNameSelectProps) => {
         open,
         setOpen,
     } = props;
-    const loading = open && options.length === 0 && inputValue.length > 0;
+    const loading = open && props.loading;
 
     const onOptionSelect = (selectedItem: TodoItemNameItem | string | null) => {
         if (!selectedItem) {
@@ -47,6 +48,7 @@ const TodoItemNameSelect = (props: TodoItemNameSelectProps) => {
 
     return (
         <Autocomplete
+            noOptionsText="No suggestions"
             open={open}
             inputValue={inputValue}
             onOpen={() => setOpen(true)}

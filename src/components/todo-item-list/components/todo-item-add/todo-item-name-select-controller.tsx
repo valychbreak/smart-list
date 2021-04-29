@@ -13,6 +13,7 @@ const useTodoItemNameSelectController = () => {
     const [open, setOpen] = useState(false);
     const [inputValue, setInputValue] = useState("");
     const [options, setOptions] = useState<TodoItemNameItem[]>([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (inputValue === "") {
@@ -20,16 +21,24 @@ const useTodoItemNameSelectController = () => {
         }
 
         let active = true;
+        setLoading(true);
 
-        ProductApi.findGeneralNamesBy(inputValue).then((generalNames) => {
-            const loadedOptions = generalNames.map((generalName) => (
-                asTodoItemNameItem(generalName)
-            ));
+        ProductApi.findGeneralNamesBy(inputValue)
+            .then((generalNames) => {
+                const loadedOptions = generalNames.map((generalName) => (
+                    asTodoItemNameItem(generalName)
+                ));
 
-            if (active) {
-                setOptions(loadedOptions);
-            }
-        });
+                if (active) {
+                    setOptions(loadedOptions);
+                }
+            })
+            .catch(() => { setOptions([]); })
+            .finally(() => {
+                if (active) {
+                    setLoading(false);
+                }
+            });
 
         return () => {
             active = false;
@@ -46,6 +55,7 @@ const useTodoItemNameSelectController = () => {
         open,
         inputValue,
         options,
+        loading,
         setOpen,
         setInputValue,
         clear,

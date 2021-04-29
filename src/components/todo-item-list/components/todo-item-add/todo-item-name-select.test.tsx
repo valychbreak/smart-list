@@ -18,6 +18,7 @@ describe("TodoItemNameSelect", () => {
         ...overridingProps
     }: OverridingProps = {}): JSX.Element => (
         <TodoItemNameSelect
+            loading={false}
             open={false}
             setOpen={() => {}}
             inputValue={""}
