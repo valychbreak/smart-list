@@ -15,8 +15,16 @@ const useTodoItemNameSelectController = () => {
     const [options, setOptions] = useState<TodoItemNameItem[]>([]);
     const [loading, setLoading] = useState(false);
 
+    const clear = () => {
+        setInputValue("");
+        setOpen(false);
+        setLoading(false);
+        setOptions([]);
+    };
+
     useEffect(() => {
         if (inputValue === "") {
+            clear();
             return undefined;
         }
 
@@ -44,12 +52,6 @@ const useTodoItemNameSelectController = () => {
             active = false;
         };
     }, [inputValue]);
-
-    const clear = () => {
-        setInputValue("");
-        setOpen(false);
-        setOptions([]);
-    };
 
     return {
         open,

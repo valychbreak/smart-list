@@ -96,4 +96,24 @@ describe("useTodoItemNameSelectController", () => {
         expect(result.current.open).toEqual(false);
         expect(result.current.options).toEqual([]);
     });
+
+    it("should clear select field when input is cleared", async () => {
+        jest.spyOn(ProductApi, "findGeneralNamesBy")
+            .mockImplementation(() => Promise.resolve(["Milk"]));
+
+        const { result } = renderHook(controller);
+
+        await act(async () => {
+            result.current.setInputValue("Mil");
+        });
+
+        await act(async () => {
+            result.current.setInputValue("");
+        });
+
+        expect(result.current.inputValue).toEqual("");
+        expect(result.current.open).toEqual(false);
+        expect(result.current.loading).toEqual(false);
+        expect(result.current.options).toEqual([]);
+    });
 });
