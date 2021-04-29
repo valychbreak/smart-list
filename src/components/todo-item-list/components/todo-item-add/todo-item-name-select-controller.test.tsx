@@ -45,6 +45,7 @@ describe("useTodoItemNameSelectController", () => {
         expect(result.current.options).toEqual([
             createTodoItemNameItem("Milk"),
             createTodoItemNameItem("Milky"),
+            { label: "Add Mil", todoItemName: "Mil" },
         ]);
     });
 
