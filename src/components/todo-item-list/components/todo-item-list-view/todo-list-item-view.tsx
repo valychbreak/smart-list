@@ -3,13 +3,13 @@ import {
     TableRow, TableCell, Checkbox, IconButton,
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
-import TodoItemListContext from "../context/TodoItemListContext";
-import TodoItem, { ProductPriceData, Store } from "../../../components/todo-item-list/types";
-import CategorySelector from "../../../components/category-selector";
-import Category from "../../../entity/category";
-import UserCategoryAPI from "../../../api/UserCategoryAPI";
-import TodoItemQuantityAdjustmentField from "../../../components/todo-item-list/components/todo-item-quantity-adjustment-field";
-import GroceriesTodoStoreContext from "../../../components/todo-item-list/components/groceries-todo-store-context/groceries-todo-store-context";
+import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
+import TodoItem, { ProductPriceData, Store } from "../../types";
+import CategorySelector from "../../../category-selector";
+import Category from "../../../../entity/category";
+import UserCategoryAPI from "../../../../api/UserCategoryAPI";
+import TodoItemQuantityAdjustmentField from "../todo-item-quantity-adjustment-field";
+import GroceriesTodoStoreContext from "../groceries-todo-store-context/groceries-todo-store-context";
 
 interface StorePriceViewProps {
     store: Store | null;
@@ -19,6 +19,10 @@ interface StorePriceViewProps {
 
 function currencyFormat(amount: number) {
     return amount.toFixed(2);
+}
+
+function isLinkedTodoItem(todoItem: TodoItem): boolean {
+    return !!todoItem.targetProduct;
 }
 
 const StorePriceView = (props: StorePriceViewProps) => {
@@ -56,6 +60,8 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
 
     const todoItem = props.item;
 
+    const todoItemName = isLinkedTodoItem(todoItem) ? `${todoItem.generalName}*` : todoItem.generalName;
+
     return (
         <TableRow
             hover
@@ -66,11 +72,16 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
         >
             {props.showPurchaseAction
                 && <TableCell padding="none">
-                    <Checkbox checked={isPurchased} onChange={() => togglePurchase(!isPurchased)} inputProps={{ "aria-labelledby": "todo-item-name" }}/>
+                    <Checkbox
+                        data-test-id="todo-item-purchase-checkbox"
+                        checked={isPurchased}
+                        onChange={() => togglePurchase(!isPurchased)}
+                        inputProps={{ "aria-labelledby": "todo-item-name" }}
+                    />
                 </TableCell>
             }
-            <TableCell component="th" id="todo-item-name" scope="row">
-                {todoItem.generalName}
+            <TableCell data-test-id="todo-item-name" component="th" id="todo-item-name" scope="row">
+                {todoItemName}
             </TableCell>
             <TableCell>
                 <TodoItemQuantityAdjustmentField todoItem={todoItem} />

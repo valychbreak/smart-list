@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import {
     makeStyles, SortDirection, Table, TableBody, TableCell, TableContainer, TableFooter, TableRow,
 } from "@material-ui/core";
-import TodoListItemView from "../../../../pages/groceries-todo/components/TodoListItemView";
+import TodoListItemView from "./todo-list-item-view";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import "./todo-list-view.css";
 import { TodoItemListHeader } from "./todo-list-table-head";
