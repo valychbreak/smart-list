@@ -27,7 +27,7 @@ const useTodoItemNameSelectController = () => {
             ));
 
             if (active) {
-                setOptions([...loadedOptions, asTodoItemNameItem(inputValue, `Add ${inputValue}`)]);
+                setOptions(loadedOptions);
             }
         });
 

@@ -27,12 +27,22 @@ const TodoItemNameSelect = (props: TodoItemNameSelectProps) => {
     } = props;
     const loading = open && options.length === 0 && inputValue.length > 0;
 
-    const onOptionSelect = (selectedItem: TodoItemNameItem | null) => {
+    const onOptionSelect = (selectedItem: TodoItemNameItem | string | null) => {
         if (!selectedItem) {
             return;
         }
 
-        onTodoItemNameSelect(selectedItem.todoItemName);
+        if ((selectedItem as TodoItemNameItem).todoItemName) {
+            const { todoItemName } = selectedItem as TodoItemNameItem;
+            onTodoItemNameSelect(todoItemName);
+        } else {
+            onTodoItemNameSelect(selectedItem as string);
+        }
+    };
+
+    const onInputChange = (value: string) => {
+        setInputValue(value);
+        onOptionSelect(value);
     };
 
     return (
@@ -50,13 +60,13 @@ const TodoItemNameSelect = (props: TodoItemNameSelectProps) => {
                 onOptionSelect(newValue);
             }}
             onInputChange={(event, value) => {
-                setInputValue(value);
+                onInputChange(value);
             }}
             renderInput={(params) => (
                 <TextField
                     {...params}
                     size="medium"
-                    placeholder="Type few letters..."
+                    placeholder="What to buy?"
                     variant="standard"
                     margin="none"
                     InputLabelProps={{ shrink: false }}
