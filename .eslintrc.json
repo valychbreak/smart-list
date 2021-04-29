@@ -9,6 +9,7 @@
   "settings": {},
   "rules": {
     "import/extensions": 0,
+    "@typescript-eslint/comma-dangle": 0,
     "@typescript-eslint/indent": ["error", 4],
     "@typescript-eslint/quotes": ["error", "double"]
   }

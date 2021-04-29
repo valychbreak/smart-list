@@ -62,11 +62,20 @@ class TodoItem {
         return todoItem;
     }
 
+    static fromName(name: string, quantity: number): TodoItem {
+        const todoItem = new TodoItem(Date.now(), name);
+        todoItem.quantity = quantity;
+        todoItem.isBought = false;
+        return todoItem;
+    }
+
     static from(json: any): TodoItem {
         const todoItem = new TodoItem(json.id, json.generalName);
 
         todoItem.quantity = json.quantity;
-        todoItem.targetProduct = Product.from(json.targetProduct);
+        if (json.targetProduct) {
+            todoItem.targetProduct = Product.from(json.targetProduct);
+        }
         todoItem.isBought = json.isBought;
         return todoItem;
     }
