@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { renderHook, WrapperComponent } from "@testing-library/react-hooks";
+import { renderHook, WrapperComponent, act } from "@testing-library/react-hooks";
 import React from "react";
 import {
     anyOfClass, instance, mock, reset, verify, when,
 } from "ts-mockito";
-import { act } from "react-dom/test-utils";
 import { mocked } from "ts-jest/utils";
 import { waitFor } from "@testing-library/react";
 import TodoItemListContext, { TodoItemListContextType } from "../../../../pages/groceries-todo/context/TodoItemListContext";

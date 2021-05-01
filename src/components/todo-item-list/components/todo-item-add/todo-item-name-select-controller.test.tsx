@@ -15,20 +15,20 @@ describe("useTodoItemNameSelectController", () => {
             .mockImplementation(() => Promise.resolve([]));
     });
 
-    it("should set open", () => {
+    it("should set open", async () => {
         const { result } = renderHook(controller);
 
-        act(() => {
+        await act(async () => {
             result.current.setOpen(true);
         });
 
         expect(result.current.open).toBe(true);
     });
 
-    it("should set input value", () => {
+    it("should set input value", async () => {
         const { result } = renderHook(controller);
 
-        act(() => {
+        await act(async () => {
             result.current.setInputValue("Milk");
         });
 
