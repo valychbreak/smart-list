@@ -53,7 +53,7 @@ const AddTodoItemComponent = () => {
     return (<>
         <Grid container justify="center" alignItems="center">
             <Grid item xs>
-                <Fab color="inherit" size="medium" onClick={() => enableScanner()}>
+                <Fab data-test-id="open-scanner-btn" color="inherit" size="medium" onClick={() => enableScanner()}>
                     <SettingsOverscanIcon/>
                 </Fab>
                 <Dialog open={isScannerEnabled} onClose={disableScanner}>
