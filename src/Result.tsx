@@ -1,6 +1,11 @@
 import React from "react";
+import { BarcodeScanResult } from "./components/barcode-scanner/types";
 
-const Result: React.FC<any> = (props: any) => {
+type ResultProps = {
+    result: BarcodeScanResult;
+};
+
+const Result: React.FC<ResultProps> = (props: ResultProps) => {
     const { result } = props;
 
     if (!result) {
@@ -8,7 +13,7 @@ const Result: React.FC<any> = (props: any) => {
     }
     return (
         <li >
-            {result.codeResult.code} [{result.codeResult.format}]
+            {result.code} [{result.format}]
         </li>
     );
 };

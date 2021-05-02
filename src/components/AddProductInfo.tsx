@@ -2,6 +2,7 @@ import { Dialog } from "@material-ui/core";
 import { useState } from "react";
 import Product from "../entity/Product";
 import Scanner from "../Scanner";
+import { BarcodeScanResult } from "./barcode-scanner/types";
 import ProductForm from "./ProductForm";
 
 interface AddProductInfoPros {
@@ -12,9 +13,9 @@ const INITIAL_STAGE = 0;
 
 const AddProductInfo = (props: AddProductInfoPros) => {
     const [stage, setStage] = useState(INITIAL_STAGE);
-    const [barcodeResult, setBarcodeResult] = useState<any>();
+    const [barcodeResult, setBarcodeResult] = useState<BarcodeScanResult>();
 
-    const onBarcodeDetected = (result: any) => {
+    const onBarcodeDetected = (result: BarcodeScanResult) => {
         setBarcodeResult(result);
         setStage(2);
     };
@@ -28,6 +29,9 @@ const AddProductInfo = (props: AddProductInfoPros) => {
         setStage(INITIAL_STAGE);
     };
 
+    const barcode: string = barcodeResult?.code || "";
+    const barcodeType: string = barcodeResult?.format || "";
+
     return (
         <>
             <button onClick={() => setStage(1)}>Scan barcode</button>
@@ -38,8 +42,8 @@ const AddProductInfo = (props: AddProductInfoPros) => {
                 <Scanner onDetected={onBarcodeDetected} />
             </Dialog>
             {stage === 2 && (
-                <ProductForm productBarcode={barcodeResult?.codeResult?.code}
-                    productBarcodeType={barcodeResult?.codeResult?.format}
+                <ProductForm productBarcode={barcode}
+                    productBarcodeType={barcodeType}
                     onProductSubmit={onProductSubmit}/>
             )}
         </>

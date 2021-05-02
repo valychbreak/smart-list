@@ -63,7 +63,7 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
                 <Dialog
                     open={purchasingController.openScanner}
                     onClose={() => purchasingController.disableScanner()}>
-                    <Scanner onDetected={(result) => purchasingController.onBarcodeScan(result)} />
+                    <Scanner onDetected={purchasingController.onBarcodeScan} />
                 </Dialog>
             </Paper>
         </Container>

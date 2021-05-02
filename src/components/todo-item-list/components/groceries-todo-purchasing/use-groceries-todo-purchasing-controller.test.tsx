@@ -82,7 +82,7 @@ describe("useGroceriesTodoPurchasingController", () => {
 
             // when
             act(() => {
-                result.current.onBarcodeScanAdapter(createScanResult("12345678", "ean8"));
+                result.current.onBarcodeScan(createScanResult("12345678", "ean8"));
             });
 
             // then
@@ -100,7 +100,7 @@ describe("useGroceriesTodoPurchasingController", () => {
 
             // when
             act(() => {
-                result.current.onBarcodeScanAdapter(scannedResult);
+                result.current.onBarcodeScan(scannedResult);
             });
 
             // then
@@ -120,7 +120,7 @@ describe("useGroceriesTodoPurchasingController", () => {
 
             // when
             act(() => {
-                result.current.onBarcodeScanAdapter(scannedResult);
+                result.current.onBarcodeScan(scannedResult);
             });
 
             // then
@@ -128,18 +128,6 @@ describe("useGroceriesTodoPurchasingController", () => {
                 expect(result.current.openAddProductConfirmation).toBeTruthy();
                 expect(result.current.productToAdd).toBe(product);
             }));
-        });
-
-        test("should not match null barcode", () => {
-            // given
-            const todoItem = createTodoItem("87654321", "ean8");
-            const { result } = renderGroceriesTodoPurchasingController([todoItem]);
-
-            // when
-            result.current.onBarcodeScanAdapter(createScanResult(null, "ean8"));
-
-            // then
-            verify(todoItemListMockedContext.todoItems).never();
         });
 
         test.each`
@@ -161,27 +149,13 @@ describe("useGroceriesTodoPurchasingController", () => {
             // when
             act(() => {
                 result.current.enableScanner();
-                result.current.onBarcodeScanAdapter(createScanResult(scannedBarcode, "ean8"));
+                result.current.onBarcodeScan(createScanResult(scannedBarcode, "ean8"));
             });
 
             // then
             await act(() => waitFor(() => {
                 expect(result.current.openScanner).toBeFalsy();
             }));
-        });
-
-        test("should not disable scanner when barcode is null", () => {
-            // given
-            const { result } = renderGroceriesTodoPurchasingController([]);
-
-            // when
-            act(() => {
-                result.current.enableScanner();
-                result.current.onBarcodeScanAdapter(createScanResult(null, "ean8"));
-            });
-
-            // then
-            expect(result.current.openScanner).toBeTruthy();
         });
     });
 });
@@ -207,7 +181,7 @@ function createProduct(generalName: string) {
     return instance(mockedProduct);
 }
 
-function createScanResult(barcode: string | null, barcodeType: string): BarcodeScanResult {
+function createScanResult(barcode: string, barcodeType: string): BarcodeScanResult {
     return { code: barcode, format: barcodeType };
 }
 

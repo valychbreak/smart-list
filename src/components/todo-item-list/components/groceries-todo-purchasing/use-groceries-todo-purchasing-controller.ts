@@ -1,4 +1,3 @@
-import { QuaggaJSResultObject } from "@ericblade/quagga2";
 import { useContext, useState } from "react";
 import ProductApi from "../../../../api/ProductApi";
 import Product from "../../../../entity/Product";
@@ -34,11 +33,7 @@ const useGroceriesTodoPurchasingController = () => {
         }
     }
 
-    const onBarcodeScanAdapter = (result: BarcodeScanResult) => {
-        if (result.code === null) {
-            return;
-        }
-
+    const onBarcodeScan = (result: BarcodeScanResult) => {
         disableScanner();
 
         const foundItem: TodoItem | undefined = todoItemListContext.todoItems.find((todoItem) => {
@@ -63,13 +58,6 @@ const useGroceriesTodoPurchasingController = () => {
             });
     };
 
-    const onBarcodeScan = (result: QuaggaJSResultObject) => {
-        onBarcodeScanAdapter({
-            code: result.codeResult.code,
-            format: result.codeResult.format,
-        });
-    };
-
     function addPurchasedProduct(product: Product) {
         const newItem = TodoItem.fromProduct(product);
         todoItemListContext.addItem(newItem);
@@ -90,7 +78,6 @@ const useGroceriesTodoPurchasingController = () => {
         toggleTodoItemPurchaseStatus,
         onPriceSubmissionClose: cancelAddingPrice,
         onBarcodeScan,
-        onBarcodeScanAdapter,
 
         addPurchasedProduct,
 

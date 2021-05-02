@@ -3,6 +3,7 @@ import td from "testdouble";
 import ProductApi from "../../../../api/ProductApi";
 import Product from "../../../../entity/Product";
 import * as TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
+import { BarcodeScanResult } from "../../../barcode-scanner/types";
 import TodoItem from "../../types";
 import useTodoItemAddController from "./todo-item-add-controller";
 
@@ -12,9 +13,9 @@ const mockProduct = (generalName: string): Product => {
     return product;
 };
 
-const scanResult = (barcode: string, barcodeType: string) => ({
-    codeResult: { code: barcode, format: barcodeType },
-});
+const scanResult = (barcode: string, barcodeType: string): BarcodeScanResult => (
+    { code: barcode, format: barcodeType }
+);
 
 const barcodeScanResult = scanResult("12345678", "ean8");
 

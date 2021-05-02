@@ -26,7 +26,7 @@ const useTodoItemAddController = () => {
         todoItemListContext.addItem(todoItem);
     };
 
-    const onBarcodeDetected = (result: any) => {
+    const onBarcodeDetected = (result: BarcodeScanResult) => {
         // Before scanner is unmounted, it still able to trigger barcodes detection.
         // Making sure that we trigger scan only once.
         if (!isScannerEnabled) {
@@ -35,8 +35,8 @@ const useTodoItemAddController = () => {
 
         disableScanner();
 
-        const barcode = result.codeResult?.code;
-        const barcodeType = result.codeResult?.format;
+        const barcode = result.code;
+        const barcodeType = result.format;
 
         if (barcode && barcodeType) {
             ProductApi.findByBarcode(barcode, barcodeType).then((product) => {

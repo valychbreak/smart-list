@@ -1,15 +1,25 @@
 import React, { useEffect, useState } from "react";
-import Quagga from "@ericblade/quagga2";
+import Quagga, { QuaggaJSResultObject } from "@ericblade/quagga2";
+import { BarcodeScanResult } from "./components/barcode-scanner/types";
 
 type ScannerProps = {
-    onDetected(result: any): void;
+    onDetected(result: BarcodeScanResult): void;
 };
 
 const Scanner: React.FC<ScannerProps> = (props: ScannerProps) => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    function onBarcodeDetected(result: any) {
-        props.onDetected(result);
+    function onBarcodeDetected(result: QuaggaJSResultObject) {
+        const { codeResult } = result;
+
+        if (!codeResult.code) {
+            return;
+        }
+
+        props.onDetected({
+            code: codeResult.code,
+            format: codeResult.format
+        });
     }
 
     useEffect(() => {
