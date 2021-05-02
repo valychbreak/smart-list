@@ -1,7 +1,6 @@
 import { Button, Grid } from "@material-ui/core";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useTodoItemListContext } from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import QuantityField from "../../../quantity-field";
 import TodoItem from "../../types";
 import TodoItemNameSelect from "./todo-item-name-select";
@@ -12,7 +11,13 @@ type TodoItemAddFormFields = {
     quantity: number;
 };
 
-const TodoItemAddForm = () => {
+type TodoItemAddFormProps = {
+    onTodoItemSubmit(todoItem: TodoItem): void;
+};
+
+const TodoItemAddForm = (props: TodoItemAddFormProps) => {
+    const { onTodoItemSubmit } = props;
+
     const {
         open,
         inputValue,
@@ -25,12 +30,10 @@ const TodoItemAddForm = () => {
 
     const { control, handleSubmit } = useForm<TodoItemAddFormFields>();
 
-    const { addItem } = useTodoItemListContext();
-
     const onFormSubmit = (formData: TodoItemAddFormFields) => {
         const { name, quantity } = formData;
         if (name !== "") {
-            addItem(TodoItem.fromName(name, quantity));
+            onTodoItemSubmit(TodoItem.fromName(name, quantity));
             clear();
         }
     };

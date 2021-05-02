@@ -23,6 +23,10 @@ const AddTodoItemComponent = () => {
         setScannerEnabled(false);
     };
 
+    const addTodoItem = (todoItem: TodoItem) => {
+        todoItemListContext.addItem(todoItem);
+    };
+
     const onBarcodeDetected = (result: any) => {
         // Before scanner is unmounted, it still able to trigger barcodes detection.
         // Making sure that we trigger scan only once.
@@ -44,7 +48,7 @@ const AddTodoItemComponent = () => {
                     }
                 } else {
                     const newItem = TodoItem.fromProduct(product);
-                    todoItemListContext.addItem(newItem);
+                    addTodoItem(newItem);
                 }
             });
         }
@@ -61,7 +65,7 @@ const AddTodoItemComponent = () => {
                 </Dialog>
             </Grid>
             <Grid item xs={10}>
-                <TodoItemAddForm />
+                <TodoItemAddForm onTodoItemSubmit={addTodoItem} />
             </Grid>
         </Grid>
     </>);

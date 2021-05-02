@@ -6,7 +6,7 @@ import TodoItemAddForm from "./todo-item-add-form";
 import TodoItemNameSelect from "./todo-item-name-select";
 
 describe("TodoItemAddForm", () => {
-    const todoItemAddForm = (): JSX.Element => <TodoItemAddForm />;
+    const todoItemAddForm = (): JSX.Element => <TodoItemAddForm onTodoItemSubmit={() => {}}/>;
 
     it("has add button", () => {
         const wrapper = shallow(todoItemAddForm());
