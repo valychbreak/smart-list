@@ -1,13 +1,18 @@
 import { useState } from "react";
-import { useHistory } from "react-router-dom";
 import ProductApi from "../../../../api/ProductApi";
 import TodoItem from "../../types";
 import { useTodoItemListContext } from "../../../../pages/groceries-todo/context/TodoItemListContext";
+import { BarcodeScanResult } from "../../../barcode-scanner/types";
 
 const useTodoItemAddController = () => {
     const [isScannerEnabled, setScannerEnabled] = useState(false);
+    const [openNewProductDialog, setOpenNewProductDialog] = useState(false);
+    const [
+        lastBarcodeScanResult,
+        setBarcodeScanResult,
+    ] = useState<BarcodeScanResult | null>(null);
+
     const todoItemListContext = useTodoItemListContext();
-    const history = useHistory();
 
     const enableScanner = () => {
         setScannerEnabled(true);
@@ -36,10 +41,11 @@ const useTodoItemAddController = () => {
         if (barcode && barcodeType) {
             ProductApi.findByBarcode(barcode, barcodeType).then((product) => {
                 if (product == null) {
-                    // eslint-disable-next-line no-alert
-                    if (window.confirm(`Scanned barcode  ${barcode} (${barcodeType}) does not exist in our database. \nDo you want to go to 'Add new item' page?`)) {
-                        history.push("new-product");
-                    }
+                    setBarcodeScanResult({
+                        code: barcode,
+                        format: barcodeType,
+                    });
+                    setOpenNewProductDialog(true);
                 } else {
                     const newItem = TodoItem.fromProduct(product);
                     addTodoItem(newItem);
@@ -50,10 +56,13 @@ const useTodoItemAddController = () => {
 
     return {
         openScanner: isScannerEnabled,
+        openNewProductDialog,
+        lastBarcodeScanResult,
         enableScanner,
         disableScanner,
         onBarcodeDetected,
         addTodoItem,
+        setOpenNewProductDialog,
     };
 };
 

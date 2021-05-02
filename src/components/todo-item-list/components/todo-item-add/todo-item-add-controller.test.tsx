@@ -20,6 +20,16 @@ const barcodeScanResult = scanResult("12345678", "ean8");
 
 describe("useTodoItemAddController", () => {
     const controller = () => useTodoItemAddController();
+    const renderController = (enableScanner: boolean = false) => {
+        const wrapper = renderHook(() => controller());
+
+        if (enableScanner) {
+            act(() => wrapper.result.current.enableScanner());
+        }
+
+        return wrapper;
+    };
+
     let todoItemListContext: TodoItemListContext.TodoItemListContextType;
 
     beforeEach(() => {
@@ -32,7 +42,7 @@ describe("useTodoItemAddController", () => {
     });
 
     it("should enable scanner", () => {
-        const { result } = renderHook(() => controller());
+        const { result } = renderController();
 
         act(() => result.current.enableScanner());
 
@@ -40,7 +50,7 @@ describe("useTodoItemAddController", () => {
     });
 
     it("should disable scanner", () => {
-        const { result } = renderHook(() => controller());
+        const { result } = renderController();
 
         act(() => {
             result.current.enableScanner();
@@ -55,11 +65,7 @@ describe("useTodoItemAddController", () => {
             Promise.resolve(null)
         );
 
-        const { result } = renderHook(() => controller());
-
-        act(() => {
-            result.current.enableScanner();
-        });
+        const { result } = renderController(true);
 
         await act(async () => {
             result.current.onBarcodeDetected(barcodeScanResult);
@@ -70,7 +76,7 @@ describe("useTodoItemAddController", () => {
     });
 
     it("should add todo item to context", async () => {
-        const { result } = renderHook(() => controller());
+        const { result } = renderController();
 
         const todoItem = td.object<TodoItem>();
         act(() => {
@@ -88,11 +94,7 @@ describe("useTodoItemAddController", () => {
             Promise.resolve(product)
         );
 
-        const { result } = renderHook(() => controller());
-
-        act(() => {
-            result.current.enableScanner();
-        });
+        const { result } = renderController(true);
 
         await act(async () => {
             result.current.onBarcodeDetected(barcodeScanResult);
@@ -104,5 +106,19 @@ describe("useTodoItemAddController", () => {
             )
         );
         expect(result.current.openScanner).toBe(false);
+    });
+
+    it("should open new product dialog when product not found after scanning a barcode", async () => {
+        jest.spyOn(ProductApi, "findByBarcode").mockReturnValue(
+            Promise.resolve(null)
+        );
+
+        const { result } = renderController(true);
+
+        await act(async () => {
+            result.current.onBarcodeDetected(barcodeScanResult);
+        });
+
+        expect(result.current.openNewProductDialog).toBe(true);
     });
 });
