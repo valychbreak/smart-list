@@ -1,5 +1,6 @@
 import { Button, FormGroup, Grid, Link, makeStyles, Select, Typography } from "@material-ui/core";
 import MenuItem from "@material-ui/core/MenuItem";
+import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import { BarcodeScanResult } from "../../../barcode-scanner/types";
@@ -57,7 +58,9 @@ const SelectTodoItemForProduct = (props: SelectTodoItemForProductProps) => {
                     defaultValue={0}
                     control={control}
                 >
-                    <MenuItem value={0}>Please select...</MenuItem>
+                    <MenuItem value={0} disabled>
+                        Please select...
+                    </MenuItem>
 
                     {todoItems.map((todoItem) => (
                         <MenuItem key={todoItem.id} value={todoItem.id}>
