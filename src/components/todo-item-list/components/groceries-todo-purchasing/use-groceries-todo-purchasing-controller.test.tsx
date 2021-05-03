@@ -231,7 +231,7 @@ function createScanResult(barcode: string, barcodeType: string = "ean8"): Barcod
 }
 
 function createTodoItem(barcode: string, barcodeType: string): TodoItem {
-    const todoItem = new TodoItem(1, "item");
+    const todoItem = TodoItem.createTodoItem(1, "item");
     const mockedProduct = mock(Product);
     when(mockedProduct.productBarcode).thenReturn(barcode);
     when(mockedProduct.productBarcodeType).thenReturn(barcodeType);

@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { useHistory } from "react-router-dom";
 import {
     Button, Container, Dialog, makeStyles, Paper,
 } from "@material-ui/core";
@@ -29,19 +28,10 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
         todoItems,
         linkScannedProductTo
     } = purchasingController;
-    const history = useHistory();
 
     useEffect(() => {
-        const scannedResult = purchasingController.scannedProductResult;
         const { productToAdd } = purchasingController;
-        if (purchasingController.openAddNewProductForm && scannedResult !== null) {
-            // eslint-disable-next-line no-alert
-            if (window.confirm(`There is no product with barcode ${scannedResult.code} in the list and in database.\nDo you want to go to 'Add new item' page?`)) {
-                history.push("new-product");
-            } else {
-                purchasingController.dismissSubmitingNewProduct();
-            }
-        } else if (purchasingController.openAddProductConfirmation && productToAdd !== null) {
+        if (purchasingController.openAddProductConfirmation && productToAdd !== null) {
             // eslint-disable-next-line no-alert
             const addingProductConfirmed = window.confirm(`${productToAdd.productFullName} wasn't added to the list.\n Do you want to add it and mark as purchased?`);
             if (addingProductConfirmed) {

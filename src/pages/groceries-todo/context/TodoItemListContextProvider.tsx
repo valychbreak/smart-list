@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import ProductApi from "../../../api/ProductApi";
 import ProductPriceApi from "../../../api/ProductPriceApi";
 import StoreApi from "../../../api/StoreApi";
 import TodoProductItemsApi from "../../../api/TodoProductItemsApi";
 import TodoItem from "../../../components/todo-item-list/types";
+import Product from "../../../entity/Product";
 import TodoItemListContext from "./TodoItemListContext";
 
 async function enrichTodoItem(item: TodoItem): Promise<void> {
@@ -99,6 +101,19 @@ const TodoItemListContextProvider = (
         });
     };
 
+    const linkTodoItem = async (todoItem: TodoItem, product: Product) => {
+        const savedProduct = await ProductApi.saveProduct(product);
+        const updatedTodoItem = todoItem.clone();
+        updatedTodoItem.targetProduct = savedProduct;
+        TodoProductItemsApi.update(updatedTodoItem);
+
+        const replacedTodoItems = todoItems.map((existingTodoItem) => (
+            existingTodoItem.id === todoItem.id ? todoItem : existingTodoItem
+        ));
+
+        setTodoItems(replacedTodoItems);
+    };
+
     const toggleItemPurchased = (item: TodoItem, toggle: boolean) => {
         // eslint-disable-next-line no-param-reassign
         item.isBought = toggle;
@@ -113,7 +128,13 @@ const TodoItemListContextProvider = (
 
     return (
         <TodoItemListContext.Provider value={{
-            todoItems, addItem, removeItem, toggleItemPurchased, updateItemQuantity, clearItems,
+            todoItems,
+            addItem,
+            removeItem,
+            linkTodoItem,
+            toggleItemPurchased,
+            updateItemQuantity,
+            clearItems,
         }}>
             {props.children}
         </TodoItemListContext.Provider>

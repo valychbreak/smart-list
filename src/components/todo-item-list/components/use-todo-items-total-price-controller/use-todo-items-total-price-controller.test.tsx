@@ -8,7 +8,7 @@ import useTodoItemsTotalPriceController from "./use-todo-items-total-price-contr
 const todoItemListMockedContext = mock<Context.TodoItemListContextType>();
 
 function createTodoItem(barcode: string, barcodeType: string): TodoItem {
-    const todoItem = new TodoItem(1, "item");
+    const todoItem = TodoItem.createTodoItem(1, "item");
     const mockedProduct = mock(Product);
     when(mockedProduct.productBarcode).thenReturn(barcode);
     when(mockedProduct.productBarcodeType).thenReturn(barcodeType);
