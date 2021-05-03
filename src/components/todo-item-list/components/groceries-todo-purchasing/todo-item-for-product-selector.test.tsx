@@ -65,7 +65,7 @@ describe("SelectTodoItemForProduct", () => {
             selectTodoItemForProduct({ todoItems: [todoItem] })
         );
 
-        const milkOption = wrapper.find("option[value=1]");
+        const milkOption = wrapper.find("[value=1]");
         expect(milkOption.exists()).toBe(true);
         expect(milkOption.text()).toBe("Milk");
     });

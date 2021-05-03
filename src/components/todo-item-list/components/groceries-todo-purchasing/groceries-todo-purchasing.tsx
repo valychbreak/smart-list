@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import {
-    Button, Container, Dialog, makeStyles, Paper,
+    Button, Container, Dialog, DialogActions, DialogContent,
+    DialogContentText,
+    DialogTitle, makeStyles, Paper, Typography,
 } from "@material-ui/core";
 import SettingsOverscanIcon from "@material-ui/icons/SettingsOverscan";
 import Scanner from "../../../../Scanner";
@@ -8,6 +10,7 @@ import TodoListView from "../todo-item-list-view";
 import TodoItemPriceSubmitDialog from "../todo-item-price-submit-dialog";
 import useGroceriesTodoPurchasingController from "./use-groceries-todo-purchasing-controller";
 import SelectTodoItemForProduct from "./todo-item-for-product-selector";
+import TodoItem from "../../types";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -26,7 +29,9 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
     const {
         openAddNewProductForm,
         todoItems,
-        linkScannedProductTo
+        scannedProductResult,
+        linkScannedProductTo,
+        dismissSubmitingNewProduct,
     } = purchasingController;
 
     useEffect(() => {
@@ -42,12 +47,35 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
         }
     }, [purchasingController.scannedProductResult, purchasingController.productToAdd]);
 
+    const onTodoItemSubmit = (todoItem: TodoItem) => {
+        linkScannedProductTo(todoItem);
+        dismissSubmitingNewProduct();
+    };
+
+    const closeNewProductDialog = () => {
+        dismissSubmitingNewProduct();
+    };
+
     return (<>
         <Dialog open={openAddNewProductForm}>
-            <SelectTodoItemForProduct
-                todoItems={todoItems}
-                onTodoItemSubmit={(todoItem) => linkScannedProductTo(todoItem)}
-            />
+            <DialogTitle>
+                New product
+            </DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    {/* eslint-disable-next-line max-len */}
+                    Scanned barcode {scannedProductResult?.code} was not found in our DB.<br />
+                    Follow steps below to add a new product.
+                </DialogContentText>
+                <Typography variant="inherit"></Typography>
+                <SelectTodoItemForProduct
+                    todoItems={todoItems}
+                    onTodoItemSubmit={onTodoItemSubmit}
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={closeNewProductDialog}>Cancel</Button>
+            </DialogActions>
         </Dialog>
         <TodoItemPriceSubmitDialog open={purchasingController.openPriceSubmission}
             selectedItem={purchasingController.selectedItem}
