@@ -8,6 +8,7 @@ import Scanner from "../../../../Scanner";
 import TodoListView from "../todo-item-list-view";
 import TodoItemPriceSubmitDialog from "../todo-item-price-submit-dialog";
 import useGroceriesTodoPurchasingController from "./use-groceries-todo-purchasing-controller";
+import SelectTodoItemForProduct from "./todo-item-for-product-selector";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -23,6 +24,11 @@ const useStyles = makeStyles((theme) => ({
 const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
     const classes = useStyles();
     const purchasingController = useGroceriesTodoPurchasingController();
+    const {
+        openAddNewProductForm,
+        todoItems,
+        linkScannedProductTo
+    } = purchasingController;
     const history = useHistory();
 
     useEffect(() => {
@@ -47,6 +53,12 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
     }, [purchasingController.scannedProductResult, purchasingController.productToAdd]);
 
     return (<>
+        <Dialog open={openAddNewProductForm}>
+            <SelectTodoItemForProduct
+                todoItems={todoItems}
+                onTodoItemSubmit={(todoItem) => linkScannedProductTo(todoItem)}
+            />
+        </Dialog>
         <TodoItemPriceSubmitDialog open={purchasingController.openPriceSubmission}
             selectedItem={purchasingController.selectedItem}
             handleClose={purchasingController.onPriceSubmissionClose} />

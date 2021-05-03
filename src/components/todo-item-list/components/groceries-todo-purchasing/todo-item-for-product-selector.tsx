@@ -10,7 +10,7 @@ type FormFields = {
 };
 
 type SelectTodoItemForProductProps = {
-    barcodeScanResult: BarcodeScanResult;
+    barcodeScanResult?: BarcodeScanResult;
     todoItems: TodoItem[];
     onTodoItemSubmit(todoItem: TodoItem): void;
 };

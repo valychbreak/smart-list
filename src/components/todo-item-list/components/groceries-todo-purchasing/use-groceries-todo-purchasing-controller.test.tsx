@@ -21,6 +21,7 @@ const todoItemListMockedContext = mock<TodoItemListContextType>();
 describe("useGroceriesTodoPurchasingController", () => {
     beforeEach(() => {
         ProductApiMocked.findByBarcode.mockReset();
+        ProductApiMocked.findByBarcode.mockResolvedValue(null);
         reset(todoItemListMockedContext);
     });
 
@@ -71,6 +72,29 @@ describe("useGroceriesTodoPurchasingController", () => {
             verify(todoItemListMockedContext.addItem(anyOfClass(TodoItem))).once();
             expect(result.current.openPriceSubmission).toBeTruthy();
             expect(result.current.selectedItem?.targetProduct).toBe(product);
+        });
+    });
+
+    describe("linkScannedProductTo", () => {
+        test("should link scanned result to todo item", async () => {
+            // given
+            const { result } = renderGroceriesTodoPurchasingController([]);
+            const scanResult = createScanResult("12345678");
+            const todoItem = createTodoItem("1234567", "ean8");
+
+            // when
+            await act(async () => {
+                result.current.onBarcodeScan(scanResult);
+            });
+
+            act(() => {
+                result.current.linkScannedProductTo(todoItem);
+            });
+
+            // then
+            verify(
+                todoItemListMockedContext.linkTodoItem(anyOfClass(TodoItem), anyOfClass(Product))
+            ).once();
         });
     });
 
@@ -181,7 +205,7 @@ function createProduct(generalName: string) {
     return instance(mockedProduct);
 }
 
-function createScanResult(barcode: string, barcodeType: string): BarcodeScanResult {
+function createScanResult(barcode: string, barcodeType: string = "ean8"): BarcodeScanResult {
     return { code: barcode, format: barcodeType };
 }
 

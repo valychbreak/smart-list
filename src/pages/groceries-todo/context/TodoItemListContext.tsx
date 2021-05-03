@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useContext } from "react";
 import TodoItem from "../../../components/todo-item-list/types";
+import Product from "../../../entity/Product";
 
 export type TodoItemListContextType = {
     todoItems: TodoItem[];
 
     addItem: (item: TodoItem) => void;
     removeItem: (item: TodoItem) => void;
+    linkTodoItem: (item: TodoItem, product: Product) => void;
     toggleItemPurchased: (item: TodoItem, toggle: boolean) => void;
     updateItemQuantity: (item: TodoItem, quantity: number) => void;
     clearItems: () => void;
@@ -20,6 +22,10 @@ const TodoItemListContext = React.createContext<TodoItemListContextType>({
     },
 
     removeItem: (item: TodoItem) => {
+        throw new Error("No implementation");
+    },
+
+    linkTodoItem: () => {
         throw new Error("No implementation");
     },
 

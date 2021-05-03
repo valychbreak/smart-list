@@ -64,7 +64,19 @@ const useGroceriesTodoPurchasingController = () => {
         toggleTodoItemPurchaseStatus(newItem, true);
     }
 
+    function linkScannedProductTo(todoItem: TodoItem) {
+        if (!notExistingProductScanResult.value) {
+            throw new Error("Scan result is empty");
+        }
+
+        const { code, format } = notExistingProductScanResult.value;
+        const product = new Product(todoItem.generalName, code, format);
+        todoItemListContext.linkTodoItem(todoItem, product);
+    }
+
     return {
+        todoItems: todoItemListContext.todoItems,
+
         openScanner: isScanning,
         openPriceSubmission: purchasedTodoItem.isSet,
         selectedItem: purchasedTodoItem.value,
@@ -86,6 +98,8 @@ const useGroceriesTodoPurchasingController = () => {
 
         enableScanner,
         disableScanner,
+
+        linkScannedProductTo,
     };
 };
 
