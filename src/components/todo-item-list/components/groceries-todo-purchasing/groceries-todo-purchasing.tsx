@@ -32,6 +32,7 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
         scannedProductResult,
         linkScannedProductTo,
         dismissSubmitingNewProduct,
+        toggleTodoItemPurchaseStatus
     } = purchasingController;
 
     useEffect(() => {
@@ -50,6 +51,7 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
     const onTodoItemSubmit = (todoItem: TodoItem) => {
         linkScannedProductTo(todoItem);
         dismissSubmitingNewProduct();
+        toggleTodoItemPurchaseStatus(todoItem, true);
     };
 
     const closeNewProductDialog = () => {
