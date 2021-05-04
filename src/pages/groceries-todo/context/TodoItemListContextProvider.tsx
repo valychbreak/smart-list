@@ -108,7 +108,7 @@ const TodoItemListContextProvider = (
         TodoProductItemsApi.update(updatedTodoItem);
 
         const replacedTodoItems = todoItems.map((existingTodoItem) => (
-            existingTodoItem.id === todoItem.id ? todoItem : existingTodoItem
+            existingTodoItem.id === updatedTodoItem.id ? updatedTodoItem : existingTodoItem
         ));
 
         setTodoItems(replacedTodoItems);

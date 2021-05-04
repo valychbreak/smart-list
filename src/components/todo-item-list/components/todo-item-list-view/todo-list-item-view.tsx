@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import {
     TableRow, TableCell, Checkbox, IconButton,
 } from "@material-ui/core";
@@ -44,13 +44,10 @@ interface TodoListItemViewProps {
 }
 
 const TodoListItemView = (props: TodoListItemViewProps) => {
-    const [isPurchased, setIsPurchased] = useState(props.item.isBought);
-
     const todoItemListProvider = useContext(TodoItemListContext);
     const { selectedStore } = useContext(GroceriesTodoStoreContext);
 
     function togglePurchase(toggle: boolean) {
-        setIsPurchased(toggle);
         props.onTodoItemPurchaseToggle(props.item, toggle);
     }
 
@@ -61,6 +58,7 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
     const todoItem = props.item;
 
     const todoItemName = isLinkedTodoItem(todoItem) ? `${todoItem.generalName}*` : todoItem.generalName;
+    const isPurchased = props.item.isBought;
 
     return (
         <TableRow
