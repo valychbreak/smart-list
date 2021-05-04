@@ -64,14 +64,20 @@ const useGroceriesTodoPurchasingController = () => {
         toggleTodoItemPurchaseStatus(newItem, true);
     }
 
-    function linkScannedProductTo(todoItem: TodoItem) {
+    async function toggleTodoItemPurchaseStatusWithScannedResult(todoItem: TodoItem) {
         if (!notExistingProductScanResult.value) {
             throw new Error("Scan result is empty");
         }
 
         const { code, format } = notExistingProductScanResult.value;
+        notExistingProductScanResult.clearValue();
+
         const product = new Product(todoItem.generalName, code, format);
-        todoItemListContext.linkTodoItem(todoItem, product);
+        const savedProduct = await ProductApi.saveProduct(product);
+        const updatedTodoItem = todoItem.clone();
+        updatedTodoItem.targetProduct = savedProduct;
+        todoItemListContext.updateItem(updatedTodoItem);
+        toggleTodoItemPurchaseStatus(updatedTodoItem, true);
     }
 
     return {
@@ -99,7 +105,7 @@ const useGroceriesTodoPurchasingController = () => {
         enableScanner,
         disableScanner,
 
-        linkScannedProductTo,
+        toggleTodoItemPurchaseStatusWithScannedResult,
     };
 };
 

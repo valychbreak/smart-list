@@ -98,34 +98,39 @@ describe("useGroceriesTodoPurchasingController", () => {
         });
     });
 
-    describe("linkScannedProductTo", () => {
-        test("should link scanned result to todo item", async () => {
+    describe("toggleTodoItemPurchaseStatusWithScannedResult", () => {
+        test("should mark todo item as purchased and link to scanned product", async () => {
             // given
             const { result } = renderGroceriesTodoPurchasingController([]);
             const scanResult = createScanResult("12345678");
             const todoItem = createTodoItem("1234567", "ean8");
+
+            ProductApiMocked.saveProduct
+                .mockImplementation((product: Product) => Promise.resolve(product));
 
             // when
             await act(async () => {
                 result.current.onBarcodeScan(scanResult);
             });
 
-            act(() => {
-                result.current.linkScannedProductTo(todoItem);
+            await act(async () => {
+                result.current.toggleTodoItemPurchaseStatusWithScannedResult(todoItem);
             });
 
-            const productMatcher = td.matchers.argThat((product: Product) => (
-                product.productGeneralName === todoItem.generalName
+            const todoItemMatcher = td.matchers.argThat((actualTodoItem: TodoItem) => {
+                const product = actualTodoItem.targetProduct;
+                return actualTodoItem.id === todoItem.id
+                    && product
+                    && product.productGeneralName === todoItem.generalName
                     && product.productBarcode === scanResult.code
-                    && product.productBarcodeType === scanResult.format
-            ));
+                    && product.productBarcodeType === scanResult.format;
+            });
+
             // then
             td.verify(
-                todoItemListMockedContext.linkTodoItem(
-                    todoItem,
-                    productMatcher
-                )
+                todoItemListMockedContext.updateItem(todoItemMatcher)
             );
+            expect(result.current.openAddNewProductForm).toBe(false);
         });
     });
 
