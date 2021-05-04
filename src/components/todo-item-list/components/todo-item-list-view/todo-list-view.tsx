@@ -61,6 +61,8 @@ interface TodoListViewProps {
     onTodoItemPurchaseToggle(todoItem: TodoItem, isBought: boolean): void;
 }
 
+const DEFAULT_SORTING_PROPERTY = "id";
+
 const TodoListView: React.FC<TodoListViewProps> = ({
     showPurchaseAction = false,
     ...props
@@ -77,9 +79,19 @@ const TodoListView: React.FC<TodoListViewProps> = ({
         : 0;
 
     const [order, setOrder] = React.useState<SortDirection>("asc");
-    const [orderBy, setOrderBy] = React.useState("generalName");
+    const [orderBy, setOrderBy] = React.useState(DEFAULT_SORTING_PROPERTY);
+
+    const setDefaultSorting = () => {
+        setOrder("asc");
+        setOrderBy(DEFAULT_SORTING_PROPERTY);
+    };
 
     const handleRequestSort = (event: any, property: string) => {
+        if (orderBy === property && order === "desc") {
+            setDefaultSorting();
+            return;
+        }
+
         const isAsc = orderBy === property && order === "asc";
         setOrder(isAsc ? "desc" : "asc");
         setOrderBy(property);
