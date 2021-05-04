@@ -36,11 +36,19 @@ function stableSort(array: TodoItem[], comparator: any): TodoItem[] {
     return stabilizedThis.map((el) => el.todoItem);
 }
 
-function descendingComparator(a: any, b: any, orderBy: string) {
-    if (b[orderBy] < a[orderBy]) {
+function descendingComparator(left: any, right: any, orderBy: string) {
+    let rightProperty = right[orderBy];
+    let leftProperty = left[orderBy];
+
+    if (typeof rightProperty === "string") {
+        rightProperty = rightProperty.toLowerCase();
+        leftProperty = leftProperty.toLowerCase();
+    }
+
+    if (rightProperty < leftProperty) {
         return -1;
     }
-    if (b[orderBy] > a[orderBy]) {
+    if (rightProperty > leftProperty) {
         return 1;
     }
     return 0;
