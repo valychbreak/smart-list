@@ -1,4 +1,4 @@
 export interface BarcodeScanResult {
-    code: string | null;
+    code: string;
     format: string;
 }

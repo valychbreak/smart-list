@@ -99,11 +99,20 @@ const TodoItemListContextProvider = (
         });
     };
 
+    const updateItem = (updatedTodoItem: TodoItem) => {
+        const replacedTodoItems = todoItems.map((existingTodoItem) => (
+            existingTodoItem.id === updatedTodoItem.id ? updatedTodoItem : existingTodoItem
+        ));
+
+        TodoProductItemsApi.update(updatedTodoItem);
+
+        setTodoItems(replacedTodoItems);
+    };
+
     const toggleItemPurchased = (item: TodoItem, toggle: boolean) => {
         // eslint-disable-next-line no-param-reassign
         item.isBought = toggle;
-        TodoProductItemsApi.update(item);
-        setTodoItems([...todoItems]);
+        updateItem(item);
     };
 
     const clearItems = () => {
@@ -113,7 +122,13 @@ const TodoItemListContextProvider = (
 
     return (
         <TodoItemListContext.Provider value={{
-            todoItems, addItem, removeItem, toggleItemPurchased, updateItemQuantity, clearItems,
+            todoItems,
+            addItem,
+            removeItem,
+            updateItem,
+            toggleItemPurchased,
+            updateItemQuantity,
+            clearItems,
         }}>
             {props.children}
         </TodoItemListContext.Provider>

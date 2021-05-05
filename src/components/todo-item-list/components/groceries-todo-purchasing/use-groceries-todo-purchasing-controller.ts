@@ -1,4 +1,3 @@
-import { QuaggaJSResultObject } from "@ericblade/quagga2";
 import { useContext, useState } from "react";
 import ProductApi from "../../../../api/ProductApi";
 import Product from "../../../../entity/Product";
@@ -34,11 +33,7 @@ const useGroceriesTodoPurchasingController = () => {
         }
     }
 
-    const onBarcodeScanAdapter = (result: BarcodeScanResult) => {
-        if (result.code === null) {
-            return;
-        }
-
+    const onBarcodeScan = (result: BarcodeScanResult) => {
         disableScanner();
 
         const foundItem: TodoItem | undefined = todoItemListContext.todoItems.find((todoItem) => {
@@ -63,20 +58,31 @@ const useGroceriesTodoPurchasingController = () => {
             });
     };
 
-    const onBarcodeScan = (result: QuaggaJSResultObject) => {
-        onBarcodeScanAdapter({
-            code: result.codeResult.code,
-            format: result.codeResult.format,
-        });
-    };
-
     function addPurchasedProduct(product: Product) {
         const newItem = TodoItem.fromProduct(product);
         todoItemListContext.addItem(newItem);
         toggleTodoItemPurchaseStatus(newItem, true);
     }
 
+    async function toggleTodoItemPurchaseStatusWithScannedResult(todoItem: TodoItem) {
+        if (!notExistingProductScanResult.value) {
+            throw new Error("Scan result is empty");
+        }
+
+        const { code, format } = notExistingProductScanResult.value;
+        notExistingProductScanResult.clearValue();
+
+        const product = new Product(todoItem.generalName, code, format);
+        const savedProduct = await ProductApi.saveProduct(product);
+        const updatedTodoItem = todoItem.clone();
+        updatedTodoItem.targetProduct = savedProduct;
+        todoItemListContext.updateItem(updatedTodoItem);
+        toggleTodoItemPurchaseStatus(updatedTodoItem, true);
+    }
+
     return {
+        todoItems: todoItemListContext.todoItems,
+
         openScanner: isScanning,
         openPriceSubmission: purchasedTodoItem.isSet,
         selectedItem: purchasedTodoItem.value,
@@ -90,7 +96,6 @@ const useGroceriesTodoPurchasingController = () => {
         toggleTodoItemPurchaseStatus,
         onPriceSubmissionClose: cancelAddingPrice,
         onBarcodeScan,
-        onBarcodeScanAdapter,
 
         addPurchasedProduct,
 
@@ -99,6 +104,8 @@ const useGroceriesTodoPurchasingController = () => {
 
         enableScanner,
         disableScanner,
+
+        toggleTodoItemPurchaseStatusWithScannedResult,
     };
 };
 

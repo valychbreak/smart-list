@@ -45,16 +45,29 @@ class TodoItem {
 
     priceData: ProductPriceData;
 
-    constructor(id: number, generalName: string) {
+    constructor(
+        id: number,
+        generalName: string,
+        quantity: number,
+        isBought: boolean,
+        priceData: ProductPriceData
+    ) {
         this.id = id;
         this.generalName = generalName;
-        this.quantity = 1;
-        this.isBought = false;
-        this.priceData = new ProductPriceData();
+        this.quantity = quantity;
+        this.isBought = isBought;
+        this.priceData = priceData;
+    }
+
+    static createTodoItem(id: number, generalName: string) {
+        return new TodoItem(id, generalName, 1, false, new ProductPriceData());
     }
 
     static fromProduct(product: Product, quantity?: number): TodoItem {
-        const todoItem = new TodoItem(Date.now(), product.productGeneralName);
+        const todoItem = this.createTodoItem(
+            Date.now(),
+            product.productGeneralName
+        );
 
         todoItem.quantity = quantity || 1;
         todoItem.targetProduct = product;
@@ -62,13 +75,32 @@ class TodoItem {
         return todoItem;
     }
 
+    static fromName(name: string, quantity: number): TodoItem {
+        const todoItem = this.createTodoItem(Date.now(), name);
+        todoItem.quantity = quantity;
+        todoItem.isBought = false;
+        return todoItem;
+    }
+
     static from(json: any): TodoItem {
-        const todoItem = new TodoItem(json.id, json.generalName);
+        const todoItem = this.createTodoItem(json.id, json.generalName);
 
         todoItem.quantity = json.quantity;
-        todoItem.targetProduct = Product.from(json.targetProduct);
+        if (json.targetProduct) {
+            todoItem.targetProduct = Product.from(json.targetProduct);
+        }
         todoItem.isBought = json.isBought;
         return todoItem;
+    }
+
+    clone(): TodoItem {
+        return new TodoItem(
+            this.id,
+            this.generalName,
+            this.quantity,
+            this.isBought,
+            this.priceData
+        );
     }
 }
 

@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { renderHook, WrapperComponent } from "@testing-library/react-hooks";
-import React from "react";
+import { renderHook, WrapperComponent, act } from "@testing-library/react-hooks";
 import {
-    anyOfClass, instance, mock, reset, verify, when,
+    instance, mock, when,
 } from "ts-mockito";
-import { act } from "react-dom/test-utils";
 import { mocked } from "ts-jest/utils";
+import td from "testdouble";
 import { waitFor } from "@testing-library/react";
 import TodoItemListContext, { TodoItemListContextType } from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import TodoItem from "../../types";
@@ -17,12 +16,34 @@ import ProductApi from "../../../../api/ProductApi";
 jest.mock("../../../../api/ProductApi");
 const ProductApiMocked = mocked(ProductApi, true);
 
-const todoItemListMockedContext = mock<TodoItemListContextType>();
-
 describe("useGroceriesTodoPurchasingController", () => {
+    const todoItemListMockedContext = td.object<TodoItemListContextType>();
+
+    const todoItemListContextProvider: WrapperComponent<{ todoItems: TodoItem[] }> = (
+        { ...props }
+    ) => {
+        todoItemListMockedContext.todoItems = props.todoItems;
+
+        return (
+            <TodoItemListContext.Provider value={todoItemListMockedContext}>
+                {props.children}
+            </TodoItemListContext.Provider>
+        );
+    };
+
+    function renderGroceriesTodoPurchasingController(todoItems: TodoItem[]) {
+        return renderHook(() => useGroceriesTodoPurchasingController(), {
+            wrapper: todoItemListContextProvider,
+            initialProps: {
+                todoItems,
+            },
+        });
+    }
+
     beforeEach(() => {
         ProductApiMocked.findByBarcode.mockReset();
-        reset(todoItemListMockedContext);
+        ProductApiMocked.findByBarcode.mockResolvedValue(null);
+        td.reset();
     });
 
     describe("toggleTodoItemPurchaseStatus", () => {
@@ -37,7 +58,7 @@ describe("useGroceriesTodoPurchasingController", () => {
             });
 
             // then
-            verify(todoItemListMockedContext.toggleItemPurchased(todoItem, true)).once();
+            td.verify(todoItemListMockedContext.toggleItemPurchased(todoItem, true));
             expect(result.current.openPriceSubmission).toBeTruthy();
             expect(result.current.selectedItem).toBe(todoItem);
         });
@@ -53,7 +74,7 @@ describe("useGroceriesTodoPurchasingController", () => {
             });
 
             // then
-            verify(todoItemListMockedContext.toggleItemPurchased(todoItem, false)).once();
+            td.verify(todoItemListMockedContext.toggleItemPurchased(todoItem, false));
         });
     });
 
@@ -69,9 +90,47 @@ describe("useGroceriesTodoPurchasingController", () => {
             });
 
             // then
-            verify(todoItemListMockedContext.addItem(anyOfClass(TodoItem))).once();
+            td.verify(
+                todoItemListMockedContext.addItem(td.matchers.contains({ targetProduct: product }))
+            );
             expect(result.current.openPriceSubmission).toBeTruthy();
             expect(result.current.selectedItem?.targetProduct).toBe(product);
+        });
+    });
+
+    describe("toggleTodoItemPurchaseStatusWithScannedResult", () => {
+        test("should mark todo item as purchased and link to scanned product", async () => {
+            // given
+            const { result } = renderGroceriesTodoPurchasingController([]);
+            const scanResult = createScanResult("12345678");
+            const todoItem = createTodoItem("1234567", "ean8");
+
+            ProductApiMocked.saveProduct
+                .mockImplementation((product: Product) => Promise.resolve(product));
+
+            // when
+            await act(async () => {
+                result.current.onBarcodeScan(scanResult);
+            });
+
+            await act(async () => {
+                result.current.toggleTodoItemPurchaseStatusWithScannedResult(todoItem);
+            });
+
+            const todoItemMatcher = td.matchers.argThat((actualTodoItem: TodoItem) => {
+                const product = actualTodoItem.targetProduct;
+                return actualTodoItem.id === todoItem.id
+                    && product
+                    && product.productGeneralName === todoItem.generalName
+                    && product.productBarcode === scanResult.code
+                    && product.productBarcodeType === scanResult.format;
+            });
+
+            // then
+            td.verify(
+                todoItemListMockedContext.updateItem(todoItemMatcher)
+            );
+            expect(result.current.openAddNewProductForm).toBe(false);
         });
     });
 
@@ -83,13 +142,13 @@ describe("useGroceriesTodoPurchasingController", () => {
 
             // when
             act(() => {
-                result.current.onBarcodeScanAdapter(createScanResult("12345678", "ean8"));
+                result.current.onBarcodeScan(createScanResult("12345678", "ean8"));
             });
 
             // then
             expect(result.current.openPriceSubmission).toBe(true);
             expect(result.current.selectedItem).toBe(todoItem);
-            verify(todoItemListMockedContext.toggleItemPurchased(todoItem, true)).once();
+            td.verify(todoItemListMockedContext.toggleItemPurchased(todoItem, true));
         });
 
         test("should set open new product dialog to true when product does not exist in the list and db", async () => {
@@ -101,7 +160,7 @@ describe("useGroceriesTodoPurchasingController", () => {
 
             // when
             act(() => {
-                result.current.onBarcodeScanAdapter(scannedResult);
+                result.current.onBarcodeScan(scannedResult);
             });
 
             // then
@@ -121,7 +180,7 @@ describe("useGroceriesTodoPurchasingController", () => {
 
             // when
             act(() => {
-                result.current.onBarcodeScanAdapter(scannedResult);
+                result.current.onBarcodeScan(scannedResult);
             });
 
             // then
@@ -129,18 +188,6 @@ describe("useGroceriesTodoPurchasingController", () => {
                 expect(result.current.openAddProductConfirmation).toBeTruthy();
                 expect(result.current.productToAdd).toBe(product);
             }));
-        });
-
-        test("should not match null barcode", () => {
-            // given
-            const todoItem = createTodoItem("87654321", "ean8");
-            const { result } = renderGroceriesTodoPurchasingController([todoItem]);
-
-            // when
-            result.current.onBarcodeScanAdapter(createScanResult(null, "ean8"));
-
-            // then
-            verify(todoItemListMockedContext.todoItems).never();
         });
 
         test.each`
@@ -162,7 +209,7 @@ describe("useGroceriesTodoPurchasingController", () => {
             // when
             act(() => {
                 result.current.enableScanner();
-                result.current.onBarcodeScanAdapter(createScanResult(scannedBarcode, "ean8"));
+                result.current.onBarcodeScan(createScanResult(scannedBarcode, "ean8"));
             });
 
             // then
@@ -170,32 +217,8 @@ describe("useGroceriesTodoPurchasingController", () => {
                 expect(result.current.openScanner).toBeFalsy();
             }));
         });
-
-        test("should not disable scanner when barcode is null", () => {
-            // given
-            const { result } = renderGroceriesTodoPurchasingController([]);
-
-            // when
-            act(() => {
-                result.current.enableScanner();
-                result.current.onBarcodeScanAdapter(createScanResult(null, "ean8"));
-            });
-
-            // then
-            expect(result.current.openScanner).toBeTruthy();
-        });
     });
 });
-
-const todoItemListContextProvider: WrapperComponent<{ todoItems: TodoItem[] }> = ({ ...props }) => {
-    when(todoItemListMockedContext.todoItems).thenReturn(props.todoItems);
-
-    return (
-        <TodoItemListContext.Provider value={instance(todoItemListMockedContext)}>
-            {props.children}
-        </TodoItemListContext.Provider>
-    );
-};
 
 function createAnyProduct() {
     return createProduct("some good name");
@@ -208,21 +231,12 @@ function createProduct(generalName: string) {
     return instance(mockedProduct);
 }
 
-function createScanResult(barcode: string | null, barcodeType: string): BarcodeScanResult {
+function createScanResult(barcode: string, barcodeType: string = "ean8"): BarcodeScanResult {
     return { code: barcode, format: barcodeType };
 }
 
-function renderGroceriesTodoPurchasingController(todoItems: TodoItem[]) {
-    return renderHook(() => useGroceriesTodoPurchasingController(), {
-        wrapper: todoItemListContextProvider,
-        initialProps: {
-            todoItems,
-        },
-    });
-}
-
 function createTodoItem(barcode: string, barcodeType: string): TodoItem {
-    const todoItem = new TodoItem(1, "item");
+    const todoItem = TodoItem.createTodoItem(1, "item");
     const mockedProduct = mock(Product);
     when(mockedProduct.productBarcode).thenReturn(barcode);
     when(mockedProduct.productBarcodeType).thenReturn(barcodeType);

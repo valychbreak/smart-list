@@ -22,7 +22,8 @@ interface ProductSelectProps {
 const NEW_PRODUCT = new Product("", "", "");
 
 function asProductSelectItem(product: Product): ProductSelectItem {
-    return { label: product.productFullName as string, product };
+    const optionLabel = product.productFullName || product.productGeneralName;
+    return { label: optionLabel, product };
 }
 
 const ProductSelect = (props: ProductSelectProps) => {
