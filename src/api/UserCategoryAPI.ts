@@ -5,6 +5,7 @@ import CategoryLocalDB from "./persistance/local-db-category";
 
 interface UserCategoryAPI {
     changeCategory(product: Product, category: Category): Promise<void>;
+    removeCategory(product: Product): Promise<void>;
     fetchProductCategory(product: Product): Promise<Category | null>;
     fetchCategoriesBy(name: string): Promise<Category[]>;
 }
@@ -12,6 +13,10 @@ interface UserCategoryAPI {
 class MockedUserCategoryAPI implements UserCategoryAPI {
     changeCategory(product: Product, category: Category): Promise<void> {
         return CategoryLocalDB.changeCategory(product, category);
+    }
+
+    removeCategory(product: Product): Promise<void> {
+        return CategoryLocalDB.removeCategory(product);
     }
 
     async fetchProductCategory(product: Product): Promise<Category | null> {

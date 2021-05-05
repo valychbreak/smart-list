@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useMemo } from "react";
 import UserCategoryAPI from "../../api/UserCategoryAPI";
 import Category from "../../entity/category";
 import AsyncAutocomplete from "./async-autocomplete";
+import useAsyncAutocompleteController from "./async-autocomplete-controller";
 
 export type CategoryOption = {
     label: string;
@@ -10,7 +11,6 @@ export type CategoryOption = {
 };
 
 type CategorySelectProps = {
-    defaultCategory?: Category | undefined | null;
     category: Category | null;
     onCategoryChange(category: Category | null): void;
     onCategoryCreate(inputValue: string): void;
@@ -20,18 +20,22 @@ function toOption(category: Category): CategoryOption {
     return { label: category.name, category };
 }
 
+const loadOptions = async (value: string): Promise<CategoryOption[]> => {
+    const matchedCategories = await UserCategoryAPI.fetchCategoriesBy(value);
+    const options = matchedCategories.map((category) => toOption(category));
+    options.push({ label: `Create "${value}" category`, inputValue: value });
+    return options;
+};
+
 const CategorySelect = (props: CategorySelectProps) => {
-    const [inputValue, setInputValue] = useState("");
-    const [options, setOptions] = useState<CategoryOption[]>([]);
+    const {
+        loading,
+        inputValue,
+        options,
+        setInputValue,
+    } = useAsyncAutocompleteController<CategoryOption>({ loadOptions });
 
-    const loadOptions = async (value: string): Promise<CategoryOption[]> => {
-        const matchedCategories = await UserCategoryAPI.fetchCategoriesBy(value);
-        return matchedCategories.map((category) => toOption(category));
-    };
-
-    const onCategorySelect = (
-        selectedCategoryItem: CategoryOption | null,
-    ) => {
+    const onCategorySelect = (selectedCategoryItem: CategoryOption | null) => {
         if (selectedCategoryItem) {
             const { category } = selectedCategoryItem;
             const manualInput = selectedCategoryItem.inputValue;
@@ -47,15 +51,17 @@ const CategorySelect = (props: CategorySelectProps) => {
         }
     };
 
+    const selectedOption: CategoryOption | null = useMemo(() => (
+        props.category ? toOption(props.category) : null
+    ), [props.category]);
+
     return (
         <AsyncAutocomplete
-            loading={false}
-            setLoading={() => {}}
+            value={selectedOption}
+            loading={loading}
             inputValue={inputValue}
             setInputValue={setInputValue}
             options={options}
-            setOptions={setOptions}
-            loadOptions={loadOptions}
             onChange={onCategorySelect}
             getOptionLabel={(option) => option.label}
             getOptionSelected={(option, value) => option.label === value.label}
