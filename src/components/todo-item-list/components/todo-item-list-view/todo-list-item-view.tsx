@@ -1,13 +1,10 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import {
     TableRow, TableCell, Checkbox, IconButton,
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import TodoItem, { ProductPriceData, Store } from "../../types";
-import CategorySelector from "../../../category-selector";
-import Category from "../../../../entity/category";
-import UserCategoryAPI from "../../../../api/UserCategoryAPI";
 import TodoItemQuantityAdjustmentField from "../todo-item-quantity-adjustment-field";
 import GroceriesTodoStoreContext from "../groceries-todo-store-context/groceries-todo-store-context";
 
@@ -96,23 +93,6 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
                 </IconButton>
             </TableCell>
         </TableRow>
-    );
-};
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const ProductCategorySelector = (props: { item: TodoItem }) => {
-    const onCategorySelect = (category: Category) => {
-        const product = props.item.targetProduct;
-        if (product !== undefined) {
-            product.category = category;
-            UserCategoryAPI.changeCategory(product, category);
-        }
-    };
-
-    return (
-        <CategorySelector
-            defaultCategory={props.item.targetProduct?.category}
-            onCategorySelect={onCategorySelect} />
     );
 };
 
