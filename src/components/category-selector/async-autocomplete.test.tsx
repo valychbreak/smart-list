@@ -1,5 +1,4 @@
 import { Autocomplete } from "@material-ui/lab";
-import { act } from "@testing-library/react";
 import { mount, shallow } from "enzyme";
 import td from "testdouble";
 import AsyncAutocomplete from "./async-autocomplete";
@@ -10,11 +9,11 @@ type CustomOption = {
 };
 
 type OverridingProps = {
+    value?: CustomOption
     inputValue?: string;
     setInputValue?(value: string): void;
     onChange?(option: CustomOption | null): void;
-    loadOptions?(inputValue: string): Promise<CustomOption[]>;
-    setOptions?(options: CustomOption[]): void;
+    getOptionLabel?(option: CustomOption): string
 };
 
 describe("AsyncAutocomplete", () => {
@@ -22,16 +21,14 @@ describe("AsyncAutocomplete", () => {
         ...overridingProps
     }: OverridingProps = {}): JSX.Element => (
         <AsyncAutocomplete
+            value={null}
             loading={false}
-            setLoading={() => {}}
             inputValue=""
             setInputValue={() => {}}
             onChange={() => {}}
             options={[]}
-            setOptions={() => {}}
             getOptionLabel={() => "label"}
             getOptionSelected={() => false}
-            loadOptions={() => Promise.resolve([])}
             {...overridingProps}
         />
     );
@@ -40,6 +37,24 @@ describe("AsyncAutocomplete", () => {
         const wrapper = shallow(asyncAutocomplete());
 
         expect(wrapper.find(Autocomplete).exists()).toBe(true);
+    });
+
+    it("should have display option by label", () => {
+        // given
+        type SetInputValue = (value: string) => void;
+        const setInputValueMock = td.func<SetInputValue>();
+
+        const initialOption = { label: "custom option" } as CustomOption;
+
+        // when
+        mount(asyncAutocomplete({
+            value: initialOption,
+            getOptionLabel: (option) => option.label,
+            setInputValue: (value) => setInputValueMock(value)
+        }));
+
+        // then
+        td.verify(setInputValueMock(initialOption.label));
     });
 
     it("should trigger input change", () => {
@@ -86,32 +101,5 @@ describe("AsyncAutocomplete", () => {
 
         // then
         td.verify(onSelectedOptionChange(selectedOption));
-    });
-
-    it("should load options on input value change", async () => {
-        // given
-        const option = {
-            label: "label",
-            value: "value",
-        } as CustomOption;
-
-        const loadOptions = () => Promise.resolve([option]);
-
-        type SetOptions = (options: CustomOption[]) => void;
-        const setOptions = td.func<SetOptions>();
-
-        // when
-        await act(async () => {
-            mount(
-                asyncAutocomplete({
-                    inputValue: "Mil",
-                    loadOptions,
-                    setOptions
-                })
-            );
-        });
-
-        // then
-        td.verify(setOptions([option]));
     });
 });
