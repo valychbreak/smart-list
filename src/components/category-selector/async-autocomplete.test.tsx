@@ -102,4 +102,26 @@ describe("AsyncAutocomplete", () => {
         // then
         td.verify(onSelectedOptionChange(selectedOption));
     });
+
+    it("should not trigger selected option change when submitted 'free text'", async () => {
+        // given
+        type OnOptionChange = (option: CustomOption | null) => void;
+        const onSelectedOptionChange = td.func<OnOptionChange>();
+
+        const wrapper = mount(
+            asyncAutocomplete({
+                onChange: onSelectedOptionChange,
+            })
+        );
+
+        const autocompleteOnChange = wrapper
+            .find(Autocomplete)
+            .prop("onChange") as any;
+
+        // when
+        autocompleteOnChange({}, "some free text");
+
+        // then
+        td.verify(onSelectedOptionChange(td.matchers.anything()), { times: 0 });
+    });
 });

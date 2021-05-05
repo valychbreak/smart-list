@@ -20,7 +20,6 @@ function useAsyncAutocompleteController<T>(props: AsyncAutocompleteControllerPro
 
     useEffect(() => {
         if (inputValue === "") {
-            clear();
             return undefined;
         }
 
@@ -42,13 +41,22 @@ function useAsyncAutocompleteController<T>(props: AsyncAutocompleteControllerPro
         };
     }, [inputValue]);
 
+    const handleInputChange = (newInputValue: string) => {
+        if (newInputValue === "") {
+            clear();
+            return;
+        }
+
+        setInputValue(newInputValue);
+    };
+
     return {
         open,
         inputValue,
         options,
         loading,
         setOpen,
-        setInputValue,
+        setInputValue: handleInputChange,
         clear,
     };
 }

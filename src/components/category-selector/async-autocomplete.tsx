@@ -32,6 +32,7 @@ function AsyncAutocomplete<T>(props: AsyncAutocompleteProps<T>) {
     return (
         <>
             <Autocomplete
+                freeSolo
                 value={value}
                 noOptionsText="No suggestions"
                 inputValue={inputValue}
@@ -42,7 +43,9 @@ function AsyncAutocomplete<T>(props: AsyncAutocompleteProps<T>) {
                 getOptionSelected={getOptionSelected}
                 getOptionLabel={getOptionLabel}
                 onChange={(event, option) => {
-                    onChange(option);
+                    if (typeof option !== "string") {
+                        onChange(option);
+                    }
                 }}
                 renderInput={(params) => (
                     <TextField
