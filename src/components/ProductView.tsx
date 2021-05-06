@@ -1,3 +1,4 @@
+import { Box, Card, CardContent, Chip, Grid, Tooltip, Typography } from "@material-ui/core";
 import React, { useEffect, useReducer, useState } from "react";
 import ProductPriceApi from "../api/ProductPriceApi";
 import StoreApi from "../api/StoreApi";
@@ -42,11 +43,18 @@ interface CounterpartyPriceViewProps {
 }
 
 const CounterpartyPriceView = (props: CounterpartyPriceViewProps) => {
+    let priceLabel = `${props.counterparty}: -`;
     if (!props.priceData[props.counterparty]) {
-        return <li> {props.counterparty} - No data yet</li>;
+        priceLabel = `${props.counterparty}: -`;
+    } else {
+        priceLabel = `${props.counterparty}: ${props.priceData[props.counterparty].price.toFixed(2)}`;
     }
 
-    return <li> {props.counterparty} - {props.priceData[props.counterparty].price} PLN</li>;
+    return (
+        <Tooltip title="Latest price" aria-label="add">
+            <Chip size="small" label={priceLabel} />
+        </Tooltip>
+    );
 };
 
 interface ProductViewPros {
@@ -87,28 +95,34 @@ const ProductView = (props: ProductViewPros) => {
         });
     }, [storeList]);
 
+    const subheader = `${props.product.productBarcode} (${props.product.productBarcodeType})`;
     return (<>
-        <ul>
-            <li>General name: {props.product.productGeneralName}</li>
-            <li>Full name: {props.product.productFullName}</li>
-            <li>Barcode: {props.product.productBarcode} | {props.product.productBarcodeType}</li>
-            <li><ProductCategorySelector product={props.product} /></li>
-            <li>Release country: {props.product.productCountry}</li>
-            <li>Release company: {props.product.productCompanyName}</li>
-            <li>Latest price: {latestPrice}</li>
-            <li>
-                Price per counterparty:
-                <ul>
-                    {storeList.map((store: Store) => (
-                        <CounterpartyPriceView
-                            key={store.id}
-                            counterparty={store.name}
-                            priceData={priceData} />
-                    ))}
-                </ul>
-            </li>
-            <li>Image: TODO</li>
-        </ul>
+        <Card>
+            <CardContent>
+                <Box marginBottom={2}>
+                    <Typography variant="h5">{props.product.productFullName}</Typography>
+                    <Typography color="textSecondary">{subheader}</Typography>
+                </Box>
+                <Typography>General name: {props.product.productGeneralName}</Typography>
+                <Grid spacing={1} alignItems="center" container>
+                    <Grid item>
+                        Category:
+                    </Grid>
+                    <Grid item xs={9}>
+                        <ProductCategorySelector product={props.product} />
+                    </Grid>
+                </Grid>
+                <Typography>Release country: {props.product.productCountry}</Typography>
+                <Typography>Release company: {props.product.productCompanyName}</Typography>
+                <Typography>Latest price: {latestPrice}</Typography>
+                {storeList.map((store: Store) => (
+                    <CounterpartyPriceView
+                        key={store.id}
+                        counterparty={store.name}
+                        priceData={priceData} />
+                ))}
+            </CardContent>
+        </Card>
         <hr />
     </>);
 };

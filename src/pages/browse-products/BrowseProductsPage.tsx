@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Grid, Typography } from "@material-ui/core";
 import ProductApi from "../../api/ProductApi";
 import ProductPriceApi from "../../api/ProductPriceApi";
 import ProductPriceEntry from "../../entity/ProductPriceEntry";
@@ -49,19 +50,20 @@ const BrowseProductsPage = () => {
                     onEntrySubmit={onPriceEntrySubmit}
                 />
             </>)}
-            <h2>Existing products:</h2>
-            <div>
-                {products.map((product: Product, idx: number) => (
-                    <div key={idx}>
-                        <button onClick={(e) => showProductPriceForm(e, product)}>
-                            Add price entry
-                        </button>
-                        <br />
-                        <ProductView product={product} />
-                    </div>
-                ))}
-            </div>
-            <hr />
+            <Typography variant="h4">Browse products</Typography>
+            <Grid container>
+                <Grid item>
+                    {products.map((product: Product, idx: number) => (
+                        <div key={idx}>
+                            <button onClick={(e) => showProductPriceForm(e, product)}>
+                                Add price entry
+                            </button>
+                            <br />
+                            <ProductView product={product} />
+                        </div>
+                    ))}
+                </Grid>
+            </Grid>
 
             <h2>JSON Data (for export):</h2>
             <button onClick={(e) => copyToClipboard(e)}>
