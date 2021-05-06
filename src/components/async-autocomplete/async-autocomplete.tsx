@@ -10,6 +10,8 @@ interface AsyncAutocompleteProps<T> {
     inputValue: string;
     options: T[];
 
+    placeholder?: string;
+
     setInputValue(value: string): void;
     onChange(option: T | null): void;
 
@@ -23,6 +25,7 @@ function AsyncAutocomplete<T>(props: AsyncAutocompleteProps<T>) {
         loading,
         options,
         inputValue,
+        placeholder,
         setInputValue,
         onChange,
         getOptionLabel,
@@ -51,7 +54,7 @@ function AsyncAutocomplete<T>(props: AsyncAutocompleteProps<T>) {
                     <TextField
                         {...params}
                         size="medium"
-                        placeholder="What to buy?"
+                        placeholder={placeholder}
                         variant="standard"
                         margin="none"
                         InputLabelProps={{ shrink: false }}

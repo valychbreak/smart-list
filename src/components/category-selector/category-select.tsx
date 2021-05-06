@@ -1,8 +1,7 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import UserCategoryAPI from "../../api/UserCategoryAPI";
 import Category from "../../entity/category";
-import AsyncAutocomplete from "./async-autocomplete";
-import useAsyncAutocompleteController from "./async-autocomplete-controller";
+import { AsyncAutocomplete, useAsyncAutocompleteController } from "../async-autocomplete";
 
 export type CategoryOption = {
     label: string;
@@ -57,6 +56,7 @@ const CategorySelect = (props: CategorySelectProps) => {
 
     return (
         <AsyncAutocomplete
+            placeholder="Select category..."
             value={selectedOption}
             loading={loading}
             inputValue={inputValue}
