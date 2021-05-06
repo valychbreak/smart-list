@@ -30,7 +30,7 @@ const BrowseProductsPage = () => {
             });
     }, []);
 
-    function showProductPriceForm(e: any, product: Product) {
+    function showProductPriceForm(product: Product) {
         setSelectedProduct(product);
         setAddingPrice(true);
     }
@@ -54,13 +54,10 @@ const BrowseProductsPage = () => {
             <Grid container>
                 <Grid item>
                     {products.map((product: Product, idx: number) => (
-                        <div key={idx}>
-                            <button onClick={(e) => showProductPriceForm(e, product)}>
-                                Add price entry
-                            </button>
-                            <br />
-                            <ProductView product={product} />
-                        </div>
+                        <ProductView
+                            key={idx}
+                            product={product}
+                            onPriceEntryClick={() => showProductPriceForm(product)}/>
                     ))}
                 </Grid>
             </Grid>

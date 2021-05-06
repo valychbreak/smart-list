@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Chip, Grid, Tooltip, Typography } from "@material-ui/core";
+import { Box, Button, Card, CardActions, CardContent, Chip, Grid, makeStyles, Tooltip, Typography } from "@material-ui/core";
 import React, { useEffect, useReducer, useState } from "react";
 import ProductPriceApi from "../api/ProductPriceApi";
 import StoreApi from "../api/StoreApi";
@@ -59,17 +59,28 @@ const CounterpartyPriceView = (props: CounterpartyPriceViewProps) => {
 
 interface ProductViewPros {
     product: Product;
+    onPriceEntryClick(): void;
 }
 
 interface PriceData {
     price: number;
 }
 
+const useStyles = makeStyles((theme) => ({
+    card: {
+        margin: theme.spacing(1),
+    }
+}));
+
 const ProductView = (props: ProductViewPros) => {
+    const classes = useStyles();
+
     const [latestPrice, setLatestPrice] = useState(0);
 
     const [priceData, setPriceData] = useState<{ [id: string]: PriceData }>({});
     const [storeList, setStoreList] = useState<Store[]>([]);
+
+    const { onPriceEntryClick } = props;
 
     useEffect(() => {
         ProductPriceApi.fetchLatestPrice(props.product)
@@ -97,7 +108,7 @@ const ProductView = (props: ProductViewPros) => {
 
     const subheader = `${props.product.productBarcode} (${props.product.productBarcodeType})`;
     return (<>
-        <Card>
+        <Card className={classes.card}>
             <CardContent>
                 <Box marginBottom={2}>
                     <Typography variant="h5">{props.product.productFullName}</Typography>
@@ -122,8 +133,10 @@ const ProductView = (props: ProductViewPros) => {
                         priceData={priceData} />
                 ))}
             </CardContent>
+            <CardActions>
+                <Button size="small" variant="outlined" onClick={onPriceEntryClick}>Add price</Button>
+            </CardActions>
         </Card>
-        <hr />
     </>);
 };
 
