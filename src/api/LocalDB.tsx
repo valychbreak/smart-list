@@ -204,9 +204,12 @@ class LocalDB {
                     for (const storedProduct of JSON.parse(storedProducts)) {
                         const parsedProduct = this.toProduct(storedProduct);
                         if (!this.containsProduct(combinedProducts, parsedProduct)) {
-                            await this.enrichProduct(parsedProduct);
                             combinedProducts.push(parsedProduct);
                         }
+                    }
+
+                    for (const product of combinedProducts) {
+                        await this.enrichProduct(product);
                     }
 
                     this.productCache = combinedProducts;

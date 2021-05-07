@@ -17,7 +17,19 @@ class CategoryLocalDB {
             category.name.toLowerCase().includes(name.toLowerCase())
                 && category.username === username
         ));
-        return foundCategories.filter((category, idx) => foundCategories.indexOf(category) === idx);
+        const withoutDuplicates: Category[] = [];
+        // eslint-disable-next-line no-restricted-syntax
+        for (const category of foundCategories) {
+            const isAdded = withoutDuplicates.find((addedCategory) => (
+                addedCategory.name === category.name
+            ));
+
+            if (!isAdded) {
+                withoutDuplicates.push(category);
+            }
+        }
+
+        return withoutDuplicates;
     }
 
     async changeCategory(product: Product, category: Category): Promise<void> {
@@ -46,6 +58,21 @@ class CategoryLocalDB {
             );
             this.categoriesCache.push(newCategory);
         }
+
+        localStorage.setItem(CATEGORIES_KEY, JSON.stringify(this.categoriesCache));
+    }
+
+    async removeCategory(product: Product) {
+        await this.initCategoriesCacheIfNeeded();
+
+        const existingCategory = this.findCategory(product);
+        if (!existingCategory) {
+            return;
+        }
+
+        this.categoriesCache = this.categoriesCache.filter((category) => (
+            category.id !== existingCategory.id
+        ));
 
         localStorage.setItem(CATEGORIES_KEY, JSON.stringify(this.categoriesCache));
     }
