@@ -1,46 +1,9 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ProductPriceApi from "../../../api/ProductPriceApi";
-import StoreApi from "../../../api/StoreApi";
 import TodoProductItemsApi from "../../../api/TodoProductItemsApi";
+import { GroceriesTodoStoreContext } from "../../../components/todo-item-list/components/groceries-todo-store-context";
 import TodoItem from "../../../components/todo-item-list/types";
 import TodoItemListContext from "./TodoItemListContext";
-
-async function enrichTodoItem(item: TodoItem): Promise<void> {
-    if (item.targetProduct) {
-        const latestPricePromise = ProductPriceApi.fetchLatestPrice(item.targetProduct)
-            .then((entry) => {
-                if (entry) {
-                    // eslint-disable-next-line no-param-reassign
-                    item.priceData.latestPrice = entry.price;
-                }
-            });
-
-        const priceFetchingPromiseList = [latestPricePromise];
-
-        const storeList = await StoreApi.fetchStores();
-        storeList.forEach((store) => {
-            if (!item.targetProduct) {
-                return;
-            }
-
-            const { targetProduct } = item;
-            const storeName = store.name;
-            const fetchPromise = ProductPriceApi.fetchLatestPrice(targetProduct, storeName)
-                .then((priceEntry) => {
-                    if (!priceEntry) {
-                        return;
-                    }
-
-                    item.priceData.setCounterpartyPrice(storeName, { price: priceEntry.price });
-                });
-            priceFetchingPromiseList.push(fetchPromise);
-        });
-
-        return Promise.all(priceFetchingPromiseList)
-            .then(() => Promise.resolve());
-    }
-    return Promise.resolve();
-}
 
 interface TodoItemListContextProviderProps {
 
@@ -50,22 +13,14 @@ const TodoItemListContextProvider = (
     props: React.PropsWithChildren<TodoItemListContextProviderProps>,
 ) => {
     const [todoItems, setTodoItems] = useState<TodoItem[]>([]);
+    const { selectedStore } = useContext(GroceriesTodoStoreContext);
 
     useEffect(() => {
-        TodoProductItemsApi.fetchTodoProductItems()
+        TodoProductItemsApi.fetchTodoProductItems(selectedStore?.name)
             .then((fetchedTodoItems) => {
-                const promiseList: Promise<any>[] = [];
-
-                fetchedTodoItems.forEach((todoItem) => {
-                    const enrichingPromise = enrichTodoItem(todoItem);
-                    promiseList.push(enrichingPromise);
-                });
-
-                Promise.all(promiseList).then(() => {
-                    setTodoItems(fetchedTodoItems);
-                });
+                setTodoItems(fetchedTodoItems);
             });
-    }, []);
+    }, [selectedStore]);
 
     const updateItemQuantity = (item: TodoItem, quantity: number) => {
         // eslint-disable-next-line no-param-reassign
@@ -88,9 +43,22 @@ const TodoItemListContextProvider = (
 
         await TodoProductItemsApi.add(item);
 
-        enrichTodoItem(item).then(() => {
-            setTodoItems(todoItems.concat(item));
-        });
+        let createdItem;
+        const { targetProduct } = item;
+        if (!targetProduct || !selectedStore) {
+            createdItem = item;
+        } else {
+            const priceEntry = await ProductPriceApi.fetchLatestPrice(
+                targetProduct, selectedStore.name
+            );
+            if (priceEntry) {
+                createdItem = item.setProductPrice(priceEntry.price);
+            } else {
+                createdItem = item;
+            }
+        }
+
+        setTodoItems(todoItems.concat(createdItem));
     };
 
     const removeItem = (removeTodoItem: TodoItem) => {

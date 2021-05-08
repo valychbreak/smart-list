@@ -4,14 +4,12 @@ import {
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
-import TodoItem, { ProductPriceData, Store } from "../../types";
+import TodoItem from "../../types";
 import TodoItemQuantityAdjustmentField from "../todo-item-quantity-adjustment-field";
-import GroceriesTodoStoreContext from "../groceries-todo-store-context/groceries-todo-store-context";
 
 interface StorePriceViewProps {
-    store: Store | null;
     quantity: number;
-    priceData: ProductPriceData;
+    price: number | null;
 }
 
 function currencyFormat(amount: number) {
@@ -23,13 +21,10 @@ function isLinkedTodoItem(todoItem: TodoItem): boolean {
 }
 
 const StorePriceView = (props: StorePriceViewProps) => {
-    const { quantity, priceData } = props;
-    const storeName = props.store?.name;
+    const { quantity, price } = props;
 
-    const storePriceData = storeName ? priceData.getCounterpartyPrice(storeName) : undefined;
-    if (storePriceData) {
-        const storePrice = storePriceData.price;
-        return <span>{currencyFormat(storePrice * quantity)} PLN</span>;
+    if (price) {
+        return <span>{currencyFormat(price * quantity)} PLN</span>;
     }
     return <span>No data yet</span>;
 };
@@ -42,7 +37,8 @@ interface TodoListItemViewProps {
 
 const TodoListItemView = (props: TodoListItemViewProps) => {
     const todoItemListProvider = useContext(TodoItemListContext);
-    const { selectedStore } = useContext(GroceriesTodoStoreContext);
+
+    const todoItem = props.item;
 
     function togglePurchase(toggle: boolean) {
         props.onTodoItemPurchaseToggle(props.item, toggle);
@@ -51,8 +47,6 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
     const deleteTodoItem = () => {
         todoItemListProvider.removeItem(props.item);
     };
-
-    const todoItem = props.item;
 
     const todoItemName = isLinkedTodoItem(todoItem) ? `${todoItem.generalName}*` : todoItem.generalName;
     const isPurchased = props.item.isBought;
@@ -83,9 +77,8 @@ const TodoListItemView = (props: TodoListItemViewProps) => {
             </TableCell>
             <TableCell>
                 <StorePriceView
-                    store={selectedStore}
                     quantity={todoItem.quantity}
-                    priceData={todoItem.priceData} />
+                    price={todoItem.productPrice} />
             </TableCell>
             <TableCell padding="none">
                 <IconButton onClick={deleteTodoItem}>

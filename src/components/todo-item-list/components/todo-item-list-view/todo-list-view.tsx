@@ -8,7 +8,6 @@ import "./todo-list-view.css";
 import { TodoItemListHeader } from "./todo-list-table-head";
 import useTodoItemsTotalPriceController from "../use-todo-items-total-price-controller";
 import TodoItem from "../../types";
-import { GroceriesTodoStoreContext } from "../groceries-todo-store-context";
 
 const useStyles = makeStyles((theme) => ({
     root: {},
@@ -76,15 +75,12 @@ const TodoListView: React.FC<TodoListViewProps> = ({
     ...props
 }) => {
     const classes = useStyles();
-    const { selectedStore } = useContext(GroceriesTodoStoreContext);
     const todoItemListContext = useContext(TodoItemListContext);
     const todoItemsTotalPriceController = useTodoItemsTotalPriceController();
 
-    const totalPrice = selectedStore
-        ? currencyFormat(
-            todoItemsTotalPriceController.totalPriceByCounterparty(selectedStore.name),
-        )
-        : 0;
+    const totalPrice = currencyFormat(
+        todoItemsTotalPriceController.totalPriceByCounterparty(),
+    );
 
     const [order, setOrder] = React.useState<SortDirection>("asc");
     const [orderBy, setOrderBy] = React.useState(DEFAULT_SORTING_PROPERTY);

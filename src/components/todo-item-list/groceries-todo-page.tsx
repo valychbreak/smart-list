@@ -17,8 +17,8 @@ const GroceriesTodoPage = () => {
     };
 
     return (<>
-        <TodoItemListContextProvider>
-            <GroceriesTodoStoreContextProvider>
+        <GroceriesTodoStoreContextProvider>
+            <TodoItemListContextProvider>
                 <GroceriesTodoToolbar
                     currentMode={controller.currentMode}
                     onPurchaseModeToggle={switchMode} />
@@ -29,8 +29,8 @@ const GroceriesTodoPage = () => {
                 {controller.currentMode === Mode.PURCHASING && <>
                     <GroceriesTodoPurchasingModeView />
                 </>}
-            </GroceriesTodoStoreContextProvider>
-        </TodoItemListContextProvider>
+            </TodoItemListContextProvider>
+        </GroceriesTodoStoreContextProvider>
     </>);
 };
 

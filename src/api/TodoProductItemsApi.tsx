@@ -11,8 +11,8 @@ interface TodoProductItemsApi {
 }
 
 class LocalStorageTodoProductItemsApi implements TodoProductItemsApi {
-    fetchTodoProductItems(): Promise<TodoItem[]> {
-        return LocalDB.loadTodoProductItems();
+    fetchTodoProductItems(storeName?: string): Promise<TodoItem[]> {
+        return LocalDB.loadTodoProductItems(storeName);
     }
 
     add(todoItem: TodoItem): Promise<void> {
