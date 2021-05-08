@@ -12,24 +12,12 @@ import ScanTest from "./pages/scan-test/ScanTestPage";
 import GroceriesTodo from "./routes/groceries-todo";
 import Login from "./routes/login";
 import Profile from "./routes/profile";
+import Export from "./routes/export";
 
 const useStyles = makeStyles((theme) => ({
     root: {},
     paper: {
         marginBottom: theme.spacing(2),
-    },
-    table: {},
-    visuallyHidden: {
-        border: 0,
-        clip: "rect(0 0 0 0)",
-        height: 1,
-        margin: -1,
-        overflow: "hidden",
-        padding: 0,
-        position: "absolute",
-    },
-    container: {
-        maxHeight: 360,
     },
 }));
 
@@ -43,34 +31,35 @@ export default function App() {
     return (
         <AuthenticationContextProvider>
             <Router>
-                <div className={classes.root}>
-                    <Paper className={classes.paper}>
-                        <AppHeader />
-                        <Switch>
-                            <Route path="/browse">
-                                <BrowseProductsPage />
-                            </Route>
-                            <Route path="/new-product">
-                                <AddNewProduct />
-                            </Route>
-                            <AuthenticatedRoute path="/groceries-todo">
-                                <GroceriesTodo />
-                            </AuthenticatedRoute>
-                            <AuthenticatedRoute path="/profile">
-                                <Profile />
-                            </AuthenticatedRoute>
-                            <Route path="/scan-test">
-                                <ScanTest />
-                            </Route>
-                            <Route path="/login">
-                                <Login />
-                            </Route>
-                            <Route path="/">
-                                <Home />
-                            </Route>
-                        </Switch>
-                    </Paper>
-                </div>
+                <Paper className={classes.paper}>
+                    <AppHeader />
+                    <Switch>
+                        <Route path="/browse">
+                            <BrowseProductsPage />
+                        </Route>
+                        <Route path="/new-product">
+                            <AddNewProduct />
+                        </Route>
+                        <AuthenticatedRoute path="/groceries-todo">
+                            <GroceriesTodo />
+                        </AuthenticatedRoute>
+                        <AuthenticatedRoute path="/profile">
+                            <Profile />
+                        </AuthenticatedRoute>
+                        <AuthenticatedRoute path="/export">
+                            <Export />
+                        </AuthenticatedRoute>
+                        <Route path="/scan-test">
+                            <ScanTest />
+                        </Route>
+                        <Route path="/login">
+                            <Login />
+                        </Route>
+                        <Route path="/">
+                            <Home />
+                        </Route>
+                    </Switch>
+                </Paper>
             </Router>
         </AuthenticationContextProvider>
     );
