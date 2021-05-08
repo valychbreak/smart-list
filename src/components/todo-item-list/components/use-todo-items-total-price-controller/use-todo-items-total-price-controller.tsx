@@ -3,10 +3,10 @@ import { useTodoItemListContext } from "../../../../pages/groceries-todo/context
 const useTodoItemsTotalPriceController = () => {
     const todoItemListContext = useTodoItemListContext();
 
-    const totalPriceByCounterparty = (counterparty: string): number => todoItemListContext.todoItems
+    const totalPriceByCounterparty = (): number => todoItemListContext.todoItems
         .map((todoItem) => {
-            const priceData = todoItem.priceData.getCounterpartyPrice(counterparty);
-            return priceData ? priceData.price * todoItem.quantity : 0;
+            const price = todoItem.productPrice;
+            return price ? price * todoItem.quantity : 0;
         })
         .reduce((previousValue: number, currentValue: number) => previousValue + currentValue, 0);
 

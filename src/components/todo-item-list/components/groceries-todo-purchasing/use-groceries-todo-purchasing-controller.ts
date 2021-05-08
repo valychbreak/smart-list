@@ -74,8 +74,7 @@ const useGroceriesTodoPurchasingController = () => {
 
         const product = new Product(todoItem.generalName, code, format);
         const savedProduct = await ProductApi.saveProduct(product);
-        const updatedTodoItem = todoItem.clone();
-        updatedTodoItem.targetProduct = savedProduct;
+        const updatedTodoItem = todoItem.setTargetProduct(savedProduct);
         todoItemListContext.updateItem(updatedTodoItem);
         toggleTodoItemPurchaseStatus(updatedTodoItem, true);
     }

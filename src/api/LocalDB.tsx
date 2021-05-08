@@ -10,6 +10,7 @@ import Product from "../entity/Product";
 import TodoItem from "../components/todo-item-list/types";
 import CategoryLocalDB from "./persistance/local-db-category";
 import Category from "../entity/category";
+import ProductPriceApi from "./ProductPriceApi";
 
 const PRODUCTS_KEY = "products";
 const PRODUCTS_PRICES_KEY = "productPrices";
@@ -101,10 +102,28 @@ class LocalDB {
         });
     }
 
-    async loadTodoProductItems(): Promise<TodoItem[]> {
+    async loadTodoProductItems(storeName?: string): Promise<TodoItem[]> {
         await this.initTodoProductItemsCache();
 
-        return [...this.todoProductItemsCache];
+        const todoItemsWithPrice: TodoItem[] = [];
+        for (const todoItem of this.todoProductItemsCache) {
+            const { targetProduct } = todoItem;
+            if (!targetProduct || !storeName) {
+                todoItemsWithPrice.push(todoItem.setProductPrice(null));
+                // eslint-disable-next-line no-continue
+                continue;
+            }
+
+            const priceEntry = await ProductPriceApi.fetchLatestPrice(targetProduct, storeName);
+            if (priceEntry) {
+                const updatedItem = todoItem.setProductPrice(priceEntry.price);
+                todoItemsWithPrice.push(updatedItem);
+            } else {
+                todoItemsWithPrice.push(todoItem.setProductPrice(null));
+            }
+        }
+
+        return todoItemsWithPrice;
     }
 
     async saveTodoProductItem(todoItem: TodoItem): Promise<void> {
@@ -144,14 +163,14 @@ class LocalDB {
             if (storedTodoItemsJson != null) {
                 try {
                     for (const todoItemJson of JSON.parse(storedTodoItemsJson)) {
-                        const parsedTodoItem = TodoItem.from(todoItemJson);
-                        const todoItemProduct = parsedTodoItem.targetProduct;
+                        const todoItem = TodoItem.from(todoItemJson);
+                        const todoItemProduct = todoItem.targetProduct;
 
                         if (todoItemProduct) {
                             await this.enrichProduct(todoItemProduct);
                         }
 
-                        parsedTodoItems.push(parsedTodoItem);
+                        parsedTodoItems.push(todoItem);
                     }
                 } catch (err) {
                     console.log(err);

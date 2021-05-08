@@ -43,24 +43,24 @@ class TodoItem {
 
     isBought: boolean;
 
-    priceData: ProductPriceData;
+    readonly productPrice: number | null;
 
     constructor(
         id: number,
         generalName: string,
         quantity: number,
         isBought: boolean,
-        priceData: ProductPriceData
+        productPrice: number | null
     ) {
         this.id = id;
         this.generalName = generalName;
         this.quantity = quantity;
         this.isBought = isBought;
-        this.priceData = priceData;
+        this.productPrice = productPrice;
     }
 
-    static createTodoItem(id: number, generalName: string) {
-        return new TodoItem(id, generalName, 1, false, new ProductPriceData());
+    static createTodoItem(id: number, generalName: string, productPrice: number | null = null) {
+        return new TodoItem(id, generalName, 1, false, productPrice);
     }
 
     static fromProduct(product: Product, quantity?: number): TodoItem {
@@ -93,14 +93,12 @@ class TodoItem {
         return todoItem;
     }
 
-    clone(): TodoItem {
-        return new TodoItem(
-            this.id,
-            this.generalName,
-            this.quantity,
-            this.isBought,
-            this.priceData
-        );
+    setProductPrice(newPrice: number | null): TodoItem {
+        return { ...this, productPrice: newPrice };
+    }
+
+    setTargetProduct(product: Product | null): TodoItem {
+        return { ...this, targetProduct: product };
     }
 }
 
