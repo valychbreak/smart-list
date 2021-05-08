@@ -20,7 +20,7 @@ const TodoItemListContextProvider = (
             .then((fetchedTodoItems) => {
                 setTodoItems(fetchedTodoItems);
             });
-    }, []);
+    }, [selectedStore]);
 
     const updateItemQuantity = (item: TodoItem, quantity: number) => {
         // eslint-disable-next-line no-param-reassign
@@ -43,22 +43,22 @@ const TodoItemListContextProvider = (
 
         await TodoProductItemsApi.add(item);
 
+        let createdItem;
         const { targetProduct } = item;
         if (!targetProduct || !selectedStore) {
-            setTodoItems(todoItems.concat(item));
-            return;
-        }
-
-        const priceEntry = await ProductPriceApi.fetchLatestPrice(
-            targetProduct, selectedStore.name
-        );
-
-        if (priceEntry) {
-            const createdItem = item.setProductPrice(priceEntry.price);
-            setTodoItems(todoItems.concat(createdItem));
+            createdItem = item;
         } else {
-            setTodoItems(todoItems.concat(item));
+            const priceEntry = await ProductPriceApi.fetchLatestPrice(
+                targetProduct, selectedStore.name
+            );
+            if (priceEntry) {
+                createdItem = item.setProductPrice(priceEntry.price);
+            } else {
+                createdItem = item;
+            }
         }
+
+        setTodoItems(todoItems.concat(createdItem));
     };
 
     const removeItem = (removeTodoItem: TodoItem) => {
