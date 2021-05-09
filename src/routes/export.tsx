@@ -1,6 +1,5 @@
-const Export = () => {
-    const someValue = 5;
-    return (<>{someValue}</>);
-};
+import TodoItemExport from "../components/todo-item-export";
+
+const Export = () => <TodoItemExport />;
 
 export default Export;
