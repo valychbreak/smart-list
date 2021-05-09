@@ -70,7 +70,15 @@ class TodoItem {
         generalName: string,
         productPrice: number | null = null
     ) {
-        return new TodoItem(id, generalName, 1, null, false, productPrice, null);
+        return new TodoItem(
+            id,
+            generalName,
+            1,
+            null,
+            false,
+            productPrice,
+            null
+        );
     }
 
     static fromProduct(product: Product, quantity?: number): TodoItem {
@@ -93,14 +101,29 @@ class TodoItem {
     }
 
     static from(json: any): TodoItem {
-        const todoItem = this.createTodoItem(json.id, json.generalName);
+        const {
+            id,
+            generalName,
+            quantity,
+            targetProduct,
+            isBought,
+            purchasedPrice,
+        } = json;
 
-        todoItem.quantity = json.quantity;
-        if (json.targetProduct) {
-            todoItem.targetProduct = Product.from(json.targetProduct);
+        let product = null;
+        if (targetProduct) {
+            product = Product.from(json.targetProduct);
         }
-        todoItem.isBought = json.isBought;
-        return todoItem;
+
+        return new TodoItem(
+            id,
+            generalName,
+            quantity,
+            product,
+            isBought,
+            null,
+            purchasedPrice
+        );
     }
 
     setProductPrice(newPrice: number | null): TodoItem {
