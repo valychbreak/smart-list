@@ -16,7 +16,7 @@ interface ProductSelectProps {
     onProductSelect(selectedProduct: Product | null): void;
     onProductCreateOptionSelect(inputValue: string): void;
 
-    defaultProduct?: Product;
+    defaultProduct?: Product | null;
 }
 
 const NEW_PRODUCT = new Product("", "", "");

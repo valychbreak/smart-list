@@ -39,7 +39,7 @@ class TodoItem {
 
     quantity: number;
 
-    targetProduct?: Product;
+    targetProduct: Product | null;
 
     isBought: boolean;
 
@@ -51,6 +51,7 @@ class TodoItem {
         id: number,
         generalName: string,
         quantity: number,
+        targetProduct: Product | null,
         isBought: boolean,
         productPrice: number | null,
         purchasedPrice: number | null
@@ -58,6 +59,7 @@ class TodoItem {
         this.id = id;
         this.generalName = generalName;
         this.quantity = quantity;
+        this.targetProduct = targetProduct;
         this.isBought = isBought;
         this.productPrice = productPrice;
         this.purchasedPrice = purchasedPrice;
@@ -68,7 +70,7 @@ class TodoItem {
         generalName: string,
         productPrice: number | null = null
     ) {
-        return new TodoItem(id, generalName, 1, false, productPrice, null);
+        return new TodoItem(id, generalName, 1, null, false, productPrice, null);
     }
 
     static fromProduct(product: Product, quantity?: number): TodoItem {
@@ -102,14 +104,16 @@ class TodoItem {
     }
 
     setProductPrice(newPrice: number | null): TodoItem {
-        return new TodoItem(
+        const todoItem = new TodoItem(
             this.id,
             this.generalName,
             this.quantity,
+            this.targetProduct,
             this.isBought,
             newPrice,
             this.purchasedPrice
         );
+        return todoItem;
     }
 
     setTargetProduct(product: Product | null): TodoItem {
@@ -117,23 +121,26 @@ class TodoItem {
             this.id,
             this.generalName,
             this.quantity,
+            product,
             this.isBought,
             this.productPrice,
             this.purchasedPrice
         );
-        todoItem.targetProduct = product || undefined;
         return todoItem;
     }
 
     setPurchasedPrice(newPrice: number | null): TodoItem {
-        return new TodoItem(
+        const todoItem = new TodoItem(
             this.id,
             this.generalName,
             this.quantity,
+            this.targetProduct,
             this.isBought,
             this.productPrice,
             newPrice
         );
+        todoItem.targetProduct = this.targetProduct;
+        return todoItem;
     }
 }
 

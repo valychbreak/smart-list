@@ -12,7 +12,7 @@ export interface ProductPriceFormFields {
 }
 
 interface ProductPriceFormProps {
-    targetProduct: Product | undefined;
+    targetProduct: Product | null;
     defaultStore?: Store | null;
     onSubmit(formData: ProductPriceFormFields): void;
 }

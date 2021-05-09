@@ -19,7 +19,7 @@ describe("Class & Types tests", () => {
 
             expect(todoItem.generalName).toEqual("Bread");
             expect(todoItem.quantity).toEqual(3);
-            expect(todoItem.targetProduct).not.toBeNull();
+            expect(todoItem.targetProduct).toBeNull();
         });
 
         it("should create modified copy with methods", () => {

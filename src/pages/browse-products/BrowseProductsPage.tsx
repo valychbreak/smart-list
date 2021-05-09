@@ -10,7 +10,7 @@ import Product from "../../entity/Product";
 const BrowseProductsPage = () => {
     const [products, setProducts] = useState<Product[]>([]);
 
-    const [selectedProduct, setSelectedProduct] = useState<Product>();
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [addingPrice, setAddingPrice] = useState(false);
 
     const [copySuccess, setCopySuccess] = useState("");

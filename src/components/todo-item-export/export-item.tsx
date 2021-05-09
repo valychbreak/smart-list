@@ -19,14 +19,11 @@ class ExportItem extends TodoItem {
             id,
             generalName,
             quantity,
+            targetProduct,
             isBought,
             productPrice,
             purchasedPrice
         );
-
-        if (targetProduct) {
-            this.targetProduct = targetProduct;
-        }
 
         this.category = category;
     }

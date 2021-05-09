@@ -15,7 +15,7 @@ function createPurchasedTodoItem(
     productPrice: number,
     purchasedPrice: number | null
 ) {
-    return new TodoItem(1, generalName, 1, true, productPrice, purchasedPrice);
+    return new TodoItem(1, generalName, 1, null, true, productPrice, purchasedPrice);
 }
 
 describe("TodoListItemView", () => {
