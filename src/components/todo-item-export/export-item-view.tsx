@@ -7,10 +7,17 @@ type ExportItemViewProps = {
 
 const ExportItemView = (props: ExportItemViewProps) => {
     const { todoItem } = props;
+    const { targetProduct } = todoItem;
 
-    return (
-        <Typography>{todoItem.generalName}</Typography>
-    );
+    const productName = targetProduct?.productFullName || todoItem.generalName;
+    const itemName = targetProduct ? productName : todoItem.generalName;
+
+    const categoryName = targetProduct?.category?.name || "-";
+
+    return (<>
+        <Typography>{itemName}</Typography>
+        <Typography>{categoryName}</Typography>
+    </>);
 };
 
 export default ExportItemView;
