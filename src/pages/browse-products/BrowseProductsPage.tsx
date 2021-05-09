@@ -3,7 +3,7 @@ import { Grid, Typography } from "@material-ui/core";
 import ProductApi from "../../api/ProductApi";
 import ProductPriceApi from "../../api/ProductPriceApi";
 import ProductPriceEntry from "../../entity/ProductPriceEntry";
-import ProductPriceForm from "../../components/ProductPriceForm";
+import ProductPriceForm, { ProductPriceFormFields } from "../../components/ProductPriceForm";
 import ProductView from "../../components/ProductView";
 import Product from "../../entity/Product";
 
@@ -35,9 +35,15 @@ const BrowseProductsPage = () => {
         setAddingPrice(true);
     }
 
-    function onPriceEntrySubmit(productPriceEntry: ProductPriceEntry) {
+    function onPriceEntrySubmit(formData: ProductPriceFormFields) {
         if (selectedProduct) {
-            ProductPriceApi.addPriceEntry(selectedProduct, productPriceEntry);
+            const priceEntry = new ProductPriceEntry(
+                selectedProduct.productBarcode,
+                formData.price,
+                formData.counterparty,
+                new Date()
+            );
+            ProductPriceApi.addPriceEntry(selectedProduct, priceEntry);
         }
     }
 
@@ -47,7 +53,7 @@ const BrowseProductsPage = () => {
                 <h3>Add price for {selectedProduct?.productFullName}</h3>
                 <ProductPriceForm
                     targetProduct={selectedProduct}
-                    onEntrySubmit={onPriceEntrySubmit}
+                    onSubmit={onPriceEntrySubmit}
                 />
             </>)}
             <Typography variant="h4">Browse products</Typography>

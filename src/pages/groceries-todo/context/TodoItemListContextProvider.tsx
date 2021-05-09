@@ -1,8 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import ProductPriceApi from "../../../api/ProductPriceApi";
 import TodoProductItemsApi from "../../../api/TodoProductItemsApi";
+import { ProductPriceFormFields } from "../../../components/ProductPriceForm";
 import { GroceriesTodoStoreContext } from "../../../components/todo-item-list/components/groceries-todo-store-context";
 import TodoItem from "../../../components/todo-item-list/types";
+import ProductPriceEntry from "../../../entity/ProductPriceEntry";
 import TodoItemListContext from "./TodoItemListContext";
 
 interface TodoItemListContextProviderProps {
@@ -88,6 +90,23 @@ const TodoItemListContextProvider = (
         TodoProductItemsApi.clear();
     };
 
+    const submitPriceEntry = async (
+        todoItem: TodoItem, productPriceFormData: ProductPriceFormFields
+    ): Promise<void> => {
+        const updatedItem = todoItem.setPurchasedPrice(productPriceFormData.price);
+        updateItem(updatedItem);
+
+        if (productPriceFormData.selectedProduct) {
+            const priceEntry = new ProductPriceEntry(
+                productPriceFormData.selectedProduct.productBarcode,
+                productPriceFormData.price,
+                productPriceFormData.counterparty,
+                new Date()
+            );
+            await ProductPriceApi.addPriceEntry(productPriceFormData.selectedProduct, priceEntry);
+        }
+    };
+
     return (
         <TodoItemListContext.Provider value={{
             todoItems,
@@ -97,6 +116,7 @@ const TodoItemListContextProvider = (
             toggleItemPurchased,
             updateItemQuantity,
             clearItems,
+            submitPriceEntry,
         }}>
             {props.children}
         </TodoItemListContext.Provider>

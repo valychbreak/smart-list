@@ -2,20 +2,19 @@ import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import Product from "../entity/Product";
-import ProductPriceEntry from "../entity/ProductPriceEntry";
 import ProductSelect from "./todo-item-list/components/product-select";
 import { Store } from "./todo-item-list/types";
 
-interface ProductPriceFormFields {
+export interface ProductPriceFormFields {
     price: number;
     counterparty: string;
-    selectedProduct: Product;
+    selectedProduct: Product | null;
 }
 
 interface ProductPriceFormProps {
     targetProduct: Product | undefined;
     defaultStore?: Store | null;
-    onEntrySubmit(productPriceEntry: ProductPriceEntry): void;
+    onSubmit(formData: ProductPriceFormFields): void;
 }
 
 const ProductPriceForm = (props: ProductPriceFormProps) => {
@@ -26,15 +25,7 @@ const ProductPriceForm = (props: ProductPriceFormProps) => {
     const defaultStoreName = props.defaultStore?.name;
 
     const submitPriceEntry = (formData: ProductPriceFormFields) => {
-        if (props.targetProduct) {
-            const priceEntry = new ProductPriceEntry(
-                formData.selectedProduct.productBarcode,
-                formData.price,
-                formData.counterparty,
-                new Date(),
-            );
-            props.onEntrySubmit(priceEntry);
-        }
+        props.onSubmit(formData);
     };
 
     const onProductCreateOptionSelect = (inputValue: string) => {
@@ -52,7 +43,7 @@ const ProductPriceForm = (props: ProductPriceFormProps) => {
                 <Controller
                     name="selectedProduct"
                     control={control}
-                    rules={{ required: true }}
+                    rules={{ required: false }}
                     render={({ onChange }) => (
                         <ProductSelect
                             inputValue={productSearchInput}
@@ -62,7 +53,7 @@ const ProductPriceForm = (props: ProductPriceFormProps) => {
                             onProductCreateOptionSelect={onProductCreateOptionSelect} />
                     )}
                     // This line is needed to prevent a warning of missing default value
-                    defaultValue={props.targetProduct}
+                    defaultValue={props.targetProduct || null}
                 />
 
                 <input name="price" type="number" step=".01" ref={register({ required: true })}/> PLN
