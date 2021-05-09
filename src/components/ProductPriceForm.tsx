@@ -25,7 +25,8 @@ const ProductPriceForm = (props: ProductPriceFormProps) => {
     const defaultStoreName = props.defaultStore?.name;
 
     const submitPriceEntry = (formData: ProductPriceFormFields) => {
-        props.onSubmit(formData);
+        // need to parse float because at runtime price is a string
+        props.onSubmit({ ...formData, price: parseFloat(formData.price.toString()) });
     };
 
     const onProductCreateOptionSelect = (inputValue: string) => {
