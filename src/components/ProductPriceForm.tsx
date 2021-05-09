@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import Product from "../entity/Product";
@@ -25,7 +25,6 @@ interface ProductPriceFormProps {
 
 const ProductPriceForm = (props: ProductPriceFormProps) => {
     const { register, handleSubmit, control } = useForm<ProductPriceFormFields>();
-    const [productSearchInput, setProductSearchInput] = useState("");
 
     const history = useHistory();
     const defaultStoreName = props.defaultStore?.name;
@@ -55,16 +54,13 @@ const ProductPriceForm = (props: ProductPriceFormProps) => {
                     name="selectedProduct"
                     control={control}
                     rules={{ required: false }}
-                    render={({ onChange }) => (
+                    defaultValue={props.targetProduct}
+                    render={({ onChange, value }) => (
                         <ProductSelect
-                            inputValue={productSearchInput}
-                            defaultProduct={props.targetProduct}
-                            setInputValue={setProductSearchInput}
+                            product={value}
                             onProductSelect={(selectedProduct) => onChange(selectedProduct)}
                             onProductCreateOptionSelect={onProductCreateOptionSelect} />
                     )}
-                    // This line is needed to prevent a warning of missing default value
-                    defaultValue={props.targetProduct || null}
                 />
 
                 <input name="price" type="number" step=".01" ref={register({ required: true })}/> PLN
