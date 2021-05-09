@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import ProductPriceApi from "../../../api/ProductPriceApi";
 import TodoProductItemsApi from "../../../api/TodoProductItemsApi";
-import { ProductPriceFormFields } from "../../../components/ProductPriceForm";
+import { ProductPriceData } from "../../../components/ProductPriceForm";
 import { GroceriesTodoStoreContext } from "../../../components/todo-item-list/components/groceries-todo-store-context";
 import TodoItem from "../../../components/todo-item-list/types";
 import ProductPriceEntry from "../../../entity/ProductPriceEntry";
@@ -91,7 +91,7 @@ const TodoItemListContextProvider = (
     };
 
     const submitPriceEntry = async (
-        todoItem: TodoItem, productPriceFormData: ProductPriceFormFields
+        todoItem: TodoItem, productPriceFormData: ProductPriceData
     ): Promise<void> => {
         const updatedItem = todoItem.setPurchasedPrice(productPriceFormData.price);
         updateItem(updatedItem);
@@ -100,7 +100,7 @@ const TodoItemListContextProvider = (
             const priceEntry = new ProductPriceEntry(
                 productPriceFormData.selectedProduct.productBarcode,
                 productPriceFormData.price,
-                productPriceFormData.counterparty,
+                productPriceFormData.storeName,
                 new Date()
             );
             await ProductPriceApi.addPriceEntry(productPriceFormData.selectedProduct, priceEntry);

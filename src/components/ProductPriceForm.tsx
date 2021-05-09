@@ -5,16 +5,22 @@ import Product from "../entity/Product";
 import ProductSelect from "./todo-item-list/components/product-select";
 import { Store } from "./todo-item-list/types";
 
-export interface ProductPriceFormFields {
-    price: number;
+interface ProductPriceFormFields {
+    price: string;
     counterparty: string;
+    selectedProduct: Product | null;
+}
+
+export interface ProductPriceData {
+    price: number;
+    storeName: string;
     selectedProduct: Product | null;
 }
 
 interface ProductPriceFormProps {
     targetProduct: Product | null;
     defaultStore?: Store | null;
-    onSubmit(formData: ProductPriceFormFields): void;
+    onSubmit(formData: ProductPriceData): void;
 }
 
 const ProductPriceForm = (props: ProductPriceFormProps) => {
@@ -25,8 +31,12 @@ const ProductPriceForm = (props: ProductPriceFormProps) => {
     const defaultStoreName = props.defaultStore?.name;
 
     const submitPriceEntry = (formData: ProductPriceFormFields) => {
-        // need to parse float because at runtime price is a string
-        props.onSubmit({ ...formData, price: parseFloat(formData.price.toString()) });
+        const { price, counterparty, selectedProduct } = formData;
+        props.onSubmit({
+            price: parseFloat(price),
+            storeName: counterparty,
+            selectedProduct
+        });
     };
 
     const onProductCreateOptionSelect = (inputValue: string) => {

@@ -1,25 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import PriceData from "../../entity/PriceData";
 import Product from "../../entity/Product";
-
-export class ProductPriceData {
-    latestPrice: number;
-
-    private perCounterpartyPrice: Map<string, PriceData>;
-
-    constructor() {
-        this.latestPrice = 0;
-        this.perCounterpartyPrice = new Map();
-    }
-
-    getCounterpartyPrice(counterparty: string): PriceData | undefined {
-        return this.perCounterpartyPrice.get(counterparty);
-    }
-
-    setCounterpartyPrice(counterparty: string, priceData: PriceData) {
-        this.perCounterpartyPrice.set(counterparty, priceData);
-    }
-}
 
 export class Store {
     readonly id: number;

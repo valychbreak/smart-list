@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import TodoItem from "../../types";
-import ProductPriceForm, { ProductPriceFormFields } from "../../../ProductPriceForm";
+import ProductPriceForm, { ProductPriceData } from "../../../ProductPriceForm";
 import GroceriesTodoStoreContext from "../groceries-todo-store-context/groceries-todo-store-context";
 import { useTodoItemListContext } from "../../../../pages/groceries-todo/context/TodoItemListContext";
 
@@ -14,7 +14,7 @@ const TodoItemPriceSubmitDialog = (props: TodoItemPriceSubmitDialogProps) => {
     const { selectedStore } = useContext(GroceriesTodoStoreContext);
     const { submitPriceEntry } = useTodoItemListContext();
 
-    function onPriceEntrySubmit(formData: ProductPriceFormFields) {
+    function onPriceEntrySubmit(formData: ProductPriceData) {
         const { selectedItem } = props;
 
         if (!selectedItem) {

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useContext } from "react";
-import { ProductPriceFormFields } from "../../../components/ProductPriceForm";
+import { ProductPriceData } from "../../../components/ProductPriceForm";
 import TodoItem from "../../../components/todo-item-list/types";
 import Product from "../../../entity/Product";
 
@@ -15,7 +15,7 @@ export type TodoItemListContextType = {
 
     submitPriceEntry: (
         todoItem: TodoItem,
-        productPriceFormData: ProductPriceFormFields
+        productPriceFormData: ProductPriceData
     ) => Promise<void>;
     clearItems: () => void;
 };

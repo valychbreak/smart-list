@@ -3,7 +3,7 @@ import { Grid, Typography } from "@material-ui/core";
 import ProductApi from "../../api/ProductApi";
 import ProductPriceApi from "../../api/ProductPriceApi";
 import ProductPriceEntry from "../../entity/ProductPriceEntry";
-import ProductPriceForm, { ProductPriceFormFields } from "../../components/ProductPriceForm";
+import ProductPriceForm, { ProductPriceData } from "../../components/ProductPriceForm";
 import ProductView from "../../components/ProductView";
 import Product from "../../entity/Product";
 
@@ -35,12 +35,12 @@ const BrowseProductsPage = () => {
         setAddingPrice(true);
     }
 
-    function onPriceEntrySubmit(formData: ProductPriceFormFields) {
+    function onPriceEntrySubmit(formData: ProductPriceData) {
         if (selectedProduct) {
             const priceEntry = new ProductPriceEntry(
                 selectedProduct.productBarcode,
                 formData.price,
-                formData.counterparty,
+                formData.storeName,
                 new Date()
             );
             ProductPriceApi.addPriceEntry(selectedProduct, priceEntry);
