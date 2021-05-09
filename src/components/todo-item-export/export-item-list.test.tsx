@@ -1,13 +1,13 @@
 import { shallow } from "enzyme";
-import TodoItem from "../todo-item-list/types";
+import ExportItem from "./export-item";
 import ExportItemList from "./export-item-list";
 
 type OverridingProps = {
-    todoItems: TodoItem[];
+    exportItems: ExportItem[];
 };
 
-function createTodoItem(id: number, generalName: string) {
-    return TodoItem.createTodoItem(id, generalName);
+function createExportItem(id: number, generalName: string) {
+    return new ExportItem(id, generalName, 1, true, null, null, null, null);
 }
 
 describe("ExportItemList", () => {
@@ -16,12 +16,12 @@ describe("ExportItemList", () => {
     );
 
     it("should display all todo items", () => {
-        const todoItems = [
-            createTodoItem(1, "Milk"),
-            createTodoItem(2, "Bread"),
+        const exportItems = [
+            createExportItem(1, "Milk"),
+            createExportItem(2, "Bread"),
         ];
 
-        const wrapper = shallow(exportItemList({ todoItems }));
+        const wrapper = shallow(exportItemList({ exportItems }));
 
         expect(wrapper).toMatchSnapshot();
     });

@@ -1,0 +1,49 @@
+import Category from "../../entity/category";
+import Product from "../../entity/Product";
+import TodoItem from "../todo-item-list/types";
+
+class ExportItem extends TodoItem {
+    readonly category: Category | null;
+
+    constructor(
+        id: number,
+        generalName: string,
+        quantity: number,
+        isBought: boolean,
+        productPrice: number | null,
+        purchasedPrice: number | null,
+        category: Category | null,
+        targetProduct: Product | null
+    ) {
+        super(
+            id,
+            generalName,
+            quantity,
+            isBought,
+            productPrice,
+            purchasedPrice
+        );
+
+        if (targetProduct) {
+            this.targetProduct = targetProduct;
+        }
+
+        this.category = category;
+    }
+
+    static fromTodoItem(todoItem: TodoItem): ExportItem {
+        const product = todoItem.targetProduct || null;
+        return new ExportItem(
+            todoItem.id,
+            todoItem.generalName,
+            todoItem.quantity,
+            todoItem.isBought,
+            todoItem.productPrice,
+            todoItem.purchasedPrice,
+            null,
+            product
+        );
+    }
+}
+
+export default ExportItem;

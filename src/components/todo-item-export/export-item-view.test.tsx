@@ -2,15 +2,15 @@ import { shallow } from "enzyme";
 import td from "testdouble";
 import Category from "../../entity/category";
 import Product from "../../entity/Product";
-import TodoItem from "../todo-item-list/types";
+import ExportItem from "./export-item";
 import ExportItemView from "./export-item-view";
 
 type OverridingProps = {
-    todoItem: TodoItem;
+    exportItem: ExportItem;
 };
 
-function createTodoItem(generalName: string) {
-    return TodoItem.createTodoItem(Date.now(), generalName);
+function createExportItem(generalName: string) {
+    return new ExportItem(1, generalName, 1, true, null, null, null, null);
 }
 
 function createTodoItemWithProduct(
@@ -22,8 +22,7 @@ function createTodoItemWithProduct(
     product.category = category || null;
     product.productFullName = fullName || null;
 
-    const todoItem = TodoItem.createTodoItem(Date.now(), generalName);
-    return todoItem.setTargetProduct(product);
+    return new ExportItem(1, generalName, 1, true, null, null, null, product);
 }
 
 describe("ExportItemView", () => {
@@ -38,51 +37,51 @@ describe("ExportItemView", () => {
 
     describe("render", () => {
         it("should display todo item general name without a product", () => {
-            const todoItem = createTodoItem("Milk");
+            const exportItem = createExportItem("Milk");
 
-            const wrapper = shallow(exportItemView({ todoItem }));
+            const wrapper = shallow(exportItemView({ exportItem }));
 
             expect(wrapper.contains("Milk")).toBe(true);
         });
 
         it("should display product full name when item is linked to product", () => {
-            const todoItem = createTodoItemWithProduct(
+            const exportItem = createTodoItemWithProduct(
                 "Milk",
                 "Milk from Special Company"
             );
 
-            const wrapper = shallow(exportItemView({ todoItem }));
+            const wrapper = shallow(exportItemView({ exportItem }));
 
             expect(wrapper.contains("Milk from Special Company")).toBe(true);
         });
 
         it("should display general name when product doesn't have full name", () => {
-            const todoItem = createTodoItemWithProduct("Milk");
+            const exportItem = createTodoItemWithProduct("Milk");
 
-            const wrapper = shallow(exportItemView({ todoItem }));
+            const wrapper = shallow(exportItemView({ exportItem }));
 
             expect(wrapper.contains("Milk")).toBe(true);
         });
 
         it("should display category name", () => {
-            const todoItem = createTodoItemWithProduct(
+            const exportItem = createTodoItemWithProduct(
                 "Milk",
                 "Special Milk",
                 groceriesCategory
             );
 
-            const wrapper = shallow(exportItemView({ todoItem }));
+            const wrapper = shallow(exportItemView({ exportItem }));
 
             expect(wrapper.contains("Groceries")).toBe(true);
         });
 
         it("should display hiphen instead of category name when it's not set", () => {
-            const todoItem = createTodoItemWithProduct(
+            const exportItem = createTodoItemWithProduct(
                 "Milk",
                 "Special Milk"
             );
 
-            const wrapper = shallow(exportItemView({ todoItem }));
+            const wrapper = shallow(exportItemView({ exportItem }));
 
             expect(wrapper.contains("-")).toBe(true);
         });

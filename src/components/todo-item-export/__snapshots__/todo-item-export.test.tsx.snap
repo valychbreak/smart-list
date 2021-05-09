@@ -3,7 +3,7 @@
 exports[`TodoItemExport should render 1`] = `
 <Fragment>
   <ExportItemList
-    todoItems={Array []}
+    exportItems={Array []}
   />
 </Fragment>
 `;

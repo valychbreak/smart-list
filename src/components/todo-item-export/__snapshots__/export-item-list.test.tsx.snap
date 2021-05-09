@@ -3,30 +3,34 @@
 exports[`ExportItemList should display all todo items 1`] = `
 <Fragment>
   <ExportItemView
-    key="1"
-    todoItem={
-      TodoItem {
+    exportItem={
+      ExportItem {
+        "category": null,
         "generalName": "Milk",
         "id": 1,
-        "isBought": false,
+        "isBought": true,
         "productPrice": null,
+        "purchasedPrice": null,
         "quantity": 1,
         "targetProduct": undefined,
       }
     }
+    key="1"
   />
   <ExportItemView
-    key="2"
-    todoItem={
-      TodoItem {
+    exportItem={
+      ExportItem {
+        "category": null,
         "generalName": "Bread",
         "id": 2,
-        "isBought": false,
+        "isBought": true,
         "productPrice": null,
+        "purchasedPrice": null,
         "quantity": 1,
         "targetProduct": undefined,
       }
     }
+    key="2"
   />
 </Fragment>
 `;

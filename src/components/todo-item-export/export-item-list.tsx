@@ -1,18 +1,18 @@
-import TodoItem from "../todo-item-list/types";
+import ExportItem from "./export-item";
 import ExportItemView from "./export-item-view";
 
 type ExportItemListProps = {
-    todoItems: TodoItem[];
+    exportItems: ExportItem[];
 };
 
 const ExportItemList = (props: ExportItemListProps) => {
-    const { todoItems } = props;
+    const { exportItems } = props;
 
     return (<>
-        {todoItems.map((todoItem) => (
+        {exportItems.map((exportItem) => (
             <ExportItemView
-                key={todoItem.id}
-                todoItem={todoItem} />
+                key={exportItem.id}
+                exportItem={exportItem} />
         ))}
     </>);
 };

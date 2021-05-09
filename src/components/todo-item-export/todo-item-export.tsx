@@ -1,20 +1,26 @@
 import { useEffect, useState } from "react";
 import TodoProductItemsApi from "../../api/TodoProductItemsApi";
-import TodoItem from "../todo-item-list/types";
+import ExportItem from "./export-item";
 import ExportItemList from "./export-item-list";
 
 const TodoItemExport = () => {
-    const [todoItems, setTodoItems] = useState<TodoItem[]>([]);
+    const [todoItems, setTodoItems] = useState<ExportItem[]>([]);
 
     useEffect(() => {
         TodoProductItemsApi.fetchTodoProductItems().then((loadedTodoItems) => {
-            setTodoItems(loadedTodoItems);
+            const exportItems: ExportItem[] = loadedTodoItems.map((todoItem) => (
+                ExportItem.fromTodoItem(todoItem)
+            ));
+
+            setTodoItems(exportItems);
         });
     }, []);
 
-    return (<>
-        <ExportItemList todoItems={todoItems} />
-    </>);
+    return (
+        <>
+            <ExportItemList exportItems={todoItems} />
+        </>
+    );
 };
 
 export default TodoItemExport;

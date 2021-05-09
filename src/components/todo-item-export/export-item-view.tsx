@@ -1,16 +1,16 @@
 import { Typography } from "@material-ui/core";
-import TodoItem from "../todo-item-list/types";
+import ExportItem from "./export-item";
 
 type ExportItemViewProps = {
-    todoItem: TodoItem;
+    exportItem: ExportItem;
 };
 
 const ExportItemView = (props: ExportItemViewProps) => {
-    const { todoItem } = props;
-    const { targetProduct } = todoItem;
+    const { exportItem } = props;
+    const { targetProduct } = exportItem;
 
-    const productName = targetProduct?.productFullName || todoItem.generalName;
-    const itemName = targetProduct ? productName : todoItem.generalName;
+    const productName = targetProduct?.productFullName || exportItem.generalName;
+    const itemName = targetProduct ? productName : exportItem.generalName;
 
     const categoryName = targetProduct?.category?.name || "-";
 
