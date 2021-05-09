@@ -45,22 +45,26 @@ class TodoItem {
 
     readonly productPrice: number | null;
 
+    readonly purchasedPrice: number | null;
+
     constructor(
         id: number,
         generalName: string,
         quantity: number,
         isBought: boolean,
-        productPrice: number | null
+        productPrice: number | null,
+        purchasedPrice: number | null
     ) {
         this.id = id;
         this.generalName = generalName;
         this.quantity = quantity;
         this.isBought = isBought;
         this.productPrice = productPrice;
+        this.purchasedPrice = purchasedPrice;
     }
 
     static createTodoItem(id: number, generalName: string, productPrice: number | null = null) {
-        return new TodoItem(id, generalName, 1, false, productPrice);
+        return new TodoItem(id, generalName, 1, false, productPrice, null);
     }
 
     static fromProduct(product: Product, quantity?: number): TodoItem {
