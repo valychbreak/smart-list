@@ -10,6 +10,7 @@ interface AsyncAutocompleteProps<T> {
     inputValue: string;
     options: T[];
 
+    freeSolo?: boolean | undefined;
     placeholder?: string;
 
     setInputValue(value: string): void;
@@ -25,6 +26,7 @@ function AsyncAutocomplete<T>(props: AsyncAutocompleteProps<T>) {
         loading,
         options,
         inputValue,
+        freeSolo,
         placeholder,
         setInputValue,
         onChange,
@@ -35,7 +37,7 @@ function AsyncAutocomplete<T>(props: AsyncAutocompleteProps<T>) {
     return (
         <>
             <Autocomplete
-                freeSolo
+                freeSolo={freeSolo}
                 value={value}
                 noOptionsText="No suggestions"
                 inputValue={inputValue}

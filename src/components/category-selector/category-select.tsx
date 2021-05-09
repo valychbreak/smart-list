@@ -56,6 +56,7 @@ const CategorySelect = (props: CategorySelectProps) => {
 
     return (
         <AsyncAutocomplete
+            freeSolo
             placeholder="Select category..."
             value={selectedOption}
             loading={loading}
