@@ -1,5 +1,5 @@
 import TodoItem from "../todo-item-list/types";
-import ExportItemListItem from "./export-item-list-item";
+import ExportItemView from "./export-item-view";
 
 type ExportItemListProps = {
     todoItems: TodoItem[];
@@ -10,7 +10,7 @@ const ExportItemList = (props: ExportItemListProps) => {
 
     return (<>
         {todoItems.map((todoItem) => (
-            <ExportItemListItem
+            <ExportItemView
                 key={todoItem.id}
                 todoItem={todoItem} />
         ))}

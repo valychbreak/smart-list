@@ -6,8 +6,8 @@ type OverridingProps = {
     todoItems: TodoItem[];
 };
 
-function createTodoItem(generalName: string) {
-    return TodoItem.createTodoItem(Date.now(), generalName);
+function createTodoItem(id: number, generalName: string) {
+    return TodoItem.createTodoItem(id, generalName);
 }
 
 describe("ExportItemList", () => {
@@ -16,7 +16,10 @@ describe("ExportItemList", () => {
     );
 
     it("should display all todo items", () => {
-        const todoItems = [createTodoItem("Milk"), createTodoItem("Bread")];
+        const todoItems = [
+            createTodoItem(1, "Milk"),
+            createTodoItem(2, "Bread"),
+        ];
 
         const wrapper = shallow(exportItemList({ todoItems }));
 

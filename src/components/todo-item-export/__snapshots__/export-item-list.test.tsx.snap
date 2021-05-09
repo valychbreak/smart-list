@@ -2,12 +2,12 @@
 
 exports[`ExportItemList should display all todo items 1`] = `
 <Fragment>
-  <ExportItemListItem
-    key="1620562357115"
+  <ExportItemView
+    key="1"
     todoItem={
       TodoItem {
         "generalName": "Milk",
-        "id": 1620562357115,
+        "id": 1,
         "isBought": false,
         "productPrice": null,
         "quantity": 1,
@@ -15,12 +15,12 @@ exports[`ExportItemList should display all todo items 1`] = `
       }
     }
   />
-  <ExportItemListItem
-    key="1620562357115"
+  <ExportItemView
+    key="2"
     todoItem={
       TodoItem {
         "generalName": "Bread",
-        "id": 1620562357115,
+        "id": 2,
         "isBought": false,
         "productPrice": null,
         "quantity": 1,
