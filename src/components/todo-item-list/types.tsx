@@ -63,7 +63,11 @@ class TodoItem {
         this.purchasedPrice = purchasedPrice;
     }
 
-    static createTodoItem(id: number, generalName: string, productPrice: number | null = null) {
+    static createTodoItem(
+        id: number,
+        generalName: string,
+        productPrice: number | null = null
+    ) {
         return new TodoItem(id, generalName, 1, false, productPrice, null);
     }
 
@@ -98,11 +102,38 @@ class TodoItem {
     }
 
     setProductPrice(newPrice: number | null): TodoItem {
-        return { ...this, productPrice: newPrice };
+        return new TodoItem(
+            this.id,
+            this.generalName,
+            this.quantity,
+            this.isBought,
+            newPrice,
+            this.purchasedPrice
+        );
     }
 
     setTargetProduct(product: Product | null): TodoItem {
-        return { ...this, targetProduct: product };
+        const todoItem = new TodoItem(
+            this.id,
+            this.generalName,
+            this.quantity,
+            this.isBought,
+            this.productPrice,
+            this.purchasedPrice
+        );
+        todoItem.targetProduct = product || undefined;
+        return todoItem;
+    }
+
+    setPurchasedPrice(newPrice: number | null): TodoItem {
+        return new TodoItem(
+            this.id,
+            this.generalName,
+            this.quantity,
+            this.isBought,
+            this.productPrice,
+            newPrice
+        );
     }
 }
 

@@ -1,3 +1,5 @@
+import td from "testdouble";
+import Product from "../../entity/Product";
 import TodoItem from "./types";
 
 describe("Class & Types tests", () => {
@@ -18,6 +20,14 @@ describe("Class & Types tests", () => {
             expect(todoItem.generalName).toEqual("Bread");
             expect(todoItem.quantity).toEqual(3);
             expect(todoItem.targetProduct).not.toBeNull();
+        });
+
+        it("should create modified copy with methods", () => {
+            const todoItem = TodoItem.createTodoItem(1, "Milk");
+
+            const updatedItem = todoItem.setTargetProduct(td.object<Product>());
+
+            updatedItem.setPurchasedPrice(10.99);
         });
     });
 });
