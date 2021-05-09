@@ -33,6 +33,7 @@ class ExportItem extends TodoItem {
 
     static fromTodoItem(todoItem: TodoItem): ExportItem {
         const product = todoItem.targetProduct || null;
+        const category = product?.category || null;
         return new ExportItem(
             todoItem.id,
             todoItem.generalName,
@@ -40,7 +41,7 @@ class ExportItem extends TodoItem {
             todoItem.isBought,
             todoItem.productPrice,
             todoItem.purchasedPrice,
-            null,
+            category,
             product
         );
     }
