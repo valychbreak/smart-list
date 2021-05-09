@@ -12,7 +12,7 @@ const ExportItemView = (props: ExportItemViewProps) => {
     const productName = targetProduct?.productFullName || exportItem.generalName;
     const itemName = targetProduct ? productName : exportItem.generalName;
 
-    const categoryName = targetProduct?.category?.name || "-";
+    const categoryName = exportItem.category?.name || "-";
 
     return (<>
         <Typography>{itemName}</Typography>

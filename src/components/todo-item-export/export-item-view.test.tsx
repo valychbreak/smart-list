@@ -19,10 +19,18 @@ function createTodoItemWithProduct(
     category?: Category
 ) {
     const product = td.object<Product>();
-    product.category = category || null;
     product.productFullName = fullName || null;
 
-    return new ExportItem(1, generalName, 1, true, null, null, null, product);
+    return new ExportItem(
+        1,
+        generalName,
+        1,
+        true,
+        null,
+        null,
+        category || null,
+        product
+    );
 }
 
 describe("ExportItemView", () => {
