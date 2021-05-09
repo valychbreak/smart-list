@@ -9,8 +9,17 @@ type OverridingProps = {
     exportItem: ExportItem;
 };
 
-function createExportItem(generalName: string) {
-    return new ExportItem(1, generalName, 1, true, null, null, null, null);
+function createExportItem(generalName: string, purchasedPrice?: number) {
+    return new ExportItem(
+        1,
+        generalName,
+        1,
+        true,
+        null,
+        purchasedPrice || null,
+        null,
+        null
+    );
 }
 
 function createTodoItemWithProduct(
@@ -92,6 +101,14 @@ describe("ExportItemView", () => {
             const wrapper = shallow(exportItemView({ exportItem }));
 
             expect(wrapper.contains("-")).toBe(true);
+        });
+
+        it("should display purchased price", () => {
+            const exportItem = createExportItem("Milk", 3.99);
+
+            const wrapper = shallow(exportItemView({ exportItem }));
+
+            expect(wrapper.contains(3.99)).toBe(true);
         });
     });
 });

@@ -17,6 +17,7 @@ const ExportItemView = (props: ExportItemViewProps) => {
     return (<>
         <Typography>{itemName}</Typography>
         <Typography>{categoryName}</Typography>
+        <Typography>{exportItem.purchasedPrice}</Typography>
     </>);
 };
 
