@@ -1,10 +1,13 @@
 /* eslint-disable class-methods-use-this */
+import Category from "../entity/category";
 import Product from "../entity/Product";
 import LocalDB from "./LocalDB";
+import CategoryLocalDB from "./persistance/local-db-category";
 
 interface ProductApi {
     getProducts(): Promise<Product[]>;
     saveProduct(product: Product): Promise<Product>;
+    changeCategory(product: Product, category: Category | null): Promise<void>;
     findBy(generalName: string): Promise<Product[]>;
     findMatchingBy(query: string): Promise<Product[]>;
     findByBarcode(barcode: string, barcodeType: string): Promise<Product | null>;
@@ -47,6 +50,14 @@ class MockedProductApi implements ProductApi {
 
     async saveProduct(product: Product): Promise<Product> {
         return LocalDB.saveProduct(product);
+    }
+
+    async changeCategory(product: Product, category: Category | null): Promise<void> {
+        if (category === null) {
+            await CategoryLocalDB.removeCategory(product);
+        } else {
+            await CategoryLocalDB.changeCategory(product, category);
+        }
     }
 }
 
