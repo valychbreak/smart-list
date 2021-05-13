@@ -29,9 +29,33 @@ const TodoItemExport = () => {
         setSelectedExportItem(null);
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const onExportItemEdit = (formData: ExportItemFormSubmitData) => {
-        //
+        if (!selectedExportItem) {
+            return;
+        }
+
+        const { purchasedPrice, category } = formData;
+
+        const updatedExportItem = new ExportItem(
+            selectedExportItem.id,
+            selectedExportItem.generalName,
+            selectedExportItem.quantity,
+            selectedExportItem.isBought,
+            selectedExportItem.productPrice,
+            purchasedPrice,
+            category,
+            selectedExportItem.targetProduct
+        );
+
+        setTodoItems(
+            todoItems.map((exportItem) => (
+                exportItem.id === updatedExportItem.id
+                    ? updatedExportItem
+                    : exportItem
+            ))
+        );
+
+        setSelectedExportItem(null);
     };
 
     return (
