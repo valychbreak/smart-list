@@ -2,8 +2,18 @@
 
 exports[`TodoItemExport should render 1`] = `
 <Fragment>
+  <WithStyles(ForwardRef(Dialog))
+    onClose={[Function]}
+    open={false}
+  >
+    <ExportItemEditForm
+      exportItem={null}
+      onSubmit={[Function]}
+    />
+  </WithStyles(ForwardRef(Dialog))>
   <ExportItemList
     exportItems={Array []}
+    onEdit={[Function]}
   />
 </Fragment>
 `;

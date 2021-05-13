@@ -7,6 +7,7 @@ import ExportItemView from "./export-item-view";
 
 type OverridingProps = {
     exportItem: ExportItem;
+    onEdit?: (exportItem: ExportItem) => void;
 };
 
 function createExportItem(generalName: string, purchasedPrice?: number) {
@@ -44,7 +45,7 @@ function createTodoItemWithProduct(
 
 describe("ExportItemView", () => {
     const exportItemView = ({ ...overridingProps }: OverridingProps) => (
-        <ExportItemView {...overridingProps} />
+        <ExportItemView onEdit={() => {}} {...overridingProps} />
     );
 
     const groceriesCategory = {
@@ -110,5 +111,16 @@ describe("ExportItemView", () => {
 
             expect(wrapper.contains(3.99)).toBe(true);
         });
+    });
+
+    describe("behaviour", () => {
+        type OnEditType = (exportItem: ExportItem) => void;
+        const onEdit = td.func<OnEditType>();
+        const exportItem = createExportItem("Milk");
+
+        const wrapper = shallow(exportItemView({ exportItem, onEdit }));
+        wrapper.find("[data-test-id='export-item-edit-btn']").simulate("click");
+
+        td.verify(onEdit(exportItem));
     });
 });

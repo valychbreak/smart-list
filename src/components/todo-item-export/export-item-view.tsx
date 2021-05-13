@@ -20,7 +20,11 @@ const ExportItemView = (props: ExportItemViewProps) => {
         <Typography>{itemName}</Typography>
         <Typography>{categoryName}</Typography>
         <Typography>{exportItem.purchasedPrice}</Typography>
-        <Button startIcon={<EditIcon />} onClick={() => onEdit(exportItem)}>
+        <Button
+            data-test-id="export-item-edit-btn"
+            startIcon={<EditIcon />}
+            onClick={() => onEdit(exportItem)}
+        >
             Edit
         </Button>
     </>);
