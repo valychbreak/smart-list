@@ -2,6 +2,7 @@ import { shallow } from "enzyme";
 import td from "testdouble";
 import Category from "../../entity/category";
 import Product from "../../entity/Product";
+import { Store } from "../todo-item-list/types";
 import ExportItem from "./export-item";
 import ExportItemView from "./export-item-view";
 
@@ -10,7 +11,7 @@ type OverridingProps = {
     onEdit?: (exportItem: ExportItem) => void;
 };
 
-function createExportItem(generalName: string, purchasedPrice?: number) {
+function createExportItem(generalName: string, purchasedPrice?: number, purchasedStore?: Store) {
     return new ExportItem(
         1,
         generalName,
@@ -18,6 +19,7 @@ function createExportItem(generalName: string, purchasedPrice?: number) {
         true,
         null,
         purchasedPrice || null,
+        purchasedStore || null,
         null,
         null
     );
@@ -36,6 +38,7 @@ function createTodoItemWithProduct(
         generalName,
         1,
         true,
+        null,
         null,
         null,
         category || null,
@@ -90,7 +93,11 @@ describe("ExportItemView", () => {
 
             const wrapper = shallow(exportItemView({ exportItem }));
 
-            expect(wrapper.contains("Groceries")).toBe(true);
+            expect(
+                wrapper
+                    .find("[data-test-id='export-item-category']")
+                    .contains("Groceries")
+            ).toBe(true);
         });
 
         it("should display hiphen instead of category name when it's not set", () => {
@@ -101,7 +108,11 @@ describe("ExportItemView", () => {
 
             const wrapper = shallow(exportItemView({ exportItem }));
 
-            expect(wrapper.contains("-")).toBe(true);
+            expect(
+                wrapper
+                    .find("[data-test-id='export-item-category']")
+                    .contains("-")
+            ).toBe(true);
         });
 
         it("should display purchased price", () => {
@@ -110,6 +121,33 @@ describe("ExportItemView", () => {
             const wrapper = shallow(exportItemView({ exportItem }));
 
             expect(wrapper.contains(3.99)).toBe(true);
+        });
+
+        it("should display store where item was purchased", () => {
+            const exportItem = createExportItem("Milk", 3.0, {
+                id: 1,
+                name: "Biedronka",
+            });
+
+            const wrapper = shallow(exportItemView({ exportItem }));
+
+            expect(
+                wrapper
+                    .find("[data-test-id='export-item-store-name']")
+                    .contains("Biedronka")
+            ).toBe(true);
+        });
+
+        it("should display hiphen instead of store name when store is not set", () => {
+            const exportItem = createExportItem("Milk");
+
+            const wrapper = shallow(exportItemView({ exportItem }));
+
+            expect(
+                wrapper
+                    .find("[data-test-id='export-item-store-name']")
+                    .contains("-")
+            ).toBe(true);
         });
     });
 

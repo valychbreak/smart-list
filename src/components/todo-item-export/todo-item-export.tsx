@@ -34,7 +34,7 @@ const TodoItemExport = () => {
             return;
         }
 
-        const { purchasedPrice, category } = formData;
+        const { purchasedPrice, category, store } = formData;
 
         const updatedExportItem = new ExportItem(
             selectedExportItem.id,
@@ -43,6 +43,7 @@ const TodoItemExport = () => {
             selectedExportItem.isBought,
             selectedExportItem.productPrice,
             purchasedPrice,
+            store,
             category,
             selectedExportItem.targetProduct
         );

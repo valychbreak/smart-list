@@ -1,6 +1,6 @@
 import Category from "../../entity/category";
 import Product from "../../entity/Product";
-import TodoItem from "../todo-item-list/types";
+import TodoItem, { Store } from "../todo-item-list/types";
 
 class ExportItem extends TodoItem {
     readonly category: Category | null;
@@ -12,6 +12,7 @@ class ExportItem extends TodoItem {
         isBought: boolean,
         productPrice: number | null,
         purchasedPrice: number | null,
+        purchasedStore: Store | null,
         category: Category | null,
         targetProduct: Product | null
     ) {
@@ -22,7 +23,8 @@ class ExportItem extends TodoItem {
             targetProduct,
             isBought,
             productPrice,
-            purchasedPrice
+            purchasedPrice,
+            purchasedStore
         );
 
         this.category = category;
@@ -38,6 +40,7 @@ class ExportItem extends TodoItem {
             todoItem.isBought,
             todoItem.productPrice,
             todoItem.purchasedPrice,
+            todoItem.purchasedStore,
             category,
             product
         );

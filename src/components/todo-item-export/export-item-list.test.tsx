@@ -7,12 +7,22 @@ type OverridingProps = {
 };
 
 function createExportItem(id: number, generalName: string) {
-    return new ExportItem(id, generalName, 1, true, null, null, null, null);
+    return new ExportItem(
+        id,
+        generalName,
+        1,
+        true,
+        null,
+        null,
+        null,
+        null,
+        null
+    );
 }
 
 describe("ExportItemList", () => {
     const exportItemList = ({ ...overridingProps }: OverridingProps) => (
-        <ExportItemList {...overridingProps} />
+        <ExportItemList onEdit={() => {}} {...overridingProps} />
     );
 
     it("should display all todo items", () => {

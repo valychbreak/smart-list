@@ -11,11 +11,13 @@ exports[`ExportItemList should display all todo items 1`] = `
         "isBought": true,
         "productPrice": null,
         "purchasedPrice": null,
+        "purchasedStoreInternal": null,
         "quantity": 1,
         "targetProduct": null,
       }
     }
     key="1"
+    onEdit={[Function]}
   />
   <ExportItemView
     exportItem={
@@ -26,11 +28,13 @@ exports[`ExportItemList should display all todo items 1`] = `
         "isBought": true,
         "productPrice": null,
         "purchasedPrice": null,
+        "purchasedStoreInternal": null,
         "quantity": 1,
         "targetProduct": null,
       }
     }
     key="2"
+    onEdit={[Function]}
   />
 </Fragment>
 `;

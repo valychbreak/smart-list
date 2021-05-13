@@ -15,7 +15,7 @@ const TodoItemListContextProvider = (
     props: React.PropsWithChildren<TodoItemListContextProviderProps>,
 ) => {
     const [todoItems, setTodoItems] = useState<TodoItem[]>([]);
-    const { selectedStore } = useContext(GroceriesTodoStoreContext);
+    const { selectedStore, storeList } = useContext(GroceriesTodoStoreContext);
 
     useEffect(() => {
         TodoProductItemsApi.fetchTodoProductItems(selectedStore?.name)
@@ -93,7 +93,15 @@ const TodoItemListContextProvider = (
     const submitPriceEntry = async (
         todoItem: TodoItem, productPriceFormData: ProductPriceData
     ): Promise<void> => {
-        const updatedItem = todoItem.setPurchasedPrice(productPriceFormData.price);
+        const store = storeList.find(
+            (existingStore) => (
+                existingStore.name === productPriceFormData.storeName
+            )
+        );
+        const updatedItem = todoItem
+            .setPurchasedPrice(productPriceFormData.price)
+            .setPurchasedStore(store || selectedStore);
+
         updateItem(updatedItem);
 
         if (productPriceFormData.selectedProduct) {

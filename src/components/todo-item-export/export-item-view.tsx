@@ -15,11 +15,13 @@ const ExportItemView = (props: ExportItemViewProps) => {
     const itemName = targetProduct ? productName : exportItem.generalName;
 
     const categoryName = exportItem.category?.name || "-";
+    const storeName = exportItem.purchasedStore?.name || "-";
 
     return (<>
         <Typography>{itemName}</Typography>
-        <Typography>{categoryName}</Typography>
+        <Typography data-test-id="export-item-category">{categoryName}</Typography>
         <Typography>{exportItem.purchasedPrice}</Typography>
+        <Typography data-test-id="export-item-store-name">{storeName}</Typography>
         <Button
             data-test-id="export-item-edit-btn"
             startIcon={<EditIcon />}

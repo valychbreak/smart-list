@@ -10,6 +10,11 @@ export class Store {
         this.id = id;
         this.name = name;
     }
+
+    static fromJson(json: any): Store {
+        const { id, name } = json;
+        return new Store(id, name);
+    }
 }
 
 class TodoItem {
@@ -27,6 +32,8 @@ class TodoItem {
 
     readonly purchasedPrice: number | null;
 
+    private purchasedStoreInternal: Store | null;
+
     constructor(
         id: number,
         generalName: string,
@@ -34,7 +41,8 @@ class TodoItem {
         targetProduct: Product | null,
         isBought: boolean,
         productPrice: number | null,
-        purchasedPrice: number | null
+        purchasedPrice: number | null,
+        purchasedStore: Store | null
     ) {
         this.id = id;
         this.generalName = generalName;
@@ -43,6 +51,7 @@ class TodoItem {
         this.isBought = isBought;
         this.productPrice = productPrice;
         this.purchasedPrice = purchasedPrice;
+        this.purchasedStoreInternal = purchasedStore;
     }
 
     static createTodoItem(
@@ -57,6 +66,7 @@ class TodoItem {
             null,
             false,
             productPrice,
+            null,
             null
         );
     }
@@ -88,11 +98,17 @@ class TodoItem {
             targetProduct,
             isBought,
             purchasedPrice,
+            purchasedStoreInternal,
         } = json;
 
         let product = null;
         if (targetProduct) {
-            product = Product.from(json.targetProduct);
+            product = Product.from(targetProduct);
+        }
+
+        let loadedStore = null;
+        if (purchasedStoreInternal) {
+            loadedStore = Store.fromJson(purchasedStoreInternal);
         }
 
         return new TodoItem(
@@ -102,7 +118,8 @@ class TodoItem {
             product,
             isBought,
             null,
-            purchasedPrice
+            purchasedPrice,
+            loadedStore
         );
     }
 
@@ -114,7 +131,8 @@ class TodoItem {
             this.targetProduct,
             this.isBought,
             newPrice,
-            this.purchasedPrice
+            this.purchasedPrice,
+            this.purchasedStoreInternal
         );
         return todoItem;
     }
@@ -127,7 +145,8 @@ class TodoItem {
             product,
             this.isBought,
             this.productPrice,
-            this.purchasedPrice
+            this.purchasedPrice,
+            this.purchasedStoreInternal
         );
         return todoItem;
     }
@@ -140,10 +159,34 @@ class TodoItem {
             this.targetProduct,
             this.isBought,
             this.productPrice,
-            newPrice
+            newPrice,
+            this.purchasedStoreInternal
         );
         todoItem.targetProduct = this.targetProduct;
         return todoItem;
+    }
+
+    setPurchasedStore(store: Store | null): TodoItem {
+        const todoItem = this.clone();
+        todoItem.purchasedStoreInternal = store;
+        return todoItem;
+    }
+
+    get purchasedStore(): Store | null {
+        return this.purchasedStoreInternal;
+    }
+
+    private clone() {
+        return new TodoItem(
+            this.id,
+            this.generalName,
+            this.quantity,
+            this.targetProduct,
+            this.isBought,
+            this.productPrice,
+            this.purchasedPrice,
+            this.purchasedStoreInternal
+        );
     }
 }
 
