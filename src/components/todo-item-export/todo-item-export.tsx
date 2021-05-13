@@ -1,5 +1,6 @@
 import { Dialog } from "@material-ui/core";
 import { useEffect, useState } from "react";
+import ProductApi from "../../api/ProductApi";
 import TodoProductItemsApi from "../../api/TodoProductItemsApi";
 import ExportItem from "./export-item";
 import ExportItemEditForm, { ExportItemFormSubmitData } from "./export-item-form";
@@ -57,6 +58,10 @@ const TodoItemExport = () => {
         );
 
         setSelectedExportItem(null);
+
+        if (formData.applyToProduct && updatedExportItem.targetProduct) {
+            ProductApi.changeCategory(updatedExportItem.targetProduct, category);
+        }
     };
 
     return (

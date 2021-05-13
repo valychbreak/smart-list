@@ -1,5 +1,5 @@
-import { Button } from "@material-ui/core";
-import { useEffect, useState } from "react";
+import { Button, Checkbox, FormControlLabel } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import StoreApi from "../../api/StoreApi";
 import Category from "../../entity/category";
@@ -12,12 +12,14 @@ type ExportItemFormFields = {
     category: Category | null;
     purchasedPrice: string;
     store: Store | null;
+    applyToProduct: boolean;
 };
 
 export type ExportItemFormSubmitData = {
     category: Category;
     purchasedPrice: number;
     store: Store | null;
+    applyToProduct: boolean;
 };
 
 type ExportItemEditFormProps = {
@@ -34,6 +36,7 @@ const ExportItemEditForm = (props: ExportItemEditFormProps) => {
             category: exportItem?.category,
             purchasedPrice: exportItem?.purchasedPrice?.toString(),
             store: defaultStore,
+            applyToProduct: false
         },
     });
 
@@ -52,6 +55,7 @@ const ExportItemEditForm = (props: ExportItemEditFormProps) => {
             category: formData.category,
             purchasedPrice: parseFloat(formData.purchasedPrice),
             store: formData.store,
+            applyToProduct: formData.applyToProduct
         });
     };
 
@@ -71,6 +75,20 @@ const ExportItemEditForm = (props: ExportItemEditFormProps) => {
                     />
                 )}
             />
+            <Controller
+                name="applyToProduct"
+                control={control}
+                render={({ onChange, value }) => (
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                value={value}
+                                onChange={(e) => onChange(e.target.checked)} />
+                        }
+                        label="Set for product as well"
+                    />
+                )}
+            />
             <br />
             <input name="purchasedPrice" type="number" step=".01" ref={register({ required: true })}/> PLN
             <br />
@@ -86,6 +104,7 @@ const ExportItemEditForm = (props: ExportItemEditFormProps) => {
                     />
                 )}
             />
+            <br />
             <Button type="submit">Submit</Button>
         </form>
     );
