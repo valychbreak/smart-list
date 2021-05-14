@@ -15,7 +15,7 @@ export type ExportItemsGrouped = {
 
 export function getExportResult(exportItems: ExportItem[]): ExportItemsGrouped[] {
     return _.chain(exportItems)
-        .groupBy((iteratee) => iteratee.category?.name)
+        .groupBy((exportItem) => exportItem.category?.name)
         .flatMap((exportItemsByCategory, key) => (
             _.chain(exportItemsByCategory)
                 .groupBy((exportItem) => exportItem.purchasedStore?.name)
