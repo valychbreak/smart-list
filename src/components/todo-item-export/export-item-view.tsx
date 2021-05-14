@@ -1,6 +1,7 @@
-import { Button, Typography } from "@material-ui/core";
+import { Box, Button, Card, CardActions, CardContent, Grid, Typography } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/Edit";
 import { Alert } from "@material-ui/lab";
+import React from "react";
 import ExportItem from "./export-item";
 
 function showWarning(exportItem: ExportItem) {
@@ -37,23 +38,38 @@ const ExportItemView = (props: ExportItemViewProps) => {
 
     const categoryName = exportItem.category?.name || "-";
     const storeName = exportItem.purchasedStore?.name || "-";
+    const purchasedPrice = exportItem.purchasedPrice || "-";
 
-    return (<>
-        {showWarning(exportItem) && (<>
-            <Alert severity="warning">{getWarningMessage(exportItem)}</Alert>
-        </>)}
-        <Typography>{itemName}</Typography>
-        <Typography data-test-id="export-item-category">{categoryName}</Typography>
-        <Typography>{exportItem.purchasedPrice}</Typography>
-        <Typography data-test-id="export-item-store-name">{storeName}</Typography>
-        <Button
-            data-test-id="export-item-edit-btn"
-            startIcon={<EditIcon />}
-            onClick={() => onEdit(exportItem)}
-        >
-            Edit
-        </Button>
-    </>);
+    return (
+        <Box marginY={1}>
+            <Card>
+                {showWarning(exportItem) && (<>
+                    <Alert severity="warning">{getWarningMessage(exportItem)}</Alert>
+                </>)}
+                <CardContent>
+                    <Typography>{itemName}</Typography>
+                    <Typography data-test-id="export-item-category" color="textSecondary">Category: {categoryName}</Typography>
+                    <Grid container justify="space-between">
+                        <Grid item>
+                            <Typography>Price: {purchasedPrice}</Typography>
+                        </Grid>
+                        <Grid item>
+                            <Typography data-test-id="export-item-store-name">Store: {storeName}</Typography>
+                        </Grid>
+                    </Grid>
+                </CardContent>
+                <CardActions>
+                    <Button
+                        data-test-id="export-item-edit-btn"
+                        startIcon={<EditIcon />}
+                        onClick={() => onEdit(exportItem)}
+                    >
+                        Edit
+                    </Button>
+                </CardActions>
+            </Card>
+        </Box>
+    );
 };
 
 export default ExportItemView;

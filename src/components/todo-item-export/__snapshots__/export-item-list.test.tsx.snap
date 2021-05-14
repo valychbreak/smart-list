@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ExportItemList should display all todo items 1`] = `
-<Fragment>
+<Styled(MuiBox)
+  padding={1}
+>
   <ExportItemView
     exportItem={
       ExportItem {
@@ -36,5 +38,5 @@ exports[`ExportItemList should display all todo items 1`] = `
     key="2"
     onEdit={[Function]}
   />
-</Fragment>
+</Styled(MuiBox)>
 `;
