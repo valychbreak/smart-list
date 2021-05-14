@@ -1,3 +1,4 @@
+import { Alert } from "@material-ui/lab";
 import { shallow } from "enzyme";
 import td from "testdouble";
 import Category from "../../entity/category";
@@ -11,7 +12,12 @@ type OverridingProps = {
     onEdit?: (exportItem: ExportItem) => void;
 };
 
-function createExportItem(generalName: string, purchasedPrice?: number, purchasedStore?: Store) {
+function createExportItem(
+    generalName: string,
+    purchasedPrice?: number,
+    purchasedStore?: Store,
+    category?: Category
+) {
     return new ExportItem(
         1,
         generalName,
@@ -20,7 +26,7 @@ function createExportItem(generalName: string, purchasedPrice?: number, purchase
         null,
         purchasedPrice || null,
         purchasedStore || null,
-        null,
+        category || null,
         null
     );
 }
@@ -148,6 +154,50 @@ describe("ExportItemView", () => {
                     .find("[data-test-id='export-item-store-name']")
                     .contains("-")
             ).toBe(true);
+        });
+
+        it("should display warning when category is not set", () => {
+            const exportItem = createExportItem("Milk", 3.99);
+
+            const wrapper = shallow(exportItemView({ exportItem }));
+
+            expect(wrapper.find(Alert).text()).toEqual(
+                "Category is required for export"
+            );
+        });
+
+        it("should display warning when purchased price is not set", () => {
+            const exportItem = createExportItem("Milk", undefined, undefined, {
+                id: 1,
+                name: "Groceries",
+            });
+
+            const wrapper = shallow(exportItemView({ exportItem }));
+
+            expect(wrapper.find(Alert).text()).toEqual(
+                "Price is required for export"
+            );
+        });
+
+        it("should display warning when purchased price and category are not set", () => {
+            const exportItem = createExportItem("Milk");
+
+            const wrapper = shallow(exportItemView({ exportItem }));
+
+            expect(wrapper.find(Alert).text()).toEqual(
+                "Category and price are required for export"
+            );
+        });
+
+        it("should not display warning when purchased price and category are set", () => {
+            const exportItem = createExportItem("Milk", 3.99, undefined, {
+                id: 1,
+                name: "Groceries",
+            });
+
+            const wrapper = shallow(exportItemView({ exportItem }));
+
+            expect(wrapper.find(Alert).exists()).toBe(false);
         });
     });
 
