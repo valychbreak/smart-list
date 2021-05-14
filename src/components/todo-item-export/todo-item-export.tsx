@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { Dialog } from "@material-ui/core";
+import { Button, Dialog } from "@material-ui/core";
 import { useEffect, useState } from "react";
 import ProductApi from "../../api/ProductApi";
 import TodoProductItemsApi from "../../api/TodoProductItemsApi";
@@ -33,6 +33,7 @@ export function getExportResult(exportItems: ExportItem[]): ExportItemsGrouped[]
 
 const TodoItemExport = () => {
     const [todoItems, setTodoItems] = useState<ExportItem[]>([]);
+    const [openExportResultDialog, setOpenExportResultDialog] = useState<boolean>(false);
 
     const [selectedExportItem, setSelectedExportItem] = useState<ExportItem | null>(null);
     const openEditDialog = selectedExportItem !== null;
@@ -89,6 +90,10 @@ const TodoItemExport = () => {
         }
     };
 
+    const showExport = () => {
+        setOpenExportResultDialog(true);
+    };
+
     return (
         <>
             <Dialog open={openEditDialog} onClose={closeEditDialog}>
@@ -97,6 +102,15 @@ const TodoItemExport = () => {
                     onSubmit={onExportItemEdit}
                 />
             </Dialog>
+
+            <Dialog
+                open={openExportResultDialog}
+                onClose={() => setOpenExportResultDialog(false)}
+            >
+                test
+            </Dialog>
+
+            <Button onClick={showExport}>Show export</Button>
             <ExportItemList exportItems={todoItems} onEdit={onEditAction} />
         </>
     );
