@@ -7,14 +7,24 @@ import ExportItem from "./export-item";
 import ExportItemEditForm, { ExportItemFormSubmitData } from "./export-item-form";
 import ExportItemList from "./export-item-list";
 
-export function getExportResult(exportItems: ExportItem[]) {
+export type ExportItemsGrouped = {
+    categoryName: string;
+    storeName: string;
+    exportItems: ExportItem[];
+};
+
+export function getExportResult(exportItems: ExportItem[]): ExportItemsGrouped[] {
     return _.chain(exportItems)
         .groupBy((iteratee) => iteratee.category?.name)
         .flatMap((exportItemsByCategory, key) => (
             _.chain(exportItemsByCategory)
                 .groupBy((exportItem) => exportItem.purchasedStore?.name)
                 .map((exportItemsByStore, storeName) => (
-                    { category: key, storeName, exportItemsByStore }
+                    {
+                        categoryName: key,
+                        storeName,
+                        exportItems: exportItemsByStore
+                    } as ExportItemsGrouped
                 ))
                 .value()
         ))

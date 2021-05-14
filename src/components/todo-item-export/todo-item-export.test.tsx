@@ -2,7 +2,7 @@ import { shallow } from "enzyme";
 import Category from "../../entity/category";
 import { Store } from "../todo-item-list/types";
 import ExportItem from "./export-item";
-import TodoItemExport, { getExportResult } from "./todo-item-export";
+import TodoItemExport, { ExportItemsGrouped, getExportResult } from "./todo-item-export";
 
 const groceriesCategory = { id: 0, name: "Groceries" };
 const snacksCategory = { id: 1, name: "Snacks" };
@@ -38,6 +38,16 @@ describe("TodoItemExport", () => {
     });
 
     describe("functions", () => {
+        const exportItemsGrouped = (
+            exportItems: ExportItem[],
+            category?: Category,
+            store?: Store
+        ): ExportItemsGrouped => ({
+            categoryName: category?.name || "undefined",
+            storeName: store?.name || "undefined",
+            exportItems,
+        });
+
         it("should group by category", () => {
             const milk = createExportItem("Milk", 3.44, groceriesCategory);
             const bread = createExportItem("Bread", 2.55, groceriesCategory);
@@ -46,15 +56,10 @@ describe("TodoItemExport", () => {
 
             const result = getExportResult(exportItems);
 
-            expect(result).toEqual([{
-                category: groceriesCategory.name,
-                storeName: "undefined",
-                exportItemsByStore: [milk, bread],
-            }, {
-                category: snacksCategory.name,
-                storeName: "undefined",
-                exportItemsByStore: [pringles],
-            }]);
+            expect(result).toEqual([
+                exportItemsGrouped([milk, bread], groceriesCategory),
+                exportItemsGrouped([pringles], snacksCategory)
+            ]);
         });
 
         it("should group by store", () => {
@@ -65,15 +70,10 @@ describe("TodoItemExport", () => {
 
             const result = getExportResult(exportItems);
 
-            expect(result).toEqual([{
-                category: "undefined",
-                storeName: auchanStore.name,
-                exportItemsByStore: [milk, bread],
-            }, {
-                category: "undefined",
-                storeName: zabkaStore.name,
-                exportItemsByStore: [pringles],
-            }]);
+            expect(result).toEqual([
+                exportItemsGrouped([milk, bread], undefined, auchanStore),
+                exportItemsGrouped([pringles], undefined, zabkaStore)
+            ]);
         });
 
         it("should group by category and store", () => {
@@ -87,23 +87,17 @@ describe("TodoItemExport", () => {
 
             expect(result).toHaveLength(3);
 
-            expect(result).toContainEqual({
-                category: groceriesCategory.name,
-                storeName: auchanStore.name,
-                exportItemsByStore: [milk, bread],
-            });
+            expect(result).toContainEqual(
+                exportItemsGrouped([milk, bread], groceriesCategory, auchanStore)
+            );
 
-            expect(result).toContainEqual({
-                category: snacksCategory.name,
-                storeName: auchanStore.name,
-                exportItemsByStore: [lays],
-            });
+            expect(result).toContainEqual(
+                exportItemsGrouped([lays], snacksCategory, auchanStore)
+            );
 
-            expect(result).toContainEqual({
-                category: snacksCategory.name,
-                storeName: zabkaStore.name,
-                exportItemsByStore: [pringles],
-            });
+            expect(result).toContainEqual(
+                exportItemsGrouped([pringles], snacksCategory, zabkaStore)
+            );
         });
     });
 });
