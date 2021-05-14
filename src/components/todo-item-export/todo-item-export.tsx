@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { Dialog } from "@material-ui/core";
 import { useEffect, useState } from "react";
 import ProductApi from "../../api/ProductApi";
@@ -5,6 +6,20 @@ import TodoProductItemsApi from "../../api/TodoProductItemsApi";
 import ExportItem from "./export-item";
 import ExportItemEditForm, { ExportItemFormSubmitData } from "./export-item-form";
 import ExportItemList from "./export-item-list";
+
+export function getExportResult(exportItems: ExportItem[]) {
+    return _.chain(exportItems)
+        .groupBy((iteratee) => iteratee.category?.name)
+        .flatMap((exportItemsByCategory, key) => (
+            _.chain(exportItemsByCategory)
+                .groupBy((exportItem) => exportItem.purchasedStore?.name)
+                .map((exportItemsByStore, storeName) => (
+                    { category: key, storeName, exportItemsByStore }
+                ))
+                .value()
+        ))
+        .value();
+}
 
 const TodoItemExport = () => {
     const [todoItems, setTodoItems] = useState<ExportItem[]>([]);
