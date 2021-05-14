@@ -11,6 +11,30 @@ exports[`TodoItemExport should render 1`] = `
       onSubmit={[Function]}
     />
   </WithStyles(ForwardRef(Dialog))>
+  <WithStyles(ForwardRef(Dialog))
+    onClose={[Function]}
+    open={false}
+  >
+    <ExportResultView
+      exportItemsGrouped={Array []}
+    />
+  </WithStyles(ForwardRef(Dialog))>
+  <WithStyles(ForwardRef(Alert))
+    severity="info"
+  >
+    Showing only purchased items
+  </WithStyles(ForwardRef(Alert))>
+  <Styled(MuiBox)
+    marginY={1}
+  >
+    <WithStyles(ForwardRef(Button))
+      onClick={[Function]}
+      startIcon={<Memo />}
+      variant="outlined"
+    >
+      Show export
+    </WithStyles(ForwardRef(Button))>
+  </Styled(MuiBox)>
   <ExportItemList
     exportItems={Array []}
     onEdit={[Function]}
