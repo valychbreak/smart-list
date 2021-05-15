@@ -1,4 +1,4 @@
-import { Button, Checkbox, FormControlLabel } from "@material-ui/core";
+import { Button, Checkbox, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, FormGroup, FormHelperText, Input, InputAdornment, InputLabel } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import StoreApi from "../../api/StoreApi";
@@ -25,13 +25,14 @@ export type ExportItemFormSubmitData = {
 type ExportItemEditFormProps = {
     exportItem: ExportItem | null;
     onSubmit: (formData: ExportItemFormSubmitData) => void;
+    onClose: () => void;
 };
 
 const ExportItemEditForm = (props: ExportItemEditFormProps) => {
-    const { exportItem } = props;
+    const { exportItem, onClose } = props;
     const defaultStore = exportItem?.purchasedStore;
 
-    const { register, handleSubmit, control } = useForm<ExportItemFormFields>({
+    const { handleSubmit, control } = useForm<ExportItemFormFields>({
         defaultValues: {
             category: exportItem?.category,
             purchasedPrice: exportItem?.purchasedPrice?.toString(),
@@ -61,51 +62,81 @@ const ExportItemEditForm = (props: ExportItemEditFormProps) => {
 
     return (
         <form onSubmit={handleSubmit(submitExportItemEditData)}>
-            <Controller
-                name="category"
-                control={control}
-                rules={{ required: true }}
-                render={({ onChange, value }) => (
-                    <CategorySelect
-                        category={value}
-                        onCategoryChange={(category) => onChange(category)}
-                        onCategoryCreate={(inputValue) => (
-                            onChange({ id: -1, name: inputValue } as Category)
+            <DialogTitle>
+                Edit export item
+            </DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    {/* eslint-disable-next-line max-len */}
+                    Product: {exportItem?.targetProduct?.productFullName || exportItem?.generalName}
+                </DialogContentText>
+                <Controller
+                    name="category"
+                    control={control}
+                    rules={{ required: true }}
+                    render={({ onChange, value }) => (
+                        <CategorySelect
+                            label="Category"
+                            category={value}
+                            onCategoryChange={(category) => onChange(category)}
+                            onCategoryCreate={(inputValue) => (
+                                onChange({ id: -1, name: inputValue } as Category)
+                            )}
+                        />
+                    )}
+                />
+                <Controller
+                    name="applyToProduct"
+                    control={control}
+                    render={({ onChange, value }) => (
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    value={value}
+                                    onChange={(e) => onChange(e.target.checked)} />
+                            }
+                            label="Set for product as well"
+                        />
+                    )}
+                />
+                <FormControl fullWidth>
+                    <InputLabel htmlFor="export-item-price">Purchased price</InputLabel>
+                    <Controller
+                        name="purchasedPrice"
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ onChange, value }) => (
+                            <Input
+                                id="export-item-price"
+                                type="number"
+                                value={value}
+                                onChange={(e) => onChange(e.target.value)}
+                                endAdornment={<InputAdornment position="end">PLN</InputAdornment>}
+                            />
                         )}
                     />
-                )}
-            />
-            <Controller
-                name="applyToProduct"
-                control={control}
-                render={({ onChange, value }) => (
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                value={value}
-                                onChange={(e) => onChange(e.target.checked)} />
-                        }
-                        label="Set for product as well"
+                    <FormHelperText>Price for 1 unit</FormHelperText>
+                </FormControl>
+                <FormGroup>
+                    <Controller
+                        name="store"
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ onChange, value }) => (
+                            <StoreSelect
+                                selectedStore={value}
+                                storeList={storeList}
+                                onStoreSelect={(store) => onChange(store)}
+                            />
+                        )}
                     />
-                )}
-            />
-            <br />
-            <input name="purchasedPrice" type="number" step=".01" ref={register({ required: true })}/> PLN
-            <br />
-            <Controller
-                name="store"
-                control={control}
-                rules={{ required: true }}
-                render={({ onChange, value }) => (
-                    <StoreSelect
-                        selectedStore={value}
-                        storeList={storeList}
-                        onStoreSelect={(store) => onChange(store)}
-                    />
-                )}
-            />
-            <br />
-            <Button type="submit">Submit</Button>
+                    <FormHelperText>Store in which product was purchased</FormHelperText>
+                </FormGroup>
+            </DialogContent>
+            <DialogActions>
+                <Button type="button" onClick={() => onClose()}>Cancel</Button>
+                <Button type="submit">Submit</Button>
+            </DialogActions>
         </form>
     );
 };

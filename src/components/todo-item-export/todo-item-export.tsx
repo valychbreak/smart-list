@@ -106,6 +106,7 @@ const TodoItemExport = () => {
                 <ExportItemEditForm
                     exportItem={selectedExportItem as ExportItem}
                     onSubmit={onExportItemEdit}
+                    onClose={() => closeEditDialog()}
                 />
             </Dialog>
 
