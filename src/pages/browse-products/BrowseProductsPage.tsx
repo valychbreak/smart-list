@@ -44,6 +44,7 @@ const BrowseProductsPage = () => {
                 new Date()
             );
             ProductPriceApi.addPriceEntry(selectedProduct, priceEntry);
+            setAddingPrice(false);
         }
     }
 
