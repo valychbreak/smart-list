@@ -133,8 +133,12 @@ const ExportItemEditForm = (props: ExportItemEditFormProps) => {
                 </FormGroup>
             </DialogContent>
             <DialogActions>
-                <Button type="button" onClick={() => onClose()}>Cancel</Button>
-                <Button type="submit">Submit</Button>
+                <Button type="button" onClick={() => onClose()}>
+                    Cancel
+                </Button>
+                <Button type="submit" color="primary" variant="outlined">
+                    Submit
+                </Button>
             </DialogActions>
         </form>
     );
