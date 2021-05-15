@@ -1,40 +1,41 @@
-import React, { useState } from "react";
+import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import Product from "../entity/Product";
-import ProductPriceEntry from "../entity/ProductPriceEntry";
 import ProductSelect from "./todo-item-list/components/product-select";
 import { Store } from "./todo-item-list/types";
 
 interface ProductPriceFormFields {
-    price: number;
+    price: string;
     counterparty: string;
-    selectedProduct: Product;
+    selectedProduct: Product | null;
+}
+
+export interface ProductPriceData {
+    price: number;
+    storeName: string;
+    selectedProduct: Product | null;
 }
 
 interface ProductPriceFormProps {
-    targetProduct: Product | undefined;
+    targetProduct: Product | null;
     defaultStore?: Store | null;
-    onEntrySubmit(productPriceEntry: ProductPriceEntry): void;
+    onSubmit(formData: ProductPriceData): void;
 }
 
 const ProductPriceForm = (props: ProductPriceFormProps) => {
     const { register, handleSubmit, control } = useForm<ProductPriceFormFields>();
-    const [productSearchInput, setProductSearchInput] = useState("");
 
     const history = useHistory();
     const defaultStoreName = props.defaultStore?.name;
 
     const submitPriceEntry = (formData: ProductPriceFormFields) => {
-        if (props.targetProduct) {
-            const priceEntry = new ProductPriceEntry(
-                formData.selectedProduct.productBarcode,
-                formData.price,
-                formData.counterparty,
-                new Date(),
-            );
-            props.onEntrySubmit(priceEntry);
-        }
+        const { price, counterparty, selectedProduct } = formData;
+        props.onSubmit({
+            price: parseFloat(price),
+            storeName: counterparty,
+            selectedProduct
+        });
     };
 
     const onProductCreateOptionSelect = (inputValue: string) => {
@@ -52,17 +53,14 @@ const ProductPriceForm = (props: ProductPriceFormProps) => {
                 <Controller
                     name="selectedProduct"
                     control={control}
-                    rules={{ required: true }}
-                    render={({ onChange }) => (
+                    rules={{ required: false }}
+                    defaultValue={props.targetProduct}
+                    render={({ onChange, value }) => (
                         <ProductSelect
-                            inputValue={productSearchInput}
-                            defaultProduct={props.targetProduct}
-                            setInputValue={setProductSearchInput}
+                            product={value}
                             onProductSelect={(selectedProduct) => onChange(selectedProduct)}
                             onProductCreateOptionSelect={onProductCreateOptionSelect} />
                     )}
-                    // This line is needed to prevent a warning of missing default value
-                    defaultValue={props.targetProduct}
                 />
 
                 <input name="price" type="number" step=".01" ref={register({ required: true })}/> PLN

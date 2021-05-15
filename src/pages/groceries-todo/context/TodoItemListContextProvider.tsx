@@ -1,8 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import ProductPriceApi from "../../../api/ProductPriceApi";
 import TodoProductItemsApi from "../../../api/TodoProductItemsApi";
+import { ProductPriceData } from "../../../components/ProductPriceForm";
 import { GroceriesTodoStoreContext } from "../../../components/todo-item-list/components/groceries-todo-store-context";
 import TodoItem from "../../../components/todo-item-list/types";
+import ProductPriceEntry from "../../../entity/ProductPriceEntry";
 import TodoItemListContext from "./TodoItemListContext";
 
 interface TodoItemListContextProviderProps {
@@ -13,7 +15,7 @@ const TodoItemListContextProvider = (
     props: React.PropsWithChildren<TodoItemListContextProviderProps>,
 ) => {
     const [todoItems, setTodoItems] = useState<TodoItem[]>([]);
-    const { selectedStore } = useContext(GroceriesTodoStoreContext);
+    const { selectedStore, storeList } = useContext(GroceriesTodoStoreContext);
 
     useEffect(() => {
         TodoProductItemsApi.fetchTodoProductItems(selectedStore?.name)
@@ -88,6 +90,31 @@ const TodoItemListContextProvider = (
         TodoProductItemsApi.clear();
     };
 
+    const submitPriceEntry = async (
+        todoItem: TodoItem, productPriceFormData: ProductPriceData
+    ): Promise<void> => {
+        const store = storeList.find(
+            (existingStore) => (
+                existingStore.name === productPriceFormData.storeName
+            )
+        );
+        const updatedItem = todoItem
+            .setPurchasedPrice(productPriceFormData.price)
+            .setPurchasedStore(store || selectedStore);
+
+        updateItem(updatedItem);
+
+        if (productPriceFormData.selectedProduct) {
+            const priceEntry = new ProductPriceEntry(
+                productPriceFormData.selectedProduct.productBarcode,
+                productPriceFormData.price,
+                productPriceFormData.storeName,
+                new Date()
+            );
+            await ProductPriceApi.addPriceEntry(productPriceFormData.selectedProduct, priceEntry);
+        }
+    };
+
     return (
         <TodoItemListContext.Provider value={{
             todoItems,
@@ -97,6 +124,7 @@ const TodoItemListContextProvider = (
             toggleItemPurchased,
             updateItemQuantity,
             clearItems,
+            submitPriceEntry,
         }}>
             {props.children}
         </TodoItemListContext.Provider>

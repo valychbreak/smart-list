@@ -32,6 +32,10 @@ class LocalDB {
     async loadProducts(): Promise<Product[]> {
         await this.initCacheIfNeeded();
 
+        for (const product of this.productCache) {
+            await this.enrichProduct(product);
+        }
+
         return [...this.productCache];
     }
 

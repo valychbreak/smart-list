@@ -1,25 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import PriceData from "../../entity/PriceData";
 import Product from "../../entity/Product";
-
-export class ProductPriceData {
-    latestPrice: number;
-
-    private perCounterpartyPrice: Map<string, PriceData>;
-
-    constructor() {
-        this.latestPrice = 0;
-        this.perCounterpartyPrice = new Map();
-    }
-
-    getCounterpartyPrice(counterparty: string): PriceData | undefined {
-        return this.perCounterpartyPrice.get(counterparty);
-    }
-
-    setCounterpartyPrice(counterparty: string, priceData: PriceData) {
-        this.perCounterpartyPrice.set(counterparty, priceData);
-    }
-}
 
 export class Store {
     readonly id: number;
@@ -30,6 +10,11 @@ export class Store {
         this.id = id;
         this.name = name;
     }
+
+    static fromJson(json: any): Store {
+        const { id, name } = json;
+        return new Store(id, name);
+    }
 }
 
 class TodoItem {
@@ -39,28 +24,51 @@ class TodoItem {
 
     quantity: number;
 
-    targetProduct?: Product;
+    targetProduct: Product | null;
 
     isBought: boolean;
 
     readonly productPrice: number | null;
 
+    readonly purchasedPrice: number | null;
+
+    private purchasedStoreInternal: Store | null;
+
     constructor(
         id: number,
         generalName: string,
         quantity: number,
+        targetProduct: Product | null,
         isBought: boolean,
-        productPrice: number | null
+        productPrice: number | null,
+        purchasedPrice: number | null,
+        purchasedStore: Store | null
     ) {
         this.id = id;
         this.generalName = generalName;
         this.quantity = quantity;
+        this.targetProduct = targetProduct;
         this.isBought = isBought;
         this.productPrice = productPrice;
+        this.purchasedPrice = purchasedPrice;
+        this.purchasedStoreInternal = purchasedStore;
     }
 
-    static createTodoItem(id: number, generalName: string, productPrice: number | null = null) {
-        return new TodoItem(id, generalName, 1, false, productPrice);
+    static createTodoItem(
+        id: number,
+        generalName: string,
+        productPrice: number | null = null
+    ) {
+        return new TodoItem(
+            id,
+            generalName,
+            1,
+            null,
+            false,
+            productPrice,
+            null,
+            null
+        );
     }
 
     static fromProduct(product: Product, quantity?: number): TodoItem {
@@ -83,22 +91,102 @@ class TodoItem {
     }
 
     static from(json: any): TodoItem {
-        const todoItem = this.createTodoItem(json.id, json.generalName);
+        const {
+            id,
+            generalName,
+            quantity,
+            targetProduct,
+            isBought,
+            purchasedPrice,
+            purchasedStoreInternal,
+        } = json;
 
-        todoItem.quantity = json.quantity;
-        if (json.targetProduct) {
-            todoItem.targetProduct = Product.from(json.targetProduct);
+        let product = null;
+        if (targetProduct) {
+            product = Product.from(targetProduct);
         }
-        todoItem.isBought = json.isBought;
-        return todoItem;
+
+        let loadedStore = null;
+        if (purchasedStoreInternal) {
+            loadedStore = Store.fromJson(purchasedStoreInternal);
+        }
+
+        return new TodoItem(
+            id,
+            generalName,
+            quantity,
+            product,
+            isBought,
+            null,
+            purchasedPrice,
+            loadedStore
+        );
     }
 
     setProductPrice(newPrice: number | null): TodoItem {
-        return { ...this, productPrice: newPrice };
+        const todoItem = new TodoItem(
+            this.id,
+            this.generalName,
+            this.quantity,
+            this.targetProduct,
+            this.isBought,
+            newPrice,
+            this.purchasedPrice,
+            this.purchasedStoreInternal
+        );
+        return todoItem;
     }
 
     setTargetProduct(product: Product | null): TodoItem {
-        return { ...this, targetProduct: product };
+        const todoItem = new TodoItem(
+            this.id,
+            this.generalName,
+            this.quantity,
+            product,
+            this.isBought,
+            this.productPrice,
+            this.purchasedPrice,
+            this.purchasedStoreInternal
+        );
+        return todoItem;
+    }
+
+    setPurchasedPrice(newPrice: number | null): TodoItem {
+        const todoItem = new TodoItem(
+            this.id,
+            this.generalName,
+            this.quantity,
+            this.targetProduct,
+            this.isBought,
+            this.productPrice,
+            newPrice,
+            this.purchasedStoreInternal
+        );
+        todoItem.targetProduct = this.targetProduct;
+        return todoItem;
+    }
+
+    setPurchasedStore(store: Store | null): TodoItem {
+        const todoItem = this.clone();
+        todoItem.purchasedStoreInternal = store;
+        return todoItem;
+    }
+
+    get purchasedStore(): Store | null {
+        return this.purchasedStoreInternal;
+    }
+
+    private clone() {
+        return new TodoItem(
+            this.id,
+            this.generalName,
+            this.quantity,
+            this.targetProduct,
+            this.isBought,
+            this.productPrice,
+            this.purchasedPrice,
+            this.purchasedStoreInternal
+        );
     }
 }
 

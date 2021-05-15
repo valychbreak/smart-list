@@ -1,13 +1,22 @@
 import { shallow } from "enzyme";
+import React from "react";
 import td from "testdouble";
 import Product from "../../../../entity/Product";
 import TodoItem from "../../types";
-import TodoListItemView from "./todo-list-item-view";
+import TodoListItemView, { StorePriceView } from "./todo-list-item-view";
 
 type OverridingProps = {
     todoItem: TodoItem;
     showPurchaseAction?: boolean;
 };
+
+function createPurchasedTodoItem(
+    generalName: string,
+    productPrice: number,
+    purchasedPrice: number | null
+) {
+    return new TodoItem(1, generalName, 1, null, true, productPrice, purchasedPrice);
+}
 
 describe("TodoListItemView", () => {
     const todoListItemView = ({
@@ -65,6 +74,54 @@ describe("TodoListItemView", () => {
             wrapper
                 .find("[data-test-id='todo-item-purchase-checkbox']")
                 .exists()
+        ).toBe(true);
+    });
+
+    it("should display product price", () => {
+        const todoItem = TodoItem.createTodoItem(1, "Milk", 3.99);
+
+        const wrapper = shallow(
+            todoListItemView({
+                todoItem,
+            })
+        );
+
+        expect(
+            wrapper.containsMatchingElement(
+                <StorePriceView price={3.99} quantity={1} />
+            )
+        ).toBe(true);
+    });
+
+    it("should display purchased price for purchased todo item when it's set", () => {
+        const todoItem = createPurchasedTodoItem("Milk", 3.99, 5.33);
+
+        const wrapper = shallow(
+            todoListItemView({
+                todoItem,
+            })
+        );
+
+        expect(
+            wrapper.containsMatchingElement(
+                <StorePriceView price={5.33} quantity={1} />
+            )
+        ).toBe(true);
+    });
+
+    it("should display product price for purchased todo item when purchased price is not set", () => {
+        const todoItem = createPurchasedTodoItem("Milk", 3.99, null);
+
+        const wrapper = shallow(
+            todoListItemView({
+                todoItem,
+            })
+        );
+
+        expect(
+            wrapper.containsMatchingElement(
+                <StorePriceView price={3.99} quantity={1} />
+            )
         ).toBe(true);
     });
 });

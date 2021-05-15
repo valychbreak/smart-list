@@ -1,9 +1,11 @@
 import {
     TableHead, TableRow, TableCell, Checkbox, TableSortLabel,
-    Select, MenuItem, withStyles, InputBase, makeStyles, SortDirection,
+    makeStyles, SortDirection,
 } from "@material-ui/core";
 import React, { useContext } from "react";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
+import StoreSelect from "../../../store-select";
+import { Store } from "../../types";
 import GroceriesTodoStoreContext from "../groceries-todo-store-context/groceries-todo-store-context";
 
 const useStyles = makeStyles(() => ({
@@ -17,8 +19,6 @@ const useStyles = makeStyles(() => ({
         position: "absolute",
     },
 }));
-
-const BootstrapInput = withStyles(() => ({}))(InputBase);
 
 const headCells = [
     {
@@ -98,9 +98,7 @@ export function EnhancedTableHead(props: EnhancedTableHeadProps) {
         onRequestSort(event, property);
     };
 
-    const onStoreSelect = (event: any) => {
-        const value = event.target.value as string;
-        const store = storeList.find((existingStore) => existingStore.name === value);
+    const onStoreSelect = (store: Store | null) => {
         if (store) {
             selectStore(store);
         } else {
@@ -143,20 +141,11 @@ export function EnhancedTableHead(props: EnhancedTableHeadProps) {
                     </TableCell>
                 ))}
                 <TableCell>
-                    <Select
-                        onChange={onStoreSelect}
-                        value={selectedStore ? selectedStore.name : "None"}
-                        input={<BootstrapInput />}
-                    >
-                        <MenuItem value="None">
-                            None
-                        </MenuItem>
-                        {storeList.map((store) => (
-                            <MenuItem key={store.id} value={store.name}>
-                                {store.name}
-                            </MenuItem>
-                        ))}
-                    </Select>
+                    <StoreSelect
+                        selectedStore={selectedStore}
+                        storeList={storeList}
+                        onStoreSelect={(store) => onStoreSelect(store)}
+                    />
                 </TableCell>
                 <TableCell padding="none"></TableCell>
             </TableRow>

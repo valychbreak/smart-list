@@ -1,8 +1,8 @@
 import { Box, Button, Card, CardActions, CardContent, Chip, Grid, makeStyles, Tooltip, Typography } from "@material-ui/core";
 import React, { useEffect, useReducer, useState } from "react";
+import ProductApi from "../api/ProductApi";
 import ProductPriceApi from "../api/ProductPriceApi";
 import StoreApi from "../api/StoreApi";
-import UserCategoryAPI from "../api/UserCategoryAPI";
 import Category from "../entity/category";
 import Product from "../entity/Product";
 import CategorySelect from "./category-selector/category-select";
@@ -15,12 +15,7 @@ const ProductCategorySelector = (props: { product: Product }) => {
 
     const onCategorySelect = (category: Category | null) => {
         product.category = category;
-
-        if (category === null) {
-            UserCategoryAPI.removeCategory(product);
-            return;
-        }
-        UserCategoryAPI.changeCategory(product, category);
+        ProductApi.changeCategory(product, category);
     };
 
     const onCategoryCreate = (inputValue: string) => {

@@ -3,6 +3,7 @@ import {
 } from "@material-ui/core";
 import React, { useContext, useEffect } from "react";
 import MenuIcon from "@material-ui/icons/Menu";
+import { Link } from "react-router-dom";
 import { StyledMenu, useMenuController } from "../../../custom-menu";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import { Mode } from "../use-groceries-todo-controller";
@@ -56,7 +57,7 @@ const GroceriesTodoToolbarMenu = (props: GroceriesTodoToolbarMenuProps) => {
             <MenuItem onClick={clearTodoList} >
                 <ListItemText primary="Clear list" />
             </MenuItem>
-            <MenuItem onClick={closeMenu} >
+            <MenuItem component={Link} to="/export" >
                 <ListItemText primary="Export to CSV" />
             </MenuItem>
         </StyledMenu>

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useContext } from "react";
+import { ProductPriceData } from "../../../components/ProductPriceForm";
 import TodoItem from "../../../components/todo-item-list/types";
 import Product from "../../../entity/Product";
 
@@ -11,6 +12,11 @@ export type TodoItemListContextType = {
     updateItem: (item: TodoItem) => void;
     toggleItemPurchased: (item: TodoItem, toggle: boolean) => void;
     updateItemQuantity: (item: TodoItem, quantity: number) => void;
+
+    submitPriceEntry: (
+        todoItem: TodoItem,
+        productPriceFormData: ProductPriceData
+    ) => Promise<void>;
     clearItems: () => void;
 };
 
@@ -38,6 +44,10 @@ const TodoItemListContext = React.createContext<TodoItemListContextType>({
     },
 
     clearItems: () => {
+        throw new Error("No implementation");
+    },
+
+    submitPriceEntry: () => {
         throw new Error("No implementation");
     },
 });
