@@ -121,7 +121,6 @@ const ExportItemEditForm = (props: ExportItemEditFormProps) => {
                     <Controller
                         name="store"
                         control={control}
-                        rules={{ required: true }}
                         render={({ onChange, value }) => (
                             <StoreSelect
                                 selectedStore={value}
