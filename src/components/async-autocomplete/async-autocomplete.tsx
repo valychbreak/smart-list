@@ -11,6 +11,7 @@ interface AsyncAutocompleteProps<T> {
     options: T[];
 
     freeSolo?: boolean | undefined;
+    label?: string;
     placeholder?: string;
 
     setInputValue(value: string): void;
@@ -27,6 +28,7 @@ function AsyncAutocomplete<T>(props: AsyncAutocompleteProps<T>) {
         options,
         inputValue,
         freeSolo,
+        label,
         placeholder,
         setInputValue,
         onChange,
@@ -56,10 +58,11 @@ function AsyncAutocomplete<T>(props: AsyncAutocompleteProps<T>) {
                     <TextField
                         {...params}
                         size="medium"
+                        label={label}
                         placeholder={placeholder}
                         variant="standard"
                         margin="none"
-                        InputLabelProps={{ shrink: false }}
+                        InputLabelProps={label ? {} : { shrink: false }}
                         InputProps={{
                             ...params.InputProps,
                             endAdornment: (

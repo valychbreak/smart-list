@@ -11,6 +11,7 @@ export type CategoryOption = {
 
 type CategorySelectProps = {
     category: Category | null;
+    label?: string;
     onCategoryChange(category: Category | null): void;
     onCategoryCreate(inputValue: string): void;
 };
@@ -57,6 +58,7 @@ const CategorySelect = (props: CategorySelectProps) => {
     return (
         <AsyncAutocomplete
             freeSolo
+            label={props.label}
             placeholder="Select category..."
             value={selectedOption}
             loading={loading}
