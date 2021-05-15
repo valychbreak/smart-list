@@ -8,6 +8,7 @@ exports[`TodoItemExport should render 1`] = `
   >
     <ExportItemEditForm
       exportItem={null}
+      onClose={[Function]}
       onSubmit={[Function]}
     />
   </WithStyles(ForwardRef(Dialog))>
