@@ -51,7 +51,9 @@ const ExportItemView = (props: ExportItemViewProps) => {
                     <Typography data-test-id="export-item-category" color="textSecondary">Category: {categoryName}</Typography>
                     <Grid container justify="space-between">
                         <Grid item>
-                            <Typography>Price: {purchasedPrice}</Typography>
+                            <Typography data-test-id="export-item-price">
+                                Price: {purchasedPrice} (x{exportItem.quantity})
+                            </Typography>
                         </Grid>
                         <Grid item>
                             <Typography data-test-id="export-item-store-name">Store: {storeName}</Typography>

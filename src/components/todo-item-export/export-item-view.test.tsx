@@ -126,7 +126,19 @@ describe("ExportItemView", () => {
 
             const wrapper = shallow(exportItemView({ exportItem }));
 
-            expect(wrapper.contains(3.99)).toBe(true);
+            expect(
+                wrapper.find("[data-test-id='export-item-price']").text()
+            ).toContain("3.99");
+        });
+
+        it("should display quantity", () => {
+            const exportItem = createExportItem("Milk", 3.99);
+
+            const wrapper = shallow(exportItemView({ exportItem }));
+
+            expect(
+                wrapper.find("[data-test-id='export-item-price']").text()
+            ).toContain("(x1)");
         });
 
         it("should display store where item was purchased", () => {
