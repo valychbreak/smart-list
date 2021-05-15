@@ -42,7 +42,7 @@ const ExportItemView = (props: ExportItemViewProps) => {
 
     return (
         <Box marginY={1}>
-            <Card>
+            <Card elevation={2}>
                 {showWarning(exportItem) && (<>
                     <Alert severity="warning">{getWarningMessage(exportItem)}</Alert>
                 </>)}
