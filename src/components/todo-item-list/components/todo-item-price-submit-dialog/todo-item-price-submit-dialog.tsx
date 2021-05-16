@@ -29,8 +29,8 @@ const TodoItemPriceSubmitDialog = (props: TodoItemPriceSubmitDialogProps) => {
     const { handleClose, selectedItem } = props;
 
     const open = props.open && !!selectedItem;
-    const dialogTitle = selectedItem?.targetProduct?.productFullName || selectedItem?.generalName;
     const product = selectedItem?.targetProduct || null;
+    const dialogTitle = product?.productFullName || selectedItem?.generalName;
 
     return (<>
         <Dialog open={open}>
