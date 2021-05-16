@@ -30,7 +30,7 @@ interface ProductPriceFormProps {
 const ProductPriceForm = (props: ProductPriceFormProps) => {
     const { defaultStore } = props;
 
-    const { handleSubmit, control } = useForm<ProductPriceFormFields>({
+    const { handleSubmit, control, formState: { errors } } = useForm<ProductPriceFormFields>({
         defaultValues: {
             price: "",
             counterparty: defaultStore,
@@ -70,7 +70,6 @@ const ProductPriceForm = (props: ProductPriceFormProps) => {
                     name="selectedProduct"
                     control={control}
                     rules={{ required: false }}
-                    defaultValue={props.targetProduct}
                     render={({ onChange, value }) => (
                         <ProductSelect
                             label="Product"
@@ -80,7 +79,7 @@ const ProductPriceForm = (props: ProductPriceFormProps) => {
                     )}
                 />
 
-                <FormControl fullWidth>
+                <FormControl error={!!errors.price} fullWidth>
                     <InputLabel required htmlFor="item-price">Purchased price</InputLabel>
                     <Controller
                         name="price"
@@ -96,9 +95,10 @@ const ProductPriceForm = (props: ProductPriceFormProps) => {
                             />
                         )}
                     />
+                    {errors.price && <FormHelperText>Price is required</FormHelperText>}
                 </FormControl>
 
-                <FormControl>
+                <FormControl error={!!errors.counterparty} fullWidth>
                     <Controller
                         name="counterparty"
                         control={control}
@@ -111,7 +111,12 @@ const ProductPriceForm = (props: ProductPriceFormProps) => {
                             />
                         )}
                     />
-                    <FormHelperText>Store in which product was purchased</FormHelperText>
+                    <FormHelperText>
+                        {errors.counterparty
+                            ? "Store is required"
+                            : "Store in which product was purchased"
+                        }
+                    </FormHelperText>
                 </FormControl>
                 <br />
                 <button type="submit">Add entry</button>
