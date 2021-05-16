@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import ProductPriceApi from "../../../api/ProductPriceApi";
 import TodoProductItemsApi from "../../../api/TodoProductItemsApi";
-import { ProductPriceData } from "../../../components/ProductPriceForm";
+import { ProductPriceData } from "../../../components/product-price-dialog-form/product-price-dialog-form";
 import { GroceriesTodoStoreContext } from "../../../components/todo-item-list/components/groceries-todo-store-context";
 import TodoItem from "../../../components/todo-item-list/types";
 import ProductPriceEntry from "../../../entity/ProductPriceEntry";

@@ -3,7 +3,7 @@ import { Dialog, DialogTitle, Grid, Typography } from "@material-ui/core";
 import ProductApi from "../../api/ProductApi";
 import ProductPriceApi from "../../api/ProductPriceApi";
 import ProductPriceEntry from "../../entity/ProductPriceEntry";
-import ProductPriceForm, { ProductPriceData } from "../../components/ProductPriceForm";
+import ProductPriceDialogForm, { ProductPriceData } from "../../components/product-price-dialog-form/product-price-dialog-form";
 import ProductView from "../../components/ProductView";
 import Product from "../../entity/Product";
 
@@ -59,7 +59,7 @@ const BrowseProductsPage = () => {
                 <DialogTitle>
                     Add price for {productName}
                 </DialogTitle>
-                <ProductPriceForm
+                <ProductPriceDialogForm
                     targetProduct={selectedProduct}
                     onSubmit={onPriceEntrySubmit}
                     onClose={closeProductPriceForm}

@@ -2,11 +2,11 @@ import { Button, DialogActions, DialogContent, FormControl, FormHelperText, Inpu
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
-import StoreApi from "../api/StoreApi";
-import Product from "../entity/Product";
-import StoreSelect from "./store-select";
-import ProductSelect from "./todo-item-list/components/product-select";
-import { Store } from "./todo-item-list/types";
+import StoreApi from "../../api/StoreApi";
+import Product from "../../entity/Product";
+import StoreSelect from "../store-select";
+import ProductSelect from "../todo-item-list/components/product-select";
+import { Store } from "../todo-item-list/types";
 
 interface ProductPriceFormFields {
     price: string;
@@ -27,7 +27,7 @@ interface ProductPriceFormProps {
     onClose(): void;
 }
 
-const ProductPriceForm = (props: ProductPriceFormProps) => {
+const ProductPriceDialogForm = (props: ProductPriceFormProps) => {
     const { defaultStore, onClose } = props;
 
     const { handleSubmit, control, formState: { errors } } = useForm<ProductPriceFormFields>({
@@ -135,4 +135,4 @@ const ProductPriceForm = (props: ProductPriceFormProps) => {
     );
 };
 
-export default ProductPriceForm;
+export default ProductPriceDialogForm;

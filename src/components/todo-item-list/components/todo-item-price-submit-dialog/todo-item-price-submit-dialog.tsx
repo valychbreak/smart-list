@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Dialog, DialogTitle } from "@material-ui/core";
 import TodoItem from "../../types";
-import ProductPriceForm, { ProductPriceData } from "../../../ProductPriceForm";
+import ProductPriceDialogForm, { ProductPriceData } from "../../../product-price-dialog-form/product-price-dialog-form";
 import GroceriesTodoStoreContext from "../groceries-todo-store-context/groceries-todo-store-context";
 import { useTodoItemListContext } from "../../../../pages/groceries-todo/context/TodoItemListContext";
 
@@ -35,7 +35,7 @@ const TodoItemPriceSubmitDialog = (props: TodoItemPriceSubmitDialogProps) => {
     return (<>
         <Dialog open={open}>
             <DialogTitle>Add price for {dialogTitle}</DialogTitle>
-            <ProductPriceForm
+            <ProductPriceDialogForm
                 defaultStore={selectedStore}
                 targetProduct={product}
                 onSubmit={onPriceEntrySubmit}

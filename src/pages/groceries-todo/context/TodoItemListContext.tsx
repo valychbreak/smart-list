@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useContext } from "react";
-import { ProductPriceData } from "../../../components/ProductPriceForm";
+import { ProductPriceData } from "../../../components/product-price-dialog-form/product-price-dialog-form";
 import TodoItem from "../../../components/todo-item-list/types";
 import Product from "../../../entity/Product";
 
