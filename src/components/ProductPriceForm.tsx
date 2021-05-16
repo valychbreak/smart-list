@@ -17,7 +17,7 @@ interface ProductPriceFormFields {
 
 export interface ProductPriceData {
     price: number;
-    storeName: string;
+    store: Store;
     selectedProduct: Product | null;
 }
 
@@ -49,9 +49,13 @@ const ProductPriceForm = (props: ProductPriceFormProps) => {
     const submitPriceEntry = (formData: ProductPriceFormFields) => {
         const { price, counterparty, selectedProduct } = formData;
 
+        if (!counterparty) {
+            return;
+        }
+
         props.onSubmit({
             price: parseFloat(price),
-            storeName: counterparty?.name || "",
+            store: counterparty,
             selectedProduct
         });
     };

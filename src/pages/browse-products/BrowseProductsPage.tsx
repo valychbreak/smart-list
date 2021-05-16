@@ -40,7 +40,7 @@ const BrowseProductsPage = () => {
             const priceEntry = new ProductPriceEntry(
                 selectedProduct.productBarcode,
                 formData.price,
-                formData.storeName,
+                formData.store.name,
                 new Date()
             );
             ProductPriceApi.addPriceEntry(selectedProduct, priceEntry);
