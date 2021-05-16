@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { FormControl, FormGroup, FormHelperText, Input, InputAdornment, InputLabel } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
+import { Button, DialogActions, DialogContent, FormControl, FormHelperText, Input, InputAdornment, InputLabel } from "@material-ui/core";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import StoreApi from "../api/StoreApi";
@@ -25,15 +24,16 @@ interface ProductPriceFormProps {
     targetProduct: Product | null;
     defaultStore?: Store | null;
     onSubmit(formData: ProductPriceData): void;
+    onClose(): void;
 }
 
 const ProductPriceForm = (props: ProductPriceFormProps) => {
-    const { defaultStore } = props;
+    const { defaultStore, onClose } = props;
 
     const { handleSubmit, control, formState: { errors } } = useForm<ProductPriceFormFields>({
         defaultValues: {
             price: "",
-            counterparty: defaultStore,
+            counterparty: defaultStore || null,
             selectedProduct: props.targetProduct
         }
     });
@@ -70,60 +70,64 @@ const ProductPriceForm = (props: ProductPriceFormProps) => {
     return (
         <>
             <form onSubmit={handleSubmit(submitPriceEntry)}>
-                <Controller
-                    name="selectedProduct"
-                    control={control}
-                    rules={{ required: false }}
-                    render={({ onChange, value }) => (
-                        <ProductSelect
-                            label="Product"
-                            product={value}
-                            onProductSelect={(selectedProduct) => onChange(selectedProduct)}
-                            onProductCreateOptionSelect={onProductCreateOptionSelect} />
-                    )}
-                />
-
-                <FormControl error={!!errors.price} fullWidth>
-                    <InputLabel required htmlFor="item-price">Purchased price</InputLabel>
+                <DialogContent>
                     <Controller
-                        name="price"
+                        name="selectedProduct"
                         control={control}
-                        rules={{ required: true }}
+                        rules={{ required: false }}
                         render={({ onChange, value }) => (
-                            <Input
-                                id="item-price"
-                                type="number"
-                                value={value}
-                                onChange={(e) => onChange(e.target.value)}
-                                endAdornment={<InputAdornment position="end">PLN</InputAdornment>}
-                            />
+                            <ProductSelect
+                                label="Product"
+                                product={value}
+                                onProductSelect={(selectedProduct) => onChange(selectedProduct)}
+                                onProductCreateOptionSelect={onProductCreateOptionSelect} />
                         )}
                     />
-                    {errors.price && <FormHelperText>Price is required</FormHelperText>}
-                </FormControl>
 
-                <FormControl error={!!errors.counterparty} fullWidth>
-                    <Controller
-                        name="counterparty"
-                        control={control}
-                        rules={{ required: true }}
-                        render={({ onChange, value }) => (
-                            <StoreSelect
-                                selectedStore={value}
-                                storeList={storeList}
-                                onStoreSelect={(store) => onChange(store)}
-                            />
-                        )}
-                    />
-                    <FormHelperText>
-                        {errors.counterparty
-                            ? "Store is required"
-                            : "Store in which product was purchased"
-                        }
-                    </FormHelperText>
-                </FormControl>
-                <br />
-                <button type="submit">Add entry</button>
+                    <FormControl error={!!errors.price} fullWidth>
+                        <InputLabel required htmlFor="item-price">Purchased price</InputLabel>
+                        <Controller
+                            name="price"
+                            control={control}
+                            rules={{ required: true }}
+                            render={({ onChange, value }) => (
+                                <Input
+                                    id="item-price"
+                                    type="number"
+                                    value={value}
+                                    onChange={(e) => onChange(e.target.value)}
+                                    endAdornment={<InputAdornment position="end">PLN</InputAdornment>}
+                                />
+                            )}
+                        />
+                        {errors.price && <FormHelperText>Price is required</FormHelperText>}
+                    </FormControl>
+
+                    <FormControl error={!!errors.counterparty} fullWidth>
+                        <Controller
+                            name="counterparty"
+                            control={control}
+                            rules={{ required: true }}
+                            render={({ onChange, value }) => (
+                                <StoreSelect
+                                    selectedStore={value}
+                                    storeList={storeList}
+                                    onStoreSelect={(store) => onChange(store)}
+                                />
+                            )}
+                        />
+                        <FormHelperText>
+                            {errors.counterparty
+                                ? "Store is required"
+                                : "Store in which product was purchased"
+                            }
+                        </FormHelperText>
+                    </FormControl>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => onClose()}>Skip</Button>
+                    <Button variant="outlined" type="submit">Submit</Button>
+                </DialogActions>
             </form>
         </>
     );

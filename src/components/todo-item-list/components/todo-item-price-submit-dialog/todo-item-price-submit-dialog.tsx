@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import { Dialog, DialogTitle } from "@material-ui/core";
 import TodoItem from "../../types";
 import ProductPriceForm, { ProductPriceData } from "../../../ProductPriceForm";
 import GroceriesTodoStoreContext from "../groceries-todo-store-context/groceries-todo-store-context";
@@ -25,18 +26,22 @@ const TodoItemPriceSubmitDialog = (props: TodoItemPriceSubmitDialogProps) => {
             props.handleClose();
         });
     }
+    const { handleClose, selectedItem } = props;
+
+    const open = props.open && !!selectedItem;
+    const dialogTitle = selectedItem?.targetProduct?.productFullName || selectedItem?.generalName;
+    const product = selectedItem?.targetProduct || null;
 
     return (<>
-        {props.open && props.selectedItem
-            && <>
-                <h3>Add price for {props.selectedItem?.targetProduct?.productFullName}</h3>
-                <button onClick={() => props.handleClose()}>Skip / Cancel</button>
-                <ProductPriceForm
-                    defaultStore={selectedStore}
-                    targetProduct={props.selectedItem?.targetProduct}
-                    onSubmit={onPriceEntrySubmit}/>
-            </>
-        }
+        <Dialog open={open}>
+            <DialogTitle>Add price for {dialogTitle}</DialogTitle>
+            <ProductPriceForm
+                defaultStore={selectedStore}
+                targetProduct={product}
+                onSubmit={onPriceEntrySubmit}
+                onClose={handleClose}
+            />
+        </Dialog>
     </>);
 };
 
