@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Grid, Typography } from "@material-ui/core";
+import { Dialog, DialogTitle, Grid, Typography } from "@material-ui/core";
 import ProductApi from "../../api/ProductApi";
 import ProductPriceApi from "../../api/ProductPriceApi";
 import ProductPriceEntry from "../../entity/ProductPriceEntry";
-import ProductPriceForm, { ProductPriceData } from "../../components/ProductPriceForm";
+import ProductPriceDialogForm, { ProductPriceData } from "../../components/product-price-dialog-form/product-price-dialog-form";
 import ProductView from "../../components/ProductView";
 import Product from "../../entity/Product";
 
@@ -35,28 +35,36 @@ const BrowseProductsPage = () => {
         setAddingPrice(true);
     }
 
+    function closeProductPriceForm() {
+        setAddingPrice(false);
+    }
+
     function onPriceEntrySubmit(formData: ProductPriceData) {
         if (selectedProduct) {
             const priceEntry = new ProductPriceEntry(
                 selectedProduct.productBarcode,
                 formData.price,
-                formData.storeName,
+                formData.store.name,
                 new Date()
             );
             ProductPriceApi.addPriceEntry(selectedProduct, priceEntry);
-            setAddingPrice(false);
+            closeProductPriceForm();
         }
     }
 
+    const productName = selectedProduct?.productFullName || selectedProduct?.productGeneralName;
     return (
         <>
-            {addingPrice && (<>
-                <h3>Add price for {selectedProduct?.productFullName}</h3>
-                <ProductPriceForm
+            <Dialog open={addingPrice}>
+                <DialogTitle>
+                    Add price for {productName}
+                </DialogTitle>
+                <ProductPriceDialogForm
                     targetProduct={selectedProduct}
                     onSubmit={onPriceEntrySubmit}
+                    onClose={closeProductPriceForm}
                 />
-            </>)}
+            </Dialog>
             <Typography variant="h4">Browse products</Typography>
             <Grid container>
                 <Grid item>

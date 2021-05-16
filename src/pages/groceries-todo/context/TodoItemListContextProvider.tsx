@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import ProductPriceApi from "../../../api/ProductPriceApi";
 import TodoProductItemsApi from "../../../api/TodoProductItemsApi";
-import { ProductPriceData } from "../../../components/ProductPriceForm";
+import { ProductPriceData } from "../../../components/product-price-dialog-form/product-price-dialog-form";
 import { GroceriesTodoStoreContext } from "../../../components/todo-item-list/components/groceries-todo-store-context";
 import TodoItem from "../../../components/todo-item-list/types";
 import ProductPriceEntry from "../../../entity/ProductPriceEntry";
@@ -15,7 +15,7 @@ const TodoItemListContextProvider = (
     props: React.PropsWithChildren<TodoItemListContextProviderProps>,
 ) => {
     const [todoItems, setTodoItems] = useState<TodoItem[]>([]);
-    const { selectedStore, storeList } = useContext(GroceriesTodoStoreContext);
+    const { selectedStore } = useContext(GroceriesTodoStoreContext);
 
     useEffect(() => {
         TodoProductItemsApi.fetchTodoProductItems(selectedStore?.name)
@@ -93,14 +93,10 @@ const TodoItemListContextProvider = (
     const submitPriceEntry = async (
         todoItem: TodoItem, productPriceFormData: ProductPriceData
     ): Promise<void> => {
-        const store = storeList.find(
-            (existingStore) => (
-                existingStore.name === productPriceFormData.storeName
-            )
-        );
+        const { store } = productPriceFormData;
         const updatedItem = todoItem
             .setPurchasedPrice(productPriceFormData.price)
-            .setPurchasedStore(store || selectedStore);
+            .setPurchasedStore(store);
 
         updateItem(updatedItem);
 
@@ -108,7 +104,7 @@ const TodoItemListContextProvider = (
             const priceEntry = new ProductPriceEntry(
                 productPriceFormData.selectedProduct.productBarcode,
                 productPriceFormData.price,
-                productPriceFormData.storeName,
+                store.name,
                 new Date()
             );
             await ProductPriceApi.addPriceEntry(productPriceFormData.selectedProduct, priceEntry);

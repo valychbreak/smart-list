@@ -31,6 +31,7 @@ interface ProductSelectProps {
     onProductCreateOptionSelect(inputValue: string): void;
 
     product: Product | null;
+    label?: string;
 }
 
 const ProductSelect = (props: ProductSelectProps) => {
@@ -63,6 +64,7 @@ const ProductSelect = (props: ProductSelectProps) => {
 
     return (
         <AsyncAutocomplete
+            label={props.label}
             placeholder="Select product..."
             value={selectedProduct}
             loading={loading}
