@@ -49,10 +49,6 @@ const ProductPriceForm = (props: ProductPriceFormProps) => {
     const submitPriceEntry = (formData: ProductPriceFormFields) => {
         const { price, counterparty, selectedProduct } = formData;
 
-        if (!counterparty) {
-            return;
-        }
-
         props.onSubmit({
             price: parseFloat(price),
             storeName: counterparty?.name || "",
@@ -106,6 +102,7 @@ const ProductPriceForm = (props: ProductPriceFormProps) => {
                     <Controller
                         name="counterparty"
                         control={control}
+                        rules={{ required: true }}
                         render={({ onChange, value }) => (
                             <StoreSelect
                                 selectedStore={value}
