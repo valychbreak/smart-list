@@ -85,7 +85,7 @@ const ProductPriceForm = (props: ProductPriceFormProps) => {
                     />
 
                     <FormControl error={!!errors.price} fullWidth>
-                        <InputLabel required htmlFor="item-price">Purchased price</InputLabel>
+                        <InputLabel required htmlFor="item-price">Product price</InputLabel>
                         <Controller
                             name="price"
                             control={control}
@@ -100,7 +100,9 @@ const ProductPriceForm = (props: ProductPriceFormProps) => {
                                 />
                             )}
                         />
-                        {errors.price && <FormHelperText>Price is required</FormHelperText>}
+                        <FormHelperText>
+                            {errors.price ? "Price is required" : "Price for 1 unit"}
+                        </FormHelperText>
                     </FormControl>
 
                     <FormControl error={!!errors.counterparty} fullWidth>
