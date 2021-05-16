@@ -1,13 +1,17 @@
-import React from "react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { FormControl, FormGroup, FormHelperText, Input, InputAdornment, InputLabel } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
+import StoreApi from "../api/StoreApi";
 import Product from "../entity/Product";
+import StoreSelect from "./store-select";
 import ProductSelect from "./todo-item-list/components/product-select";
 import { Store } from "./todo-item-list/types";
 
 interface ProductPriceFormFields {
     price: string;
-    counterparty: string;
+    counterparty: Store | null;
     selectedProduct: Product | null;
 }
 
@@ -24,16 +28,34 @@ interface ProductPriceFormProps {
 }
 
 const ProductPriceForm = (props: ProductPriceFormProps) => {
-    const { register, handleSubmit, control } = useForm<ProductPriceFormFields>();
+    const { defaultStore } = props;
+
+    const { handleSubmit, control } = useForm<ProductPriceFormFields>({
+        defaultValues: {
+            price: "",
+            counterparty: defaultStore,
+            selectedProduct: props.targetProduct
+        }
+    });
+
+    const [storeList, setStoreList] = useState<Store[]>(defaultStore ? [defaultStore] : []);
 
     const history = useHistory();
-    const defaultStoreName = props.defaultStore?.name;
+
+    useEffect(() => {
+        StoreApi.fetchStores().then((stores) => setStoreList(stores));
+    }, []);
 
     const submitPriceEntry = (formData: ProductPriceFormFields) => {
         const { price, counterparty, selectedProduct } = formData;
+
+        if (!counterparty) {
+            return;
+        }
+
         props.onSubmit({
             price: parseFloat(price),
-            storeName: counterparty,
+            storeName: counterparty?.name || "",
             selectedProduct
         });
     };
@@ -48,8 +70,6 @@ const ProductPriceForm = (props: ProductPriceFormProps) => {
     return (
         <>
             <form onSubmit={handleSubmit(submitPriceEntry)}>
-                <label>Price:</label>
-
                 <Controller
                     name="selectedProduct"
                     control={control}
@@ -57,19 +77,46 @@ const ProductPriceForm = (props: ProductPriceFormProps) => {
                     defaultValue={props.targetProduct}
                     render={({ onChange, value }) => (
                         <ProductSelect
+                            label="Product"
                             product={value}
                             onProductSelect={(selectedProduct) => onChange(selectedProduct)}
                             onProductCreateOptionSelect={onProductCreateOptionSelect} />
                     )}
                 />
 
-                <input name="price" type="number" step=".01" ref={register({ required: true })}/> PLN
-                <br/>
+                <FormControl fullWidth>
+                    <InputLabel required htmlFor="item-price">Purchased price</InputLabel>
+                    <Controller
+                        name="price"
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ onChange, value }) => (
+                            <Input
+                                id="item-price"
+                                type="number"
+                                value={value}
+                                onChange={(e) => onChange(e.target.value)}
+                                endAdornment={<InputAdornment position="end">PLN</InputAdornment>}
+                            />
+                        )}
+                    />
+                </FormControl>
 
-                <label>Shop name:</label>
-                <input name="counterparty" defaultValue={defaultStoreName} ref={register({ required: true, maxLength: 64 })} />
-                <br/>
-
+                <FormControl>
+                    <Controller
+                        name="counterparty"
+                        control={control}
+                        render={({ onChange, value }) => (
+                            <StoreSelect
+                                selectedStore={value}
+                                storeList={storeList}
+                                onStoreSelect={(store) => onChange(store)}
+                            />
+                        )}
+                    />
+                    <FormHelperText>Store in which product was purchased</FormHelperText>
+                </FormControl>
+                <br />
                 <button type="submit">Add entry</button>
             </form>
         </>
