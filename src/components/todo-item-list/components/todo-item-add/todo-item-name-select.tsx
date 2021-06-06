@@ -6,7 +6,12 @@ import Product from "../../../../entity/Product";
 export type TodoItemNameItem = {
     label: string;
     todoItemName: string;
-    product?: Product
+    product?: Product;
+};
+
+export type ProductOrName = {
+    product?: Product;
+    productName: string;
 };
 
 type TodoItemNameSelectProps = {
@@ -16,7 +21,7 @@ type TodoItemNameSelectProps = {
     loading: boolean;
     setOpen(isOpened: boolean): void;
     setInputValue(newValue: string): void;
-    onTodoItemNameSelect(todoItemName: TodoItemNameItem): void;
+    onTodoItemNameSelect(todoItemName: ProductOrName): void;
 };
 
 const TodoItemNameSelect = (props: TodoItemNameSelectProps) => {
@@ -36,10 +41,14 @@ const TodoItemNameSelect = (props: TodoItemNameSelectProps) => {
         }
 
         if ((selectedItem as TodoItemNameItem).todoItemName) {
-            onTodoItemNameSelect(selectedItem as TodoItemNameItem);
+            const selectedOption = selectedItem as TodoItemNameItem;
+            onTodoItemNameSelect({
+                productName: selectedOption.todoItemName,
+                product: selectedOption.product
+            });
         } else {
             const itemName = selectedItem as string;
-            onTodoItemNameSelect({ label: itemName, todoItemName: itemName });
+            onTodoItemNameSelect({ productName: itemName, product: undefined });
         }
     };
 

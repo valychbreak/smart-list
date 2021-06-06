@@ -3,11 +3,11 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import QuantityField from "../../../quantity-field";
 import TodoItem from "../../types";
-import TodoItemNameSelect, { TodoItemNameItem } from "./todo-item-name-select";
+import TodoItemNameSelect, { ProductOrName } from "./todo-item-name-select";
 import useTodoItemNameSelectController from "./todo-item-name-select-controller";
 
 type TodoItemAddFormFields = {
-    productOrName: TodoItemNameItem;
+    productOrName: ProductOrName;
     quantity: number;
 };
 
@@ -32,12 +32,12 @@ const TodoItemAddForm = (props: TodoItemAddFormProps) => {
 
     const onFormSubmit = (formData: TodoItemAddFormFields) => {
         const { productOrName, quantity } = formData;
-        const { product, todoItemName } = productOrName;
+        const { product, productName } = productOrName;
         if (product) {
             onTodoItemSubmit(TodoItem.fromProduct(product, quantity));
             clear();
-        } else if (todoItemName !== "") {
-            onTodoItemSubmit(TodoItem.fromName(todoItemName, quantity));
+        } else if (productName !== "") {
+            onTodoItemSubmit(TodoItem.fromName(productName, quantity));
             clear();
         }
     };
@@ -60,7 +60,7 @@ const TodoItemAddForm = (props: TodoItemAddFormProps) => {
                                 setOpen={setOpen}
                                 setInputValue={setInputValue}
                                 onTodoItemNameSelect={
-                                    (todoItemNameItem) => onChange(todoItemNameItem)
+                                    (productOrName) => onChange(productOrName)
                                 }
                             />
                         )}
