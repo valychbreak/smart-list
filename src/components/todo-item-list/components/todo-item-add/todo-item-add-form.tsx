@@ -55,7 +55,9 @@ const TodoItemAddForm = (props: TodoItemAddFormProps) => {
                                 options={options}
                                 setOpen={setOpen}
                                 setInputValue={setInputValue}
-                                onTodoItemNameSelect={(todoItemName) => onChange(todoItemName)}
+                                onTodoItemNameSelect={
+                                    (todoItemNameItem) => onChange(todoItemNameItem.todoItemName)
+                                }
                             />
                         )}
                     />

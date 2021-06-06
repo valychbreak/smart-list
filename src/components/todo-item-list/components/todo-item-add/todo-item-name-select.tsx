@@ -16,7 +16,7 @@ type TodoItemNameSelectProps = {
     loading: boolean;
     setOpen(isOpened: boolean): void;
     setInputValue(newValue: string): void;
-    onTodoItemNameSelect(todoItemName: string): void;
+    onTodoItemNameSelect(todoItemName: TodoItemNameItem): void;
 };
 
 const TodoItemNameSelect = (props: TodoItemNameSelectProps) => {
@@ -36,10 +36,10 @@ const TodoItemNameSelect = (props: TodoItemNameSelectProps) => {
         }
 
         if ((selectedItem as TodoItemNameItem).todoItemName) {
-            const { todoItemName } = selectedItem as TodoItemNameItem;
-            onTodoItemNameSelect(todoItemName);
+            onTodoItemNameSelect(selectedItem as TodoItemNameItem);
         } else {
-            onTodoItemNameSelect(selectedItem as string);
+            const itemName = selectedItem as string;
+            onTodoItemNameSelect({ label: itemName, todoItemName: itemName });
         }
     };
 
