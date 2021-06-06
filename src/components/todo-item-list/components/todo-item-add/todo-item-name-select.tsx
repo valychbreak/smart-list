@@ -1,10 +1,12 @@
 import { CircularProgress, TextField } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import React from "react";
+import Product from "../../../../entity/Product";
 
 export type TodoItemNameItem = {
     label: string;
     todoItemName: string;
+    product?: Product
 };
 
 type TodoItemNameSelectProps = {

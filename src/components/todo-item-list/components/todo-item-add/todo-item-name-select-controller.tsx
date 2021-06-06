@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import ProductApi from "../../../../api/ProductApi";
+import Product from "../../../../entity/Product";
 import { TodoItemNameItem } from "./todo-item-name-select";
 
-function asTodoItemNameItem(name: string, label?: string): TodoItemNameItem {
+function asTodoItemNameItem(product: Product): TodoItemNameItem {
+    const label = product.productFullName || product.productGeneralName;
     return {
-        label: label || name,
-        todoItemName: name,
+        label,
+        todoItemName: label,
+        product
     };
 }
 
@@ -31,10 +34,10 @@ const useTodoItemNameSelectController = () => {
         let active = true;
         setLoading(true);
 
-        ProductApi.findGeneralNamesBy(inputValue)
-            .then((generalNames) => {
-                const loadedOptions = generalNames.map((generalName) => (
-                    asTodoItemNameItem(generalName)
+        ProductApi.findMatchingBy(inputValue)
+            .then((loadedProducts) => {
+                const loadedOptions = loadedProducts.map((product) => (
+                    asTodoItemNameItem(product)
                 ));
 
                 if (active) {
