@@ -65,6 +65,8 @@ const TodoItemNameSelect = (props: TodoItemNameSelectProps) => {
             onOpen={() => setOpen(true)}
             onClose={() => setOpen(false)}
             options={options}
+            // disable autocomplete filter
+            filterOptions={(loadedOptions) => loadedOptions}
             getOptionSelected={(option, selectedValue) => (
                 option.label === selectedValue.label
             )}
