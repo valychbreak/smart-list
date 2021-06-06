@@ -1,7 +1,7 @@
 import { Autocomplete } from "@material-ui/lab";
 import { mount, shallow } from "enzyme";
 import td from "testdouble";
-import TodoItemNameSelect, { TodoItemNameItem } from "./todo-item-name-select";
+import TodoItemNameSelect, { ProductOrName, TodoItemNameItem } from "./todo-item-name-select";
 
 type OverridingProps = {
     inputValue?: string;
@@ -10,8 +10,14 @@ type OverridingProps = {
     open?: boolean;
     setOpen?(isOpened: boolean): void;
 
-    onTodoItemNameSelect?(todoItemName: string): void;
+    onTodoItemNameSelect?(todoItemName: ProductOrName): void;
 };
+
+type OnTodoItemNameSelect = (value: ProductOrName) => void;
+
+function asProductOrName(name: string): ProductOrName {
+    return { productName: name, product: undefined };
+}
 
 describe("TodoItemNameSelect", () => {
     const todoItemNameSelect = ({
@@ -57,7 +63,6 @@ describe("TodoItemNameSelect", () => {
 
     it("should trigger option select when input changes", async () => {
         // given
-        type OnTodoItemNameSelect = (value: string) => void;
         const onTodoItemNameSelectMock = td.func<OnTodoItemNameSelect>();
 
         const wrapper = mount(
@@ -74,12 +79,11 @@ describe("TodoItemNameSelect", () => {
         autocompleteOnInputChange({}, "Custom input");
 
         // then
-        td.verify(onTodoItemNameSelectMock("Custom input"));
+        td.verify(onTodoItemNameSelectMock(asProductOrName("Custom input")));
     });
 
     it("should trigger todo item name select with TodoItemNameItem", async () => {
         // given
-        type OnTodoItemNameSelect = (value: string) => void;
         const onTodoItemNameSelectMock = td.func<OnTodoItemNameSelect>();
 
         const wrapper = mount(
@@ -92,19 +96,20 @@ describe("TodoItemNameSelect", () => {
             .find(Autocomplete)
             .prop("onChange") as any;
 
-        // when
-        autocompleteOnChange({}, {
+        const selectedItem = {
             label: "Milk label",
             todoItemName: "Milk",
-        } as TodoItemNameItem);
+        } as TodoItemNameItem;
+
+        // when
+        autocompleteOnChange({}, selectedItem);
 
         // then
-        td.verify(onTodoItemNameSelectMock("Milk"));
+        td.verify(onTodoItemNameSelectMock(asProductOrName("Milk")));
     });
 
     it("should trigger todo item name select with string", async () => {
         // given
-        type OnTodoItemNameSelect = (value: string) => void;
         const onTodoItemNameSelectMock = td.func<OnTodoItemNameSelect>();
 
         const wrapper = mount(
@@ -121,6 +126,6 @@ describe("TodoItemNameSelect", () => {
         autocompleteOnChange({}, "Custom input");
 
         // then
-        td.verify(onTodoItemNameSelectMock("Custom input"));
+        td.verify(onTodoItemNameSelectMock(asProductOrName("Custom input")));
     });
 });

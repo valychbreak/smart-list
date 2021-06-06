@@ -1,10 +1,17 @@
 import { CircularProgress, TextField } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import React from "react";
+import Product from "../../../../entity/Product";
 
 export type TodoItemNameItem = {
     label: string;
     todoItemName: string;
+    product?: Product;
+};
+
+export type ProductOrName = {
+    product?: Product;
+    productName: string;
 };
 
 type TodoItemNameSelectProps = {
@@ -14,7 +21,7 @@ type TodoItemNameSelectProps = {
     loading: boolean;
     setOpen(isOpened: boolean): void;
     setInputValue(newValue: string): void;
-    onTodoItemNameSelect(todoItemName: string): void;
+    onTodoItemNameSelect(todoItemName: ProductOrName): void;
 };
 
 const TodoItemNameSelect = (props: TodoItemNameSelectProps) => {
@@ -34,10 +41,14 @@ const TodoItemNameSelect = (props: TodoItemNameSelectProps) => {
         }
 
         if ((selectedItem as TodoItemNameItem).todoItemName) {
-            const { todoItemName } = selectedItem as TodoItemNameItem;
-            onTodoItemNameSelect(todoItemName);
+            const selectedOption = selectedItem as TodoItemNameItem;
+            onTodoItemNameSelect({
+                productName: selectedOption.todoItemName,
+                product: selectedOption.product
+            });
         } else {
-            onTodoItemNameSelect(selectedItem as string);
+            const itemName = selectedItem as string;
+            onTodoItemNameSelect({ productName: itemName, product: undefined });
         }
     };
 
@@ -54,6 +65,8 @@ const TodoItemNameSelect = (props: TodoItemNameSelectProps) => {
             onOpen={() => setOpen(true)}
             onClose={() => setOpen(false)}
             options={options}
+            // disable autocomplete filter
+            filterOptions={(loadedOptions) => loadedOptions}
             getOptionSelected={(option, selectedValue) => (
                 option.label === selectedValue.label
             )}

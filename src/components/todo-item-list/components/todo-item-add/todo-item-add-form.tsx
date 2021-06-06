@@ -3,11 +3,11 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import QuantityField from "../../../quantity-field";
 import TodoItem from "../../types";
-import TodoItemNameSelect from "./todo-item-name-select";
+import TodoItemNameSelect, { ProductOrName } from "./todo-item-name-select";
 import useTodoItemNameSelectController from "./todo-item-name-select-controller";
 
 type TodoItemAddFormFields = {
-    name: string;
+    productOrName: ProductOrName;
     quantity: number;
 };
 
@@ -31,9 +31,13 @@ const TodoItemAddForm = (props: TodoItemAddFormProps) => {
     const { control, handleSubmit } = useForm<TodoItemAddFormFields>();
 
     const onFormSubmit = (formData: TodoItemAddFormFields) => {
-        const { name, quantity } = formData;
-        if (name !== "") {
-            onTodoItemSubmit(TodoItem.fromName(name, quantity));
+        const { productOrName, quantity } = formData;
+        const { product, productName } = productOrName;
+        if (product) {
+            onTodoItemSubmit(TodoItem.fromProduct(product, quantity));
+            clear();
+        } else if (productName !== "") {
+            onTodoItemSubmit(TodoItem.fromName(productName, quantity));
             clear();
         }
     };
@@ -43,7 +47,7 @@ const TodoItemAddForm = (props: TodoItemAddFormProps) => {
             <Grid container spacing={1}>
                 <Grid item xs={6}>
                     <Controller
-                        name="name"
+                        name="productOrName"
                         control={control}
                         rules={{ required: true }}
                         defaultValue=""
@@ -55,7 +59,9 @@ const TodoItemAddForm = (props: TodoItemAddFormProps) => {
                                 options={options}
                                 setOpen={setOpen}
                                 setInputValue={setInputValue}
-                                onTodoItemNameSelect={(todoItemName) => onChange(todoItemName)}
+                                onTodoItemNameSelect={
+                                    (productOrName) => onChange(productOrName)
+                                }
                             />
                         )}
                     />
