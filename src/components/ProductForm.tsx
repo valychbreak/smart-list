@@ -18,6 +18,7 @@ interface ProductFormProps {
     productBarcode: string;
     productBarcodeType: string;
 
+    shortForm?: boolean;
     onProductSubmit(product: Product): void;
 }
 
@@ -56,6 +57,10 @@ const ProductForm = (props: ProductFormProps) => {
                 const countryRecord = response.data
                     .find((record: any) => isCountryCodeMatching(countryPrefix, record.barcode));
 
+                if (!countryRecord) {
+                    return;
+                }
+
                 setSuggestedCountry(countryRecord.country);
             });
     }
@@ -73,7 +78,7 @@ const ProductForm = (props: ProductFormProps) => {
         }
 
         updatedSuggestedCountry(barcode);
-    }, []);
+    }, [props.productBarcode]);
 
     const createProduct = (formData: ProductFormFields) => {
         const product = new Product(
@@ -112,24 +117,26 @@ const ProductForm = (props: ProductFormProps) => {
                 {errors.productGeneralName && "Required and max length is 64."}
                 <br/>
 
-                <label>Full product name: </label>
-                <input name="productFullName" ref={register({ maxLength: 128 })}/>
-                {errors.productFullName && "Max length is 128."}
-                <br/>
+                {!props.shortForm && <>
+                    <label>Full product name: </label>
+                    <input name="productFullName" ref={register({ maxLength: 128 })}/>
+                    {errors.productFullName && "Max length is 128."}
+                    <br/>
 
-                <label>Release country: </label>
-                <input name="productCountry" defaultValue={suggestedCountry} ref={register({ maxLength: 64 })}/>
-                {errors.productCountry && "Max length is 64."}
-                <br/>
+                    <label>Release country: </label>
+                    <input name="productCountry" defaultValue={suggestedCountry} ref={register({ maxLength: 64 })}/>
+                    {errors.productCountry && "Max length is 64."}
+                    <br/>
 
-                <label>Release company: </label>
-                <input name="productCompanyName" ref={register({ maxLength: 64 })}/>
-                {errors.productCompanyName && "Max length is 64."}
-                <br/>
+                    <label>Release company: </label>
+                    <input name="productCompanyName" ref={register({ maxLength: 64 })}/>
+                    {errors.productCompanyName && "Max length is 64."}
+                    <br/>
 
-                <label>Product image (optional): </label>
-                <button>Take a picture (TODO)</button>
-                <br/>
+                    <label>Product image (optional): </label>
+                    <button>Take a picture (TODO)</button>
+                    <br/>
+                </>}
 
                 <button type="submit">Submit</button>
             </form>
