@@ -218,6 +218,38 @@ describe("useGroceriesTodoPurchasingController", () => {
             }));
         });
     });
+
+    describe("addTodoItemFromNewProduct", () => {
+        test("should save product and add todo item", async () => {
+            // given
+            const { result } = renderGroceriesTodoPurchasingController([]);
+
+            ProductApiMocked.saveProduct
+                .mockImplementation((product: Product) => Promise.resolve(product));
+
+            // when
+
+            const newProduct = new Product("Milk", "12345678", "ean8");
+
+            await act(async () => {
+                result.current.addTodoItemFromNewProduct(newProduct);
+            });
+
+            const todoItemMatcher = td.matchers.argThat((actualTodoItem: TodoItem) => {
+                const product = actualTodoItem.targetProduct;
+                return product
+                    && product.productGeneralName === newProduct.productGeneralName
+                    && product.productBarcode === newProduct.productBarcode
+                    && product.productBarcodeType === newProduct.productBarcodeType;
+            });
+
+            // then
+            expect(ProductApiMocked.saveProduct).toBeCalled();
+            td.verify(
+                todoItemListMockedContext.addItem(todoItemMatcher)
+            );
+        });
+    });
 });
 
 function createAnyProduct() {

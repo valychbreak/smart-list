@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Button, Container, Dialog, DialogActions, DialogContent,
     DialogContentText,
-    DialogTitle, makeStyles, Paper, Typography,
+    DialogTitle, Link, makeStyles, Paper,
 } from "@material-ui/core";
 import SettingsOverscanIcon from "@material-ui/icons/SettingsOverscan";
 import Scanner from "../../../../Scanner";
@@ -11,6 +11,7 @@ import TodoItemPriceSubmitDialog from "../todo-item-price-submit-dialog";
 import useGroceriesTodoPurchasingController from "./use-groceries-todo-purchasing-controller";
 import SelectTodoItemForProduct from "./todo-item-for-product-selector";
 import TodoItem from "../../types";
+import ProductForm from "../../../ProductForm";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -21,9 +22,14 @@ const useStyles = makeStyles((theme) => ({
             // height: 60
         },
     },
+    dialogHelpText: {
+        marginTop: theme.spacing(2),
+    }
 }));
 
 const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
+    const [displayNewProductForm, setDisplayNewProductForm] = useState(false);
+
     const classes = useStyles();
     const purchasingController = useGroceriesTodoPurchasingController();
     const {
@@ -32,6 +38,7 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
         scannedProductResult,
         toggleTodoItemPurchaseStatusWithScannedResult,
         dismissSubmitingNewProduct,
+        addTodoItemFromNewProduct,
     } = purchasingController;
 
     useEffect(() => {
@@ -63,14 +70,44 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
             <DialogContent>
                 <DialogContentText>
                     {/* eslint-disable-next-line max-len */}
-                    Scanned barcode {scannedProductResult?.code} was not found in our DB.<br />
-                    Follow steps below to add a new product.
+                    Scanned barcode {scannedProductResult?.code} was not found in our DB.
                 </DialogContentText>
-                <Typography variant="inherit"></Typography>
-                <SelectTodoItemForProduct
-                    todoItems={todoItems}
-                    onTodoItemSubmit={onTodoItemSubmit}
-                />
+                {!displayNewProductForm && <>
+                    <DialogContentText>
+                        Select item from the list that you want to link scanned product
+                        to:
+                    </DialogContentText>
+                    <SelectTodoItemForProduct
+                        todoItems={todoItems}
+                        onTodoItemSubmit={onTodoItemSubmit}
+                    />
+                    <DialogContentText className={classes.dialogHelpText}>
+                        {"Also, you can "}
+                        <Link onClick={() => setDisplayNewProductForm(true)}>
+                            Add new product
+                        </Link>
+                        {" instead."}
+                    </DialogContentText>
+                </>}
+
+                {displayNewProductForm && <>
+                    <DialogContentText>
+                        {/* eslint-disable-next-line max-len */}
+                        Fill in the form to add new product:
+                    </DialogContentText>
+                    <ProductForm
+                        productBarcode={scannedProductResult?.code || ""}
+                        productBarcodeType={scannedProductResult?.format || ""}
+                        onProductSubmit={(product) => addTodoItemFromNewProduct(product)}
+                    />
+                    <DialogContentText className={classes.dialogHelpText}>
+                        {"Also, you can "}
+                        <Link onClick={() => setDisplayNewProductForm(false)}>
+                            Select from groceries list
+                        </Link>
+                        {" instead."}
+                    </DialogContentText>
+                </>}
             </DialogContent>
             <DialogActions>
                 <Button onClick={closeNewProductDialog}>Cancel</Button>

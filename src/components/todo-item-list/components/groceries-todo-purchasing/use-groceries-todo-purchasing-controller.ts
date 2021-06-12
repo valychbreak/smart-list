@@ -79,6 +79,12 @@ const useGroceriesTodoPurchasingController = () => {
         toggleTodoItemPurchaseStatus(updatedTodoItem, true);
     }
 
+    async function addTodoItemFromNewProduct(product: Product) {
+        const savedProduct = await ProductApi.saveProduct(product);
+        addPurchasedProduct(savedProduct);
+        notExistingProductScanResult.clearValue();
+    }
+
     return {
         todoItems: todoItemListContext.todoItems,
 
@@ -105,6 +111,7 @@ const useGroceriesTodoPurchasingController = () => {
         disableScanner,
 
         toggleTodoItemPurchaseStatusWithScannedResult,
+        addTodoItemFromNewProduct,
     };
 };
 

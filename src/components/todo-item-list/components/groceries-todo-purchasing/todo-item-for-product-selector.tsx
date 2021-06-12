@@ -1,8 +1,7 @@
-import { Button, FormGroup, Grid, Link, makeStyles, Select, Typography } from "@material-ui/core";
+import { Button, FormGroup, makeStyles, Select } from "@material-ui/core";
 import MenuItem from "@material-ui/core/MenuItem";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useHistory } from "react-router-dom";
 import { BarcodeScanResult } from "../../../barcode-scanner/types";
 import TodoItem from "../../types";
 
@@ -18,7 +17,8 @@ type SelectTodoItemForProductProps = {
 
 const useStyles = makeStyles((theme) => ({
     formButtons: {
-        paddingTop: theme.spacing(1)
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
     }
 }));
 
@@ -26,7 +26,6 @@ const SelectTodoItemForProduct = (props: SelectTodoItemForProductProps) => {
     const { todoItems } = props;
 
     const { handleSubmit, control } = useForm<FormFields>();
-    const history = useHistory();
 
     const classes = useStyles();
 
@@ -41,16 +40,8 @@ const SelectTodoItemForProduct = (props: SelectTodoItemForProductProps) => {
         props.onTodoItemSubmit(todoItem);
     };
 
-    const redirectToAddNewProduct = () => {
-        history.push("/new-product");
-    };
-
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
-            <Typography variant="inherit">
-                Select item from the list that you want to link scanned product
-                to:
-            </Typography>
             <FormGroup>
                 <Controller
                     name="todoItemId"
@@ -70,19 +61,9 @@ const SelectTodoItemForProduct = (props: SelectTodoItemForProductProps) => {
                 </Controller>
             </FormGroup>
 
-            <Grid spacing={1} alignItems="center" className={classes.formButtons} container>
-                <Grid item>
-                    <Button variant="contained" type="submit" data-test-id="product-todo-item-submit-btn">
-                        Submit
-                    </Button>
-                </Grid>
-                <Grid item>or</Grid>
-                <Grid item>
-                    <Link onClick={() => redirectToAddNewProduct()} data-test-id="create-new-product-btn">
-                        Add new product
-                    </Link>
-                </Grid>
-            </Grid>
+            <Button className={classes.formButtons} variant="contained" type="submit" data-test-id="product-todo-item-submit-btn">
+                Submit
+            </Button>
         </form>
     );
 };
