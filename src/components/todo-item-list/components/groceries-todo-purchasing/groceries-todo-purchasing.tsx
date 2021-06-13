@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
     Button, Container, Dialog, DialogActions, DialogContent,
     DialogContentText,
@@ -12,6 +12,7 @@ import useGroceriesTodoPurchasingController from "./use-groceries-todo-purchasin
 import SelectTodoItemForProduct from "./todo-item-for-product-selector";
 import TodoItem from "../../types";
 import ProductForm from "../../../product-form";
+import ScannedProductDialogView from "./scanned-product-dialog-view";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -34,6 +35,8 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
     const purchasingController = useGroceriesTodoPurchasingController();
     const {
         openAddNewProductForm,
+        openAddProductConfirmation,
+        productToAdd,
         todoItems,
         scannedProductResult,
         toggleTodoItemPurchaseStatusWithScannedResult,
@@ -41,25 +44,25 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
         addTodoItemFromNewProduct,
     } = purchasingController;
 
-    useEffect(() => {
-        const { productToAdd } = purchasingController;
-        if (purchasingController.openAddProductConfirmation && productToAdd !== null) {
-            // eslint-disable-next-line no-alert
-            const addingProductConfirmed = window.confirm(`${productToAdd.productFullName} wasn't added to the list.\n Do you want to add it and mark as purchased?`);
-            if (addingProductConfirmed) {
-                purchasingController.addPurchasedProduct(productToAdd);
-            } else {
-                purchasingController.dismissAddingProduct();
-            }
-        }
-    }, [purchasingController.scannedProductResult, purchasingController.productToAdd]);
-
     const onTodoItemSubmit = (todoItem: TodoItem) => {
         toggleTodoItemPurchaseStatusWithScannedResult(todoItem);
     };
 
     const closeNewProductDialog = () => {
         dismissSubmitingNewProduct();
+    };
+
+    const closeAddProductConfirmation = () => {
+        purchasingController.dismissAddingProduct();
+    };
+
+    const addScannedProductToTodoItems = () => {
+        if (!productToAdd) {
+            return;
+        }
+
+        purchasingController.addPurchasedProduct(productToAdd);
+        closeAddProductConfirmation();
     };
 
     return (<>
@@ -116,6 +119,31 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
                 <Button onClick={closeNewProductDialog}>Cancel</Button>
             </DialogActions>
         </Dialog>
+
+        {productToAdd && (
+            <Dialog open={openAddProductConfirmation}>
+                <DialogTitle>Add product to groceries list?</DialogTitle>
+                <DialogContent dividers>
+                    <DialogContentText>
+                        <ScannedProductDialogView product={productToAdd} />
+                    </DialogContentText>
+                </DialogContent>
+                <DialogContent>
+                    <DialogContentText>
+                        Do you want to add scanned product to groceries list and mark as purchased?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => closeAddProductConfirmation()} color="primary">
+                        No
+                    </Button>
+                    <Button onClick={() => addScannedProductToTodoItems()} color="primary" autoFocus>
+                        Yes
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        )}
+
         <TodoItemPriceSubmitDialog open={purchasingController.openPriceSubmission}
             selectedItem={purchasingController.selectedItem}
             handleClose={purchasingController.onPriceSubmissionClose} />
