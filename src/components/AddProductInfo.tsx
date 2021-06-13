@@ -3,7 +3,7 @@ import { useState } from "react";
 import Product from "../entity/Product";
 import Scanner from "../Scanner";
 import { BarcodeScanResult } from "./barcode-scanner/types";
-import ProductForm from "./ProductForm";
+import ProductForm from "./product-form";
 
 interface AddProductInfoPros {
     onProductSubmit(product: Product): void;

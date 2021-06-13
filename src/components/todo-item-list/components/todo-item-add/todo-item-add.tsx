@@ -3,7 +3,7 @@ import SettingsOverscanIcon from "@material-ui/icons/SettingsOverscan";
 import Scanner from "../../../../Scanner";
 import TodoItemAddForm from "./todo-item-add-form";
 import useTodoItemAddController from "./todo-item-add-controller";
-import ProductForm from "../../../ProductForm";
+import ProductForm from "../../../product-form";
 import Product from "../../../../entity/Product";
 import ProductApi from "../../../../api/ProductApi";
 import { useTodoItemListContext } from "../../../../pages/groceries-todo/context/TodoItemListContext";

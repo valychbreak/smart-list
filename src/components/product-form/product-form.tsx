@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import Product from "../entity/Product";
+import Product from "../../entity/Product";
 
 interface ProductFormFields {
     productBarcode: string;

@@ -11,7 +11,7 @@ import TodoItemPriceSubmitDialog from "../todo-item-price-submit-dialog";
 import useGroceriesTodoPurchasingController from "./use-groceries-todo-purchasing-controller";
 import SelectTodoItemForProduct from "./todo-item-for-product-selector";
 import TodoItem from "../../types";
-import ProductForm from "../../../ProductForm";
+import ProductForm from "../../../product-form";
 
 const useStyles = makeStyles((theme) => ({
     root: {
