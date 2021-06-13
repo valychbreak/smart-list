@@ -149,7 +149,7 @@ const ProductForm = (props: ProductFormProps) => {
                         )}
                     />
                     <FormHelperText>
-                        {errors.productBarcode
+                        {errors.productBarcodeType
                             ? "Required and max length is 64."
                             : "For example: ean8, ean13"
                         }
