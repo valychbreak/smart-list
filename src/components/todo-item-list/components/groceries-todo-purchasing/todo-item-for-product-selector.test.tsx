@@ -1,6 +1,6 @@
 import { act } from "@testing-library/react";
 import td from "testdouble";
-import { Select, Typography } from "@material-ui/core";
+import { Select } from "@material-ui/core";
 import { mount, shallow } from "enzyme";
 import TodoItem from "../../types";
 import SelectTodoItemForProduct from "./todo-item-for-product-selector";
@@ -36,26 +36,10 @@ describe("SelectTodoItemForProduct", () => {
         />
     );
 
-    it("should have explanation text", () => {
-        const wrapper = shallow(selectTodoItemForProduct({ todoItems: [] }));
-
-        expect(wrapper.find(Typography).text()).toBe(
-            "Select item from the list that you want to link scanned product to:"
-        );
-    });
-
     it("should have submit button", () => {
         const wrapper = shallow(selectTodoItemForProduct({ todoItems: [] }));
 
         expect(wrapper.find("[type='submit']").exists()).toBe(true);
-    });
-
-    it("should have button to create a new product", () => {
-        const wrapper = shallow(selectTodoItemForProduct({ todoItems: [] }));
-
-        expect(
-            wrapper.find("[data-test-id='create-new-product-btn']").text()
-        ).toBe("Add new product");
     });
 
     it("should display todo item", () => {

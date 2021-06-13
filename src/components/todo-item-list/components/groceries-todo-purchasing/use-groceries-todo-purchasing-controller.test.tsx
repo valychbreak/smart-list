@@ -12,6 +12,7 @@ import useGroceriesTodoPurchasingController from "./use-groceries-todo-purchasin
 import Product from "../../../../entity/Product";
 import { BarcodeScanResult } from "../../../barcode-scanner/types";
 import ProductApi from "../../../../api/ProductApi";
+import ProductFormData from "../../../product-form/types";
 
 jest.mock("../../../../api/ProductApi");
 const ProductApiMocked = mocked(ProductApi, true);
@@ -216,6 +217,37 @@ describe("useGroceriesTodoPurchasingController", () => {
             await act(() => waitFor(() => {
                 expect(result.current.openScanner).toBeFalsy();
             }));
+        });
+    });
+
+    describe("addTodoItemFromNewProduct", () => {
+        test("should save product and add todo item", async () => {
+            // given
+            const { result } = renderGroceriesTodoPurchasingController([]);
+
+            const productFormData = td.object<ProductFormData>();
+            const newProduct = new Product("Milk", "12345678", "ean8");
+            ProductApiMocked.createNewProduct
+                .mockResolvedValue(newProduct);
+
+            // when
+            await act(async () => {
+                result.current.addTodoItemFromNewProduct(productFormData);
+            });
+
+            const todoItemMatcher = td.matchers.argThat((actualTodoItem: TodoItem) => {
+                const product = actualTodoItem.targetProduct;
+                return product
+                    && product.productGeneralName === newProduct.productGeneralName
+                    && product.productBarcode === newProduct.productBarcode
+                    && product.productBarcodeType === newProduct.productBarcodeType;
+            });
+
+            // then
+            expect(ProductApiMocked.createNewProduct).toBeCalled();
+            td.verify(
+                todoItemListMockedContext.addItem(todoItemMatcher)
+            );
         });
     });
 });

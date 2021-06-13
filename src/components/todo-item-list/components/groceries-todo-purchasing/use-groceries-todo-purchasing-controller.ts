@@ -3,6 +3,7 @@ import ProductApi from "../../../../api/ProductApi";
 import Product from "../../../../entity/Product";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import { BarcodeScanResult } from "../../../barcode-scanner/types";
+import ProductFormData from "../../../product-form/types";
 import useExtendedState from "../../../use-extended-state";
 import TodoItem from "../../types";
 
@@ -79,6 +80,12 @@ const useGroceriesTodoPurchasingController = () => {
         toggleTodoItemPurchaseStatus(updatedTodoItem, true);
     }
 
+    async function addTodoItemFromNewProduct(productFormData: ProductFormData) {
+        const savedProduct = await ProductApi.createNewProduct(productFormData);
+        addPurchasedProduct(savedProduct);
+        notExistingProductScanResult.clearValue();
+    }
+
     return {
         todoItems: todoItemListContext.todoItems,
 
@@ -105,6 +112,7 @@ const useGroceriesTodoPurchasingController = () => {
         disableScanner,
 
         toggleTodoItemPurchaseStatusWithScannedResult,
+        addTodoItemFromNewProduct,
     };
 };
 
