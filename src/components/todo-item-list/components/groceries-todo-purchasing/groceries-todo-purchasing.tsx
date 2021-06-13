@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+    Box,
     Button, Container, Dialog, DialogActions, DialogContent,
     DialogContentText,
     DialogTitle, Link, makeStyles, Paper,
@@ -22,9 +23,6 @@ const useStyles = makeStyles((theme) => ({
             bottom: 0,
             // height: 60
         },
-    },
-    dialogHelpText: {
-        marginTop: theme.spacing(2),
     }
 }));
 
@@ -84,12 +82,14 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
                         todoItems={todoItems}
                         onTodoItemSubmit={onTodoItemSubmit}
                     />
-                    <DialogContentText className={classes.dialogHelpText}>
-                        {"Also, you can "}
-                        <Link onClick={() => setDisplayNewProductForm(true)}>
-                            Add new product
-                        </Link>
-                        {" instead."}
+                    <DialogContentText>
+                        <Box marginTop={2}>
+                            {"Also, you can "}
+                            <Link onClick={() => setDisplayNewProductForm(true)}>
+                                Add new product
+                            </Link>
+                            {" instead."}
+                        </Box>
                     </DialogContentText>
                 </>}
 
@@ -106,12 +106,14 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
                             (productFormData) => addTodoItemFromNewProduct(productFormData)
                         }
                     />
-                    <DialogContentText className={classes.dialogHelpText}>
-                        {"Also, you can "}
-                        <Link onClick={() => setDisplayNewProductForm(false)}>
-                            Select from groceries list
-                        </Link>
-                        {" instead."}
+                    <DialogContentText>
+                        <Box marginTop={2}>
+                            {"Also, you can "}
+                            <Link onClick={() => setDisplayNewProductForm(false)}>
+                                Select from groceries list
+                            </Link>
+                            {" instead."}
+                        </Box>
                     </DialogContentText>
                 </>}
             </DialogContent>
