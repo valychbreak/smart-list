@@ -41,11 +41,15 @@ const AddProductInfo = (props: AddProductInfoPros) => {
             <Dialog open={stage === 1} onClose={onDialogClose}>
                 <Scanner onDetected={onBarcodeDetected} />
             </Dialog>
-            {stage === 2 && (
+            {stage === 2 && <>
+                <div>
+                    <p>Barcode (change if scanned incorrectly): {barcode}</p>
+                    <p>Barcode format: {barcodeType}</p>
+                </div>
                 <ProductForm productBarcode={barcode}
                     productBarcodeType={barcodeType}
                     onProductSubmit={onProductSubmit}/>
-            )}
+            </>}
         </>
     );
 };
