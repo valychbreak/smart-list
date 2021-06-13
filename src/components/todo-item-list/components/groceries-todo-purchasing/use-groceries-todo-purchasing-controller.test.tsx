@@ -12,6 +12,7 @@ import useGroceriesTodoPurchasingController from "./use-groceries-todo-purchasin
 import Product from "../../../../entity/Product";
 import { BarcodeScanResult } from "../../../barcode-scanner/types";
 import ProductApi from "../../../../api/ProductApi";
+import ProductFormData from "../../../product-form/types";
 
 jest.mock("../../../../api/ProductApi");
 const ProductApiMocked = mocked(ProductApi, true);
@@ -224,15 +225,14 @@ describe("useGroceriesTodoPurchasingController", () => {
             // given
             const { result } = renderGroceriesTodoPurchasingController([]);
 
-            ProductApiMocked.saveProduct
-                .mockImplementation((product: Product) => Promise.resolve(product));
+            const productFormData = td.object<ProductFormData>();
+            const newProduct = new Product("Milk", "12345678", "ean8");
+            ProductApiMocked.createNewProduct
+                .mockResolvedValue(newProduct);
 
             // when
-
-            const newProduct = new Product("Milk", "12345678", "ean8");
-
             await act(async () => {
-                result.current.addTodoItemFromNewProduct(newProduct);
+                result.current.addTodoItemFromNewProduct(productFormData);
             });
 
             const todoItemMatcher = td.matchers.argThat((actualTodoItem: TodoItem) => {
@@ -244,7 +244,7 @@ describe("useGroceriesTodoPurchasingController", () => {
             });
 
             // then
-            expect(ProductApiMocked.saveProduct).toBeCalled();
+            expect(ProductApiMocked.createNewProduct).toBeCalled();
             td.verify(
                 todoItemListMockedContext.addItem(todoItemMatcher)
             );

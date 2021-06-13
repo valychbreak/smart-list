@@ -8,6 +8,7 @@ import TodoItemAddForm from "./todo-item-add-form";
 import Product from "../../../../entity/Product";
 import ProductApi from "../../../../api/ProductApi";
 import TodoItem from "../../types";
+import ProductFormData from "../../../product-form/types";
 
 describe("AddTodoItemComponent", () => {
     const addTodoItemComponent = (): JSX.Element => <AddTodoItemComponent />;
@@ -35,7 +36,7 @@ describe("AddTodoItemComponent", () => {
         it("should add product to todo items", async () => {
             // given
             const product = td.object<Product>();
-            jest.spyOn(ProductApi, "saveProduct").mockResolvedValue(
+            jest.spyOn(ProductApi, "createNewProduct").mockResolvedValue(
                 product
             );
 
@@ -43,7 +44,7 @@ describe("AddTodoItemComponent", () => {
             const addItemMock = td.func<AddItem>();
 
             // when
-            await addProductToTodoItems(product, addItemMock);
+            await addProductToTodoItems(td.object<ProductFormData>(), addItemMock);
 
             // then
             td.verify(addItemMock(td.matchers.anything()));

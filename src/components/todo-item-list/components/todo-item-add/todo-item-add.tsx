@@ -4,17 +4,17 @@ import Scanner from "../../../../Scanner";
 import TodoItemAddForm from "./todo-item-add-form";
 import useTodoItemAddController from "./todo-item-add-controller";
 import ProductForm from "../../../product-form";
-import Product from "../../../../entity/Product";
 import ProductApi from "../../../../api/ProductApi";
 import { useTodoItemListContext } from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import TodoItem from "../../types";
+import ProductFormData from "../../../product-form/types";
 
 // export for testing only
 export async function addProductToTodoItems(
-    product: Product,
+    productFormData: ProductFormData,
     addItem: (todoItem: TodoItem) => void
 ) {
-    const savedProduct = await ProductApi.saveProduct(product);
+    const savedProduct = await ProductApi.createNewProduct(productFormData);
     addItem(TodoItem.fromProduct(savedProduct));
 }
 
@@ -32,8 +32,8 @@ const AddTodoItemComponent = () => {
 
     const { addItem } = useTodoItemListContext();
 
-    const onNewProductSubmit = async (product: Product) => {
-        addProductToTodoItems(product, addItem);
+    const onNewProductSubmit = async (productFormData: ProductFormData) => {
+        addProductToTodoItems(productFormData, addItem);
         setOpenNewProductDialog(false);
     };
 
@@ -53,7 +53,10 @@ const AddTodoItemComponent = () => {
                         shortForm
                         productBarcode={lastBarcodeScanResult?.code || ""}
                         productBarcodeType={lastBarcodeScanResult?.format || ""}
-                        onProductSubmit={(product) => onNewProductSubmit(product)} />
+                        onProductSubmit={
+                            (productFormData) => onNewProductSubmit(productFormData)
+                        }
+                    />
                 </DialogContent>
             </Dialog>
             <Grid container justify="center" alignItems="center">

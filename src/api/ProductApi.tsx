@@ -1,4 +1,5 @@
 /* eslint-disable class-methods-use-this */
+import ProductFormData from "../components/product-form/types";
 import Category from "../entity/category";
 import Product from "../entity/Product";
 import LocalDB from "./LocalDB";
@@ -6,7 +7,11 @@ import CategoryLocalDB from "./persistance/local-db-category";
 
 interface ProductApi {
     getProducts(): Promise<Product[]>;
+    /**
+     * @deprecated Use createNewProduct method with ProductFormData argument instead
+     */
     saveProduct(product: Product): Promise<Product>;
+    createNewProduct(productFormData: ProductFormData): Promise<Product>;
     changeCategory(product: Product, category: Category | null): Promise<void>;
     findBy(generalName: string): Promise<Product[]>;
     findMatchingBy(query: string): Promise<Product[]>;
@@ -49,6 +54,22 @@ class MockedProductApi implements ProductApi {
     }
 
     async saveProduct(product: Product): Promise<Product> {
+        return LocalDB.saveProduct(product);
+    }
+
+    async createNewProduct(productFormData: ProductFormData): Promise<Product> {
+        const {
+            generalName,
+            barcode,
+            barcodeType,
+            fullName,
+            companyName,
+            country,
+        } = productFormData;
+        const product = new Product(generalName, barcode, barcodeType);
+        product.productFullName = fullName;
+        product.productCompanyName = companyName;
+        product.productCountry = country;
         return LocalDB.saveProduct(product);
     }
 

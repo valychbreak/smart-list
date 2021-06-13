@@ -2,7 +2,7 @@ import { Button, FormControl, FormHelperText, Input, InputLabel } from "@materia
 import axios from "axios";
 import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-import Product from "../../entity/Product";
+import ProductFormData from "./types";
 
 interface ProductFormFields {
     productBarcode: string;
@@ -20,7 +20,7 @@ interface ProductFormProps {
     productBarcodeType: string;
 
     shortForm?: boolean;
-    onProductSubmit(product: Product): void;
+    onProductSubmit(product: ProductFormData): void;
 }
 
 function isCountryCodeMatching(productCountryPrefix: string, recordCountryCode: string): boolean {
@@ -91,18 +91,16 @@ const ProductForm = (props: ProductFormProps) => {
         updatedSuggestedCountry(barcode);
     }, [props.productBarcode]);
 
-    const createProduct = (formData: ProductFormFields) => {
-        const product = new Product(
-            formData.productGeneralName,
-            formData.productBarcode,
-            formData.productBarcodeType,
-        );
-
-        product.productFullName = formData.productFullName;
-        product.productCompanyName = formData.productCompanyName;
-        product.productCountry = formData.productCountry;
-        return product;
-    };
+    const createProduct = (formData: ProductFormFields): ProductFormData => (
+        {
+            generalName: formData.productGeneralName,
+            barcode: formData.productBarcode,
+            barcodeType: formData.productBarcodeType,
+            fullName: formData.productFullName,
+            companyName: formData.productCompanyName,
+            country: formData.productCountry
+        }
+    );
 
     const addItemInfo = (formData: ProductFormFields) => {
         const product = createProduct(formData);

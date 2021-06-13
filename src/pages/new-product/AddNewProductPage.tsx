@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Container } from "@material-ui/core";
-import Product from "../../entity/Product";
 import AddProductInfo from "../../components/AddProductInfo";
 import ProductApi from "../../api/ProductApi";
+import ProductFormData from "../../components/product-form/types";
 
 const AddNewProduct = () => {
     const [addingProduct, setAddingProduct] = useState(false);
@@ -18,9 +18,9 @@ const AddNewProduct = () => {
         setAddingProduct(false);
     }
 
-    const onProductSubmit = async (product: Product) => {
+    const onProductSubmit = async (productFormData: ProductFormData) => {
         try {
-            const savedProduct = await ProductApi.saveProduct(product);
+            const savedProduct = await ProductApi.createNewProduct(productFormData);
             setAddingProduct(false);
 
             setSuccessMessage(`Successfully added ${savedProduct.productFullName} to local DB. Go to Browse product page to export local db.`);
@@ -39,7 +39,11 @@ const AddNewProduct = () => {
             <hr />
             {successMessage && <p>{successMessage}</p>}
             {productError && <p>{productError}</p>}
-            {addingProduct && <AddProductInfo onProductSubmit={onProductSubmit} />}
+            {addingProduct && (
+                <AddProductInfo
+                    onProductSubmit={(productFormData) => onProductSubmit(productFormData)}
+                />
+            )}
 
         </Container>
     );
