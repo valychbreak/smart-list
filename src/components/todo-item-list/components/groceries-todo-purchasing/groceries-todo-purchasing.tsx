@@ -96,6 +96,7 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
                         Fill in the form to add new product:
                     </DialogContentText>
                     <ProductForm
+                        shortForm
                         productBarcode={scannedProductResult?.code || ""}
                         productBarcodeType={scannedProductResult?.format || ""}
                         onProductSubmit={(product) => addTodoItemFromNewProduct(product)}
