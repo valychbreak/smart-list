@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
+    Box,
     Button, Container, Dialog, DialogActions, DialogContent,
     DialogContentText,
     DialogTitle, Link, makeStyles, Paper,
@@ -12,6 +13,7 @@ import useGroceriesTodoPurchasingController from "./use-groceries-todo-purchasin
 import SelectTodoItemForProduct from "./todo-item-for-product-selector";
 import TodoItem from "../../types";
 import ProductForm from "../../../product-form";
+import ScannedProductDialogView from "./scanned-product-dialog-view";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -21,9 +23,6 @@ const useStyles = makeStyles((theme) => ({
             bottom: 0,
             // height: 60
         },
-    },
-    dialogHelpText: {
-        marginTop: theme.spacing(2),
     }
 }));
 
@@ -34,6 +33,8 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
     const purchasingController = useGroceriesTodoPurchasingController();
     const {
         openAddNewProductForm,
+        openAddProductConfirmation,
+        productToAdd,
         todoItems,
         scannedProductResult,
         toggleTodoItemPurchaseStatusWithScannedResult,
@@ -41,25 +42,25 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
         addTodoItemFromNewProduct,
     } = purchasingController;
 
-    useEffect(() => {
-        const { productToAdd } = purchasingController;
-        if (purchasingController.openAddProductConfirmation && productToAdd !== null) {
-            // eslint-disable-next-line no-alert
-            const addingProductConfirmed = window.confirm(`${productToAdd.productFullName} wasn't added to the list.\n Do you want to add it and mark as purchased?`);
-            if (addingProductConfirmed) {
-                purchasingController.addPurchasedProduct(productToAdd);
-            } else {
-                purchasingController.dismissAddingProduct();
-            }
-        }
-    }, [purchasingController.scannedProductResult, purchasingController.productToAdd]);
-
     const onTodoItemSubmit = (todoItem: TodoItem) => {
         toggleTodoItemPurchaseStatusWithScannedResult(todoItem);
     };
 
     const closeNewProductDialog = () => {
         dismissSubmitingNewProduct();
+    };
+
+    const closeAddProductConfirmation = () => {
+        purchasingController.dismissAddingProduct();
+    };
+
+    const addScannedProductToTodoItems = () => {
+        if (!productToAdd) {
+            return;
+        }
+
+        purchasingController.addPurchasedProduct(productToAdd);
+        closeAddProductConfirmation();
     };
 
     return (<>
@@ -81,12 +82,14 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
                         todoItems={todoItems}
                         onTodoItemSubmit={onTodoItemSubmit}
                     />
-                    <DialogContentText className={classes.dialogHelpText}>
-                        {"Also, you can "}
-                        <Link onClick={() => setDisplayNewProductForm(true)}>
-                            Add new product
-                        </Link>
-                        {" instead."}
+                    <DialogContentText>
+                        <Box marginTop={2}>
+                            {"Also, you can "}
+                            <Link onClick={() => setDisplayNewProductForm(true)}>
+                                Add new product
+                            </Link>
+                            {" instead."}
+                        </Box>
                     </DialogContentText>
                 </>}
 
@@ -103,12 +106,14 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
                             (productFormData) => addTodoItemFromNewProduct(productFormData)
                         }
                     />
-                    <DialogContentText className={classes.dialogHelpText}>
-                        {"Also, you can "}
-                        <Link onClick={() => setDisplayNewProductForm(false)}>
-                            Select from groceries list
-                        </Link>
-                        {" instead."}
+                    <DialogContentText>
+                        <Box marginTop={2}>
+                            {"Also, you can "}
+                            <Link onClick={() => setDisplayNewProductForm(false)}>
+                                Select from groceries list
+                            </Link>
+                            {" instead."}
+                        </Box>
                     </DialogContentText>
                 </>}
             </DialogContent>
@@ -116,6 +121,31 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
                 <Button onClick={closeNewProductDialog}>Cancel</Button>
             </DialogActions>
         </Dialog>
+
+        {productToAdd && (
+            <Dialog open={openAddProductConfirmation}>
+                <DialogTitle>Add product to groceries list?</DialogTitle>
+                <DialogContent dividers>
+                    <DialogContentText>
+                        <ScannedProductDialogView product={productToAdd} />
+                    </DialogContentText>
+                </DialogContent>
+                <DialogContent>
+                    <DialogContentText>
+                        Do you want to add scanned product to groceries list and mark as purchased?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => closeAddProductConfirmation()} color="primary">
+                        No
+                    </Button>
+                    <Button onClick={() => addScannedProductToTodoItems()} color="primary" autoFocus>
+                        Yes
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        )}
+
         <TodoItemPriceSubmitDialog open={purchasingController.openPriceSubmission}
             selectedItem={purchasingController.selectedItem}
             handleClose={purchasingController.onPriceSubmissionClose} />
