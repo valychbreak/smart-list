@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import openFoodFactsApi from "./open-food-facts.api";
 
-type ProductDetails = {
+export type ProductDetails = {
     name: string | null;
     barcode: string | null;
     company: string | null;

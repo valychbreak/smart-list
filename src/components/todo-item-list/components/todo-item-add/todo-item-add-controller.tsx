@@ -5,6 +5,7 @@ import { useTodoItemListContext } from "../../../../pages/groceries-todo/context
 import { BarcodeScanResult } from "../../../barcode-scanner/types";
 import { ProductFormFields } from "../../../product-form";
 import openFoodFactsService from "../../../../api/open-food-facts-api/open-food-facts.service";
+import productDetailsToFormFields from "../utils/product-mapping-utils";
 
 const useTodoItemAddController = () => {
     const [isScannerEnabled, setScannerEnabled] = useState(false);
@@ -55,27 +56,9 @@ const useTodoItemAddController = () => {
 
                     openFoodFactsService.fetchProduct(barcode)
                         .then((loadedExternalProduct) => {
-                            if (loadedExternalProduct) {
-                                setDefaultNewProductFields({
-                                    productBarcode: barcode,
-                                    productBarcodeType: barcodeType,
-                                    productCompanyName: loadedExternalProduct.company,
-                                    productCountry: "",
-                                    productFullName: loadedExternalProduct.name,
-                                    productGeneralName: loadedExternalProduct.name || "",
-                                    image: loadedExternalProduct.imageUrl
-                                });
-                            } else {
-                                setDefaultNewProductFields({
-                                    productBarcode: barcode,
-                                    productBarcodeType: barcodeType,
-                                    productCompanyName: "",
-                                    productCountry: "",
-                                    productFullName: "",
-                                    productGeneralName: "",
-                                    image: null
-                                });
-                            }
+                            setDefaultNewProductFields(
+                                productDetailsToFormFields(result, loadedExternalProduct)
+                            );
 
                             setOpenNewProductDialog(true);
                         });
