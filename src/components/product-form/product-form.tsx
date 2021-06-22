@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import ProductFormData from "./types";
 
-interface ProductFormFields {
+export interface ProductFormFields {
     productBarcode: string;
     productBarcodeType: string;
     productGeneralName: string;
@@ -18,6 +18,8 @@ interface ProductFormFields {
 interface ProductFormProps {
     productBarcode: string;
     productBarcodeType: string;
+
+    defaultFieldValues?: ProductFormFields;
 
     shortForm?: boolean;
     onProductSubmit(product: ProductFormData): void;
@@ -41,16 +43,18 @@ function isCountryCodeMatching(productCountryPrefix: string, recordCountryCode: 
 }
 
 const ProductForm = (props: ProductFormProps) => {
+    const { defaultFieldValues } = props;
+
     const {
         handleSubmit, errors, control, setValue
     } = useForm<ProductFormFields>({
         defaultValues: {
-            productBarcode: props.productBarcode,
-            productBarcodeType: props.productBarcodeType,
-            productGeneralName: "",
-            productFullName: "",
-            productCompanyName: "",
-            productCountry: "",
+            productBarcode: defaultFieldValues?.productBarcode || "",
+            productBarcodeType: defaultFieldValues?.productBarcodeType || "",
+            productGeneralName: defaultFieldValues?.productGeneralName || "",
+            productFullName: defaultFieldValues?.productFullName || "",
+            productCompanyName: defaultFieldValues?.productCompanyName || "",
+            productCountry: defaultFieldValues?.productCountry || "",
         }
     });
 
