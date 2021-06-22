@@ -22,6 +22,7 @@ const AddTodoItemComponent = () => {
     const {
         openScanner,
         openNewProductDialog,
+        defaultNewProductFields,
         lastBarcodeScanResult,
         enableScanner,
         disableScanner,
@@ -51,6 +52,7 @@ const AddTodoItemComponent = () => {
                     </DialogContentText>
                     <ProductForm
                         shortForm
+                        defaultFieldValues={defaultNewProductFields}
                         productBarcode={lastBarcodeScanResult?.code || ""}
                         productBarcodeType={lastBarcodeScanResult?.format || ""}
                         onProductSubmit={

@@ -3,10 +3,17 @@ import ProductApi from "../../../../api/ProductApi";
 import TodoItem from "../../types";
 import { useTodoItemListContext } from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import { BarcodeScanResult } from "../../../barcode-scanner/types";
+import { ProductFormFields } from "../../../product-form";
+import openFoodFactsService from "../../../../api/open-food-facts-api/open-food-facts.service";
 
 const useTodoItemAddController = () => {
     const [isScannerEnabled, setScannerEnabled] = useState(false);
     const [openNewProductDialog, setOpenNewProductDialog] = useState(false);
+    const [
+        defaultNewProductFields,
+        setDefaultNewProductFields
+    ] = useState<ProductFormFields | undefined>(undefined);
+
     const [
         lastBarcodeScanResult,
         setBarcodeScanResult,
@@ -45,7 +52,33 @@ const useTodoItemAddController = () => {
                         code: barcode,
                         format: barcodeType,
                     });
-                    setOpenNewProductDialog(true);
+
+                    openFoodFactsService.fetchProduct(barcode)
+                        .then((loadedExternalProduct) => {
+                            if (loadedExternalProduct) {
+                                setDefaultNewProductFields({
+                                    productBarcode: barcode,
+                                    productBarcodeType: barcodeType,
+                                    productCompanyName: loadedExternalProduct.company,
+                                    productCountry: "",
+                                    productFullName: loadedExternalProduct.name,
+                                    productGeneralName: loadedExternalProduct.name || "",
+                                    image: loadedExternalProduct.imageUrl
+                                });
+                            } else {
+                                setDefaultNewProductFields({
+                                    productBarcode: barcode,
+                                    productBarcodeType: barcodeType,
+                                    productCompanyName: "",
+                                    productCountry: "",
+                                    productFullName: "",
+                                    productGeneralName: "",
+                                    image: null
+                                });
+                            }
+
+                            setOpenNewProductDialog(true);
+                        });
                 } else {
                     const newItem = TodoItem.fromProduct(product);
                     addTodoItem(newItem);
@@ -57,6 +90,7 @@ const useTodoItemAddController = () => {
     return {
         openScanner: isScannerEnabled,
         openNewProductDialog,
+        defaultNewProductFields,
         lastBarcodeScanResult,
         enableScanner,
         disableScanner,
