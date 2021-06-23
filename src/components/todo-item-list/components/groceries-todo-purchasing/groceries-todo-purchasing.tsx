@@ -33,6 +33,7 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
     const purchasingController = useGroceriesTodoPurchasingController();
     const {
         openAddNewProductForm,
+        newProductDefaultFields,
         openAddProductConfirmation,
         productToAdd,
         todoItems,
@@ -100,6 +101,7 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
                     </DialogContentText>
                     <ProductForm
                         shortForm
+                        defaultFieldValues={newProductDefaultFields}
                         productBarcode={scannedProductResult?.code || ""}
                         productBarcodeType={scannedProductResult?.format || ""}
                         onProductSubmit={
