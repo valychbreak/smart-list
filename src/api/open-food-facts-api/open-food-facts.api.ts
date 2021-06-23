@@ -18,8 +18,12 @@ class OpenFoodFactsApi {
             }
         };
 
-        // const response = await axios.get("openfoodfacts_response_pringles.json", config);
-        const response = await axios.get(`https://pl.openfoodfacts.org/api/v0/product/${barcode}.json`, config);
+        let url = `https://pl.openfoodfacts.org/api/v0/product/${barcode}.json`;
+        if (process.env.REACT_APP_FAKE_OPEN_FOOD_FACTS_API === "true") {
+            url = "openfoodfacts_response_pringles.json";
+        }
+
+        const response = await axios.get(url, config);
         if (response.status === 200) {
             if (response.data.status_verbose === "product found") {
                 const { product } = response.data;
