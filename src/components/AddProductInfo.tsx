@@ -4,6 +4,7 @@ import Scanner from "../Scanner";
 import { BarcodeScanResult } from "./barcode-scanner/types";
 import ProductForm from "./product-form";
 import ProductFormData from "./product-form/types";
+import productDetailsToFormFields from "./todo-item-list/components/utils/product-mapping-utils";
 
 interface AddProductInfoProps {
     onProductSubmit(productFormData: ProductFormData): void;
@@ -32,6 +33,11 @@ const AddProductInfo = (props: AddProductInfoProps) => {
     const barcode: string = barcodeResult?.code || "";
     const barcodeType: string = barcodeResult?.format || "";
 
+    let productDefaultFields;
+    if (barcodeResult) {
+        productDefaultFields = productDetailsToFormFields(barcodeResult);
+    }
+
     return (
         <>
             <button onClick={() => setStage(1)}>Scan barcode</button>
@@ -46,8 +52,8 @@ const AddProductInfo = (props: AddProductInfoProps) => {
                     <p>Barcode (change if scanned incorrectly): {barcode}</p>
                     <p>Barcode format: {barcodeType}</p>
                 </div>
-                <ProductForm productBarcode={barcode}
-                    productBarcodeType={barcodeType}
+                <ProductForm
+                    defaultFieldValues={productDefaultFields}
                     onProductSubmit={(productFormData) => onProductSubmit(productFormData)}/>
             </>}
         </>

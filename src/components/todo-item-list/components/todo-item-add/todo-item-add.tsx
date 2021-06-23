@@ -53,8 +53,6 @@ const AddTodoItemComponent = () => {
                     <ProductForm
                         shortForm
                         defaultFieldValues={defaultNewProductFields}
-                        productBarcode={lastBarcodeScanResult?.code || ""}
-                        productBarcodeType={lastBarcodeScanResult?.format || ""}
                         onProductSubmit={
                             (productFormData) => onNewProductSubmit(productFormData)
                         }

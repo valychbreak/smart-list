@@ -16,12 +16,8 @@ export interface ProductFormFields {
 }
 
 interface ProductFormProps {
-    productBarcode: string;
-    productBarcodeType: string;
-
-    defaultFieldValues?: ProductFormFields;
-
     shortForm?: boolean;
+    defaultFieldValues?: ProductFormFields;
     onProductSubmit(product: ProductFormData): void;
 }
 
@@ -86,14 +82,14 @@ const ProductForm = (props: ProductFormProps) => {
     }
 
     useEffect(() => {
-        const barcode = props.productBarcode;
+        const barcode = defaultFieldValues?.productBarcode;
 
         if (!barcode) {
             return;
         }
 
         updatedSuggestedCountry(barcode);
-    }, [props.productBarcode]);
+    }, [defaultFieldValues?.productBarcode]);
 
     const createProduct = (formData: ProductFormFields): ProductFormData => (
         {

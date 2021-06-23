@@ -102,8 +102,6 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
                     <ProductForm
                         shortForm
                         defaultFieldValues={newProductDefaultFields}
-                        productBarcode={scannedProductResult?.code || ""}
-                        productBarcodeType={scannedProductResult?.format || ""}
                         onProductSubmit={
                             (productFormData) => addTodoItemFromNewProduct(productFormData)
                         }
