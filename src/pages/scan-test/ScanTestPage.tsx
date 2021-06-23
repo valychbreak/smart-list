@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import openFoodFactsService from "../../api/open-food-facts-api/open-food-facts.service";
 import { BarcodeScanResult } from "../../components/barcode-scanner/types";
 import Result from "../../Result";
-import Scanner from "../../Scanner";
+import Scanner from "../../components/barcode-scanner";
 
 const ScanTest = () => {
     const [scanning, setScanning] = useState(false);

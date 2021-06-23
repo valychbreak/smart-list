@@ -6,7 +6,7 @@ import {
     DialogTitle, Link, makeStyles, Paper,
 } from "@material-ui/core";
 import SettingsOverscanIcon from "@material-ui/icons/SettingsOverscan";
-import Scanner from "../../../../Scanner";
+import Scanner from "../../../barcode-scanner";
 import TodoListView from "../todo-item-list-view";
 import TodoItemPriceSubmitDialog from "../todo-item-price-submit-dialog";
 import useGroceriesTodoPurchasingController from "./use-groceries-todo-purchasing-controller";
