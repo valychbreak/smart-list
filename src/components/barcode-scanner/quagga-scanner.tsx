@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Quagga, { QuaggaJSResultObject } from "@ericblade/quagga2";
 import { BarcodeScanResult } from "./types";
 
-type ScannerProps = {
+export type ScannerProps = {
     onDetected(result: BarcodeScanResult): void;
 };
 

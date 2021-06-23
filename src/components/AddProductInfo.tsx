@@ -1,7 +1,7 @@
 import { Dialog } from "@material-ui/core";
 import { useState } from "react";
 import openFoodFactsService from "../api/open-food-facts-api/open-food-facts.service";
-import Scanner from "./barcode-scanner";
+import { Scanner } from "./barcode-scanner";
 import { BarcodeScanResult } from "./barcode-scanner/types";
 import ProductForm, { ProductFormFields } from "./product-form";
 import ProductFormData from "./product-form/types";
