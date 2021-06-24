@@ -1,9 +1,11 @@
 import { Dialog } from "@material-ui/core";
 import { useState } from "react";
-import Scanner from "../Scanner";
+import openFoodFactsService from "../api/open-food-facts-api/open-food-facts.service";
+import { Scanner } from "./barcode-scanner";
 import { BarcodeScanResult } from "./barcode-scanner/types";
-import ProductForm from "./product-form";
+import ProductForm, { ProductFormFields } from "./product-form";
 import ProductFormData from "./product-form/types";
+import productDetailsToFormFields from "./todo-item-list/components/utils/product-mapping-utils";
 
 interface AddProductInfoProps {
     onProductSubmit(productFormData: ProductFormData): void;
@@ -15,8 +17,18 @@ const AddProductInfo = (props: AddProductInfoProps) => {
     const [stage, setStage] = useState(INITIAL_STAGE);
     const [barcodeResult, setBarcodeResult] = useState<BarcodeScanResult>();
 
-    const onBarcodeDetected = (result: BarcodeScanResult) => {
+    const [
+        newProductDefaultFields, setNewProductDefaultFields
+    ] = useState<ProductFormFields | undefined>(undefined);
+
+    const onBarcodeDetected = async (result: BarcodeScanResult) => {
         setBarcodeResult(result);
+
+        const loadedExternalProduct = await openFoodFactsService.fetchProduct(result.code);
+        setNewProductDefaultFields(
+            productDetailsToFormFields(result, loadedExternalProduct)
+        );
+
         setStage(2);
     };
 
@@ -46,8 +58,8 @@ const AddProductInfo = (props: AddProductInfoProps) => {
                     <p>Barcode (change if scanned incorrectly): {barcode}</p>
                     <p>Barcode format: {barcodeType}</p>
                 </div>
-                <ProductForm productBarcode={barcode}
-                    productBarcodeType={barcodeType}
+                <ProductForm
+                    defaultFieldValues={newProductDefaultFields}
                     onProductSubmit={(productFormData) => onProductSubmit(productFormData)}/>
             </>}
         </>

@@ -1,17 +1,25 @@
 import { useContext, useState } from "react";
+import openFoodFactsService from "../../../../api/open-food-facts-api/open-food-facts.service";
 import ProductApi from "../../../../api/ProductApi";
 import Product from "../../../../entity/Product";
 import TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import { BarcodeScanResult } from "../../../barcode-scanner/types";
+import { ProductFormFields } from "../../../product-form";
 import ProductFormData from "../../../product-form/types";
 import useExtendedState from "../../../use-extended-state";
 import TodoItem from "../../types";
+import productDetailsToFormFields from "../utils/product-mapping-utils";
 
 const useGroceriesTodoPurchasingController = () => {
     const [isScanning, setScanning] = useState(false);
 
     const purchasedTodoItem = useExtendedState<TodoItem>();
+
     const notExistingProductScanResult = useExtendedState<BarcodeScanResult>();
+    const [
+        newProductDefaultFields, setNewProductDefaultFields
+    ] = useState<ProductFormFields | undefined>(undefined);
+
     const newScannedProduct = useExtendedState<Product>();
 
     const todoItemListContext = useContext(TodoItemListContext);
@@ -34,7 +42,7 @@ const useGroceriesTodoPurchasingController = () => {
         }
     }
 
-    const onBarcodeScan = (result: BarcodeScanResult) => {
+    const onBarcodeScan = async (result: BarcodeScanResult) => {
         disableScanner();
 
         const foundItem: TodoItem | undefined = todoItemListContext.todoItems.find((todoItem) => {
@@ -48,15 +56,17 @@ const useGroceriesTodoPurchasingController = () => {
             return;
         }
 
-        ProductApi.findByBarcode(result.code, result.format)
-            .then((foundProduct) => {
-                if (foundProduct === null) {
-                    notExistingProductScanResult.setValue(result);
-                    return;
-                }
+        const foundProduct = await ProductApi.findByBarcode(result.code, result.format);
+        if (foundProduct === null) {
+            const loadedExternalProduct = await openFoodFactsService.fetchProduct(result.code);
+            setNewProductDefaultFields(
+                productDetailsToFormFields(result, loadedExternalProduct)
+            );
+            notExistingProductScanResult.setValue(result);
+            return;
+        }
 
-                newScannedProduct.setValue(foundProduct);
-            });
+        newScannedProduct.setValue(foundProduct);
     };
 
     function addPurchasedProduct(product: Product) {
@@ -95,6 +105,7 @@ const useGroceriesTodoPurchasingController = () => {
 
         openAddNewProductForm: notExistingProductScanResult.isSet,
         scannedProductResult: notExistingProductScanResult.value,
+        newProductDefaultFields,
 
         openAddProductConfirmation: newScannedProduct.isSet,
         productToAdd: newScannedProduct.value,

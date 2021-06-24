@@ -6,7 +6,7 @@ import {
     DialogTitle, Link, makeStyles, Paper,
 } from "@material-ui/core";
 import SettingsOverscanIcon from "@material-ui/icons/SettingsOverscan";
-import Scanner from "../../../../Scanner";
+import { Scanner } from "../../../barcode-scanner";
 import TodoListView from "../todo-item-list-view";
 import TodoItemPriceSubmitDialog from "../todo-item-price-submit-dialog";
 import useGroceriesTodoPurchasingController from "./use-groceries-todo-purchasing-controller";
@@ -33,6 +33,7 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
     const purchasingController = useGroceriesTodoPurchasingController();
     const {
         openAddNewProductForm,
+        newProductDefaultFields,
         openAddProductConfirmation,
         productToAdd,
         todoItems,
@@ -100,8 +101,7 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
                     </DialogContentText>
                     <ProductForm
                         shortForm
-                        productBarcode={scannedProductResult?.code || ""}
-                        productBarcodeType={scannedProductResult?.format || ""}
+                        defaultFieldValues={newProductDefaultFields}
                         onProductSubmit={
                             (productFormData) => addTodoItemFromNewProduct(productFormData)
                         }

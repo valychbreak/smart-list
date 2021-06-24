@@ -1,5 +1,6 @@
 import { act, renderHook } from "@testing-library/react-hooks";
 import td from "testdouble";
+import openFoodFactsService from "../../../../api/open-food-facts-api/open-food-facts.service";
 import ProductApi from "../../../../api/ProductApi";
 import Product from "../../../../entity/Product";
 import * as TodoItemListContext from "../../../../pages/groceries-todo/context/TodoItemListContext";
@@ -40,6 +41,10 @@ describe("useTodoItemAddController", () => {
             TodoItemListContext,
             "useTodoItemListContext"
         ).mockImplementation(() => todoItemListContext);
+
+        jest.spyOn(openFoodFactsService, "fetchProduct").mockReturnValue(
+            Promise.resolve(null)
+        );
     });
 
     it("should enable scanner", () => {
@@ -88,38 +93,78 @@ describe("useTodoItemAddController", () => {
         expect(result.current.openScanner).toBe(false);
     });
 
-    it("should add todo item to context after scanning a barcode", async () => {
-        const product = mockProduct("Milk");
-
-        jest.spyOn(ProductApi, "findByBarcode").mockReturnValue(
-            Promise.resolve(product)
-        );
-
-        const { result } = renderController(true);
-
-        await act(async () => {
-            result.current.onBarcodeDetected(barcodeScanResult);
+    describe("onBarcodeDetected", () => {
+        beforeEach(() => {
+            jest.spyOn(openFoodFactsService, "fetchProduct").mockReturnValue(
+                Promise.resolve(null)
+            );
         });
 
-        td.verify(
-            todoItemListContext.addItem(
-                td.matchers.contains({ targetProduct: product })
-            )
-        );
-        expect(result.current.openScanner).toBe(false);
-    });
+        it("should add todo item to context after scanning a barcode", async () => {
+            const product = mockProduct("Milk");
 
-    it("should open new product dialog when product not found after scanning a barcode", async () => {
-        jest.spyOn(ProductApi, "findByBarcode").mockReturnValue(
-            Promise.resolve(null)
-        );
+            jest.spyOn(ProductApi, "findByBarcode").mockReturnValue(
+                Promise.resolve(product)
+            );
 
-        const { result } = renderController(true);
+            const { result } = renderController(true);
 
-        await act(async () => {
-            result.current.onBarcodeDetected(barcodeScanResult);
+            await act(async () => {
+                result.current.onBarcodeDetected(barcodeScanResult);
+            });
+
+            td.verify(
+                todoItemListContext.addItem(
+                    td.matchers.contains({ targetProduct: product })
+                )
+            );
+            expect(result.current.openScanner).toBe(false);
         });
 
-        expect(result.current.openNewProductDialog).toBe(true);
+        it("should open new product dialog when product not found after scanning a barcode", async () => {
+            jest.spyOn(ProductApi, "findByBarcode").mockReturnValue(
+                Promise.resolve(null)
+            );
+
+            const { result } = renderController(true);
+
+            await act(async () => {
+                result.current.onBarcodeDetected(barcodeScanResult);
+            });
+
+            expect(result.current.openNewProductDialog).toBe(true);
+        });
+
+        it("should open new product dialog and load data from OpenFoodFacts when product not found after scanning a barcode", async () => {
+            jest.spyOn(ProductApi, "findByBarcode").mockReturnValue(
+                Promise.resolve(null)
+            );
+
+            jest.spyOn(openFoodFactsService, "fetchProduct").mockReturnValue(
+                Promise.resolve({
+                    name: "Milk",
+                    barcode: barcodeScanResult.code,
+                    company: "Milky way",
+                    imageUrl: "https://image-url.com"
+                })
+            );
+
+            const { result } = renderController(true);
+
+            await act(async () => {
+                result.current.onBarcodeDetected(barcodeScanResult);
+            });
+
+            expect(result.current.openNewProductDialog).toBe(true);
+            expect(result.current.defaultNewProductFields).toStrictEqual({
+                productBarcode: barcodeScanResult.code,
+                productBarcodeType: barcodeScanResult.format,
+                productCompanyName: "Milky way",
+                productCountry: "",
+                productFullName: "Milk",
+                productGeneralName: "Milk",
+                image: "https://image-url.com"
+            });
+        });
     });
 });

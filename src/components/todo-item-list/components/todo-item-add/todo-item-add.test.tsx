@@ -2,7 +2,7 @@ import { act } from "@testing-library/react";
 import { shallow } from "enzyme";
 import td from "testdouble";
 import React from "react";
-import Scanner from "../../../../Scanner";
+import { Scanner } from "../../../barcode-scanner";
 import AddTodoItemComponent, { addProductToTodoItems } from "./todo-item-add";
 import TodoItemAddForm from "./todo-item-add-form";
 import Product from "../../../../entity/Product";

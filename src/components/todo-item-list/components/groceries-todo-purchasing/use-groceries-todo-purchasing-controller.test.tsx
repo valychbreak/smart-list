@@ -13,6 +13,7 @@ import Product from "../../../../entity/Product";
 import { BarcodeScanResult } from "../../../barcode-scanner/types";
 import ProductApi from "../../../../api/ProductApi";
 import ProductFormData from "../../../product-form/types";
+import openFoodFactsService from "../../../../api/open-food-facts-api/open-food-facts.service";
 
 jest.mock("../../../../api/ProductApi");
 const ProductApiMocked = mocked(ProductApi, true);
@@ -100,6 +101,12 @@ describe("useGroceriesTodoPurchasingController", () => {
     });
 
     describe("toggleTodoItemPurchaseStatusWithScannedResult", () => {
+        beforeEach(() => {
+            jest.spyOn(openFoodFactsService, "fetchProduct").mockReturnValue(
+                Promise.resolve(null)
+            );
+        });
+
         test("should mark todo item as purchased and link to scanned product", async () => {
             // given
             const { result } = renderGroceriesTodoPurchasingController([]);
@@ -136,6 +143,12 @@ describe("useGroceriesTodoPurchasingController", () => {
     });
 
     describe("onBarcodeScan", () => {
+        beforeEach(() => {
+            jest.spyOn(openFoodFactsService, "fetchProduct").mockReturnValue(
+                Promise.resolve(null)
+            );
+        });
+
         test("should mark matching item by barcode as purchased", () => {
             // given
             const todoItem = createTodoItem("12345678", "ean8");
@@ -168,6 +181,43 @@ describe("useGroceriesTodoPurchasingController", () => {
             await act(() => waitFor(() => {
                 expect(result.current.openAddNewProductForm).toBeTruthy();
                 expect(result.current.scannedProductResult).toBe(scannedResult);
+            }));
+        });
+
+        test("should set open new product dialog to true when product does not exist in the list and db, and load data from OpenFoodFacts API", async () => {
+            // given
+            ProductApiMocked.findByBarcode.mockResolvedValue(null);
+
+            const scannedResult = createScanResult("12345678", "ean8");
+            jest.spyOn(openFoodFactsService, "fetchProduct").mockReturnValue(
+                Promise.resolve({
+                    name: "Milk",
+                    barcode: scannedResult.code,
+                    company: "Milky way",
+                    imageUrl: "https://image-url.com"
+                })
+            );
+
+            const { result } = renderGroceriesTodoPurchasingController([]);
+
+            // when
+            act(() => {
+                result.current.onBarcodeScan(scannedResult);
+            });
+
+            // then
+            await act(() => waitFor(() => {
+                expect(result.current.openAddNewProductForm).toBeTruthy();
+                expect(result.current.scannedProductResult).toBe(scannedResult);
+                expect(result.current.newProductDefaultFields).toStrictEqual({
+                    productBarcode: scannedResult.code,
+                    productBarcodeType: scannedResult.format,
+                    productCompanyName: "Milky way",
+                    productCountry: "",
+                    productFullName: "Milk",
+                    productGeneralName: "Milk",
+                    image: "https://image-url.com"
+                });
             }));
         });
 

@@ -1,15 +1,23 @@
 import React, { useState } from "react";
+import openFoodFactsService from "../../api/open-food-facts-api/open-food-facts.service";
 import { BarcodeScanResult } from "../../components/barcode-scanner/types";
 import Result from "../../Result";
-import Scanner from "../../Scanner";
+import { Scanner } from "../../components/barcode-scanner";
 
 const ScanTest = () => {
     const [scanning, setScanning] = useState(false);
     const [results, setResults] = useState<BarcodeScanResult[]>([]);
     const [scannedResult, setScannedResult] = useState<BarcodeScanResult | null>(null);
 
+    const [fetchedData, setFetchedData] = useState("<nothing>");
+
     function scan() {
         setScanning(!scanning);
+    }
+
+    async function fetchOpenFoodFactsProduct(barcode: string) {
+        const result = await openFoodFactsService.fetchProduct(barcode);
+        setFetchedData(`From OpenFoodFacts: Name: ${result?.name}; Fetched code: ${result?.barcode}`);
     }
 
     function onDetected(result: BarcodeScanResult) {
@@ -31,6 +39,8 @@ const ScanTest = () => {
             setScanning(false);
             setScannedResult(result);
             setResults([]);
+
+            fetchOpenFoodFactsProduct(result.code);
         } else {
             setResults(newResults);
         }
@@ -42,11 +52,13 @@ const ScanTest = () => {
             <button onClick={scan}>{scanning ? "Cancel" : "Scan"}</button>
             <hr />
 
+            {fetchedData} <br />
+
             {scannedResult ? <p>Scanned code: {scannedResult.code}</p> : null}
 
             <ul className="results">
-                {results.map((result: BarcodeScanResult) => (
-                    <Result key={result.code} result={result} />
+                {results.map((result: BarcodeScanResult, idx) => (
+                    <Result key={idx} result={result} />
                 ))}
             </ul>
             {scanning ? <Scanner onDetected={onDetected} /> : null}

@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogContentText, DialogTitle, Fab, Grid } from "@material-ui/core";
 import SettingsOverscanIcon from "@material-ui/icons/SettingsOverscan";
-import Scanner from "../../../../Scanner";
+import { Scanner } from "../../../barcode-scanner";
 import TodoItemAddForm from "./todo-item-add-form";
 import useTodoItemAddController from "./todo-item-add-controller";
 import ProductForm from "../../../product-form";
@@ -22,6 +22,7 @@ const AddTodoItemComponent = () => {
     const {
         openScanner,
         openNewProductDialog,
+        defaultNewProductFields,
         lastBarcodeScanResult,
         enableScanner,
         disableScanner,
@@ -51,8 +52,7 @@ const AddTodoItemComponent = () => {
                     </DialogContentText>
                     <ProductForm
                         shortForm
-                        productBarcode={lastBarcodeScanResult?.code || ""}
-                        productBarcodeType={lastBarcodeScanResult?.format || ""}
+                        defaultFieldValues={defaultNewProductFields}
                         onProductSubmit={
                             (productFormData) => onNewProductSubmit(productFormData)
                         }
