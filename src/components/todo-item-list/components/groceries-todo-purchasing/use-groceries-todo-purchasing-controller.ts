@@ -42,7 +42,7 @@ const useGroceriesTodoPurchasingController = () => {
         }
     }
 
-    const onBarcodeScan = (result: BarcodeScanResult) => {
+    const onBarcodeScan = async (result: BarcodeScanResult) => {
         disableScanner();
 
         const foundItem: TodoItem | undefined = todoItemListContext.todoItems.find((todoItem) => {
@@ -56,21 +56,17 @@ const useGroceriesTodoPurchasingController = () => {
             return;
         }
 
-        ProductApi.findByBarcode(result.code, result.format)
-            .then((foundProduct) => {
-                if (foundProduct === null) {
-                    openFoodFactsService.fetchProduct(result.code)
-                        .then((loadedExternalProduct) => {
-                            setNewProductDefaultFields(
-                                productDetailsToFormFields(result, loadedExternalProduct)
-                            );
-                            notExistingProductScanResult.setValue(result);
-                        });
-                    return;
-                }
+        const foundProduct = await ProductApi.findByBarcode(result.code, result.format);
+        if (foundProduct === null) {
+            const loadedExternalProduct = await openFoodFactsService.fetchProduct(result.code);
+            setNewProductDefaultFields(
+                productDetailsToFormFields(result, loadedExternalProduct)
+            );
+            notExistingProductScanResult.setValue(result);
+            return;
+        }
 
-                newScannedProduct.setValue(foundProduct);
-            });
+        newScannedProduct.setValue(foundProduct);
     };
 
     function addPurchasedProduct(product: Product) {

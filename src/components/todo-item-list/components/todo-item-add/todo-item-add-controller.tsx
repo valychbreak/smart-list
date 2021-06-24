@@ -34,39 +34,28 @@ const useTodoItemAddController = () => {
         todoItemListContext.addItem(todoItem);
     };
 
-    const onBarcodeDetected = (result: BarcodeScanResult) => {
-        // Before scanner is unmounted, it still able to trigger barcodes detection.
-        // Making sure that we trigger scan only once.
-        if (!isScannerEnabled) {
-            return;
-        }
-
+    const onBarcodeDetected = async (result: BarcodeScanResult) => {
         disableScanner();
 
         const barcode = result.code;
         const barcodeType = result.format;
 
-        if (barcode && barcodeType) {
-            ProductApi.findByBarcode(barcode, barcodeType).then((product) => {
-                if (product == null) {
-                    setBarcodeScanResult({
-                        code: barcode,
-                        format: barcodeType,
-                    });
-
-                    openFoodFactsService.fetchProduct(barcode)
-                        .then((loadedExternalProduct) => {
-                            setDefaultNewProductFields(
-                                productDetailsToFormFields(result, loadedExternalProduct)
-                            );
-
-                            setOpenNewProductDialog(true);
-                        });
-                } else {
-                    const newItem = TodoItem.fromProduct(product);
-                    addTodoItem(newItem);
-                }
+        const product = await ProductApi.findByBarcode(barcode, barcodeType);
+        if (product == null) {
+            setBarcodeScanResult({
+                code: barcode,
+                format: barcodeType,
             });
+
+            const loadedExternalProduct = await openFoodFactsService.fetchProduct(barcode);
+            setDefaultNewProductFields(
+                productDetailsToFormFields(result, loadedExternalProduct)
+            );
+
+            setOpenNewProductDialog(true);
+        } else {
+            const newItem = TodoItem.fromProduct(product);
+            addTodoItem(newItem);
         }
     };
 
