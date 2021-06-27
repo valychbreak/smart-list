@@ -12,6 +12,7 @@ interface ProductApi {
      */
     saveProduct(product: Product): Promise<Product>;
     createNewProduct(productFormData: ProductFormData): Promise<Product>;
+    updateProduct(product: Product): Promise<void>;
     changeCategory(product: Product, category: Category | null): Promise<void>;
     findBy(generalName: string): Promise<Product[]>;
     findMatchingBy(query: string): Promise<Product[]>;
@@ -71,6 +72,10 @@ class MockedProductApi implements ProductApi {
         product.productCompanyName = companyName;
         product.productCountry = country;
         return LocalDB.saveProduct(product);
+    }
+
+    async updateProduct(product: Product): Promise<void> {
+        await LocalDB.replaceProduct(product);
     }
 
     async changeCategory(product: Product, category: Category | null): Promise<void> {

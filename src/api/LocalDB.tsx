@@ -55,6 +55,24 @@ class LocalDB {
         });
     }
 
+    async replaceProduct(product: Product): Promise<void> {
+        await this.initCacheIfNeeded();
+
+        return new Promise((resolve, reject) => {
+            if (!this.containsProduct(this.productCache, product)) {
+                return reject(new Error("Product does not exist in db"));
+            }
+
+            this.productCache = this.productCache.map((existingProduct) => (
+                existingProduct.productBarcode === product.productBarcode
+                    ? product
+                    : existingProduct
+            ));
+            localStorage.setItem(PRODUCTS_KEY, JSON.stringify(this.productCache));
+            return resolve();
+        });
+    }
+
     async findProductsBy(generalName: string): Promise<Product[]> {
         await this.initCacheIfNeeded();
 

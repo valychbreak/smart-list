@@ -26,6 +26,26 @@ export default class Product {
         this.productBarcodeType = productBarcodeType;
     }
 
+    // workaround method, because of bad class design
+    static constructorAll(
+        id: number | null,
+        productGeneralName: string,
+        productBarcode: string,
+        productBarcodeType: string,
+        productFullName: string | null,
+        productCountry: string | null,
+        productCompanyName: string | null,
+        image: string | null
+    ): Product {
+        const product = new Product(productGeneralName, productBarcode, productBarcodeType);
+        product.id = id;
+        product.productFullName = productFullName;
+        product.productCountry = productCountry;
+        product.productCompanyName = productCompanyName;
+        product.image = image;
+        return product;
+    }
+
     static from(productJson: any): Product {
         const parsedProduct = new Product(
             productJson.productGeneralName,
