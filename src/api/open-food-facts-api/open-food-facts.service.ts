@@ -10,7 +10,12 @@ export type ProductDetails = {
 
 class OpenFoodFactsService {
     async fetchProduct(barcode: string): Promise<ProductDetails | null> {
-        const response = await openFoodFactsApi.findProductByBarcode(barcode);
+        let response;
+        try {
+            response = await openFoodFactsApi.findProductByBarcode(barcode);
+        } catch (error) {
+            return null;
+        }
 
         let productName = null;
         if (response?.productName && response.brand && response.quantity) {
