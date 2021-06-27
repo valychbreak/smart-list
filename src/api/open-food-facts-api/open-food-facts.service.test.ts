@@ -72,5 +72,13 @@ describe("OpenFoodFactsService", () => {
             expect(productDetails?.company).toBe(null);
             expect(productDetails?.imageUrl).toBe(null);
         });
+
+        it("should return null when failed to reach OpenFoodFacts API", async () => {
+            OpenFoodFactsApiMocked.findProductByBarcode.mockRejectedValue(new Error());
+
+            const productDetails = await openFoodFactsService.fetchProduct(barcode);
+
+            expect(productDetails).toBe(null);
+        });
     });
 });
