@@ -1,4 +1,5 @@
 import { Box, Button, Card, CardActions, CardContent, Chip, Grid, makeStyles, Tooltip, Typography } from "@material-ui/core";
+import Edit from "@material-ui/icons/Edit";
 import React, { useEffect, useReducer, useState } from "react";
 import ProductApi from "../api/ProductApi";
 import ProductPriceApi from "../api/ProductPriceApi";
@@ -55,6 +56,7 @@ const CounterpartyPriceView = (props: CounterpartyPriceViewProps) => {
 interface ProductViewPros {
     product: Product;
     onPriceEntryClick(): void;
+    onProductEditClick(): void;
 }
 
 interface PriceData {
@@ -75,7 +77,7 @@ const ProductView = (props: ProductViewPros) => {
     const [priceData, setPriceData] = useState<{ [id: string]: PriceData }>({});
     const [storeList, setStoreList] = useState<Store[]>([]);
 
-    const { onPriceEntryClick } = props;
+    const { onPriceEntryClick, onProductEditClick } = props;
 
     useEffect(() => {
         ProductPriceApi.fetchLatestPrice(props.product)
@@ -129,6 +131,7 @@ const ProductView = (props: ProductViewPros) => {
                 ))}
             </CardContent>
             <CardActions>
+                <Button size="small" startIcon={<Edit />} onClick={onProductEditClick}>Edit</Button>
                 <Button size="small" variant="outlined" onClick={onPriceEntryClick}>Add price</Button>
             </CardActions>
         </Card>

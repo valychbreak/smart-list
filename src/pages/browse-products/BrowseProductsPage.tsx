@@ -1,17 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Dialog, DialogTitle, Grid, Typography } from "@material-ui/core";
+import { Dialog, DialogContent, DialogTitle, Grid, Typography } from "@material-ui/core";
 import ProductApi from "../../api/ProductApi";
 import ProductPriceApi from "../../api/ProductPriceApi";
 import ProductPriceEntry from "../../entity/ProductPriceEntry";
 import ProductPriceDialogForm, { ProductPriceData } from "../../components/product-price-dialog-form/product-price-dialog-form";
 import ProductView from "../../components/ProductView";
 import Product from "../../entity/Product";
+import ProductEditForm from "../../components/product-edit-form";
 
 const BrowseProductsPage = () => {
     const [products, setProducts] = useState<Product[]>([]);
 
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [addingPrice, setAddingPrice] = useState(false);
+    const [showProductEditDialog, setShowProductEditDialog] = useState(false);
 
     const [copySuccess, setCopySuccess] = useState("");
     const textAreaRef = useRef<any>(null);
@@ -52,6 +54,43 @@ const BrowseProductsPage = () => {
         }
     }
 
+    function showProductEditForm(product: Product) {
+        setSelectedProduct(product);
+        setShowProductEditDialog(true);
+    }
+
+    function closeProductEditDialog() {
+        setShowProductEditDialog(false);
+    }
+
+    function updateProductInView(product: Product) {
+        const updatedProductList = products.map((existingProduct) => {
+            if (existingProduct.productBarcode === product.productBarcode) {
+                const clonedProduct = Product.constructorAll(
+                    product.id,
+                    product.productGeneralName,
+                    product.productBarcode,
+                    product.productBarcodeType,
+                    product.productFullName,
+                    product.productCountry,
+                    product.productCompanyName,
+                    product.image
+                );
+                clonedProduct.category = existingProduct.category;
+                return clonedProduct;
+            }
+
+            return existingProduct;
+        });
+
+        setProducts(updatedProductList);
+    }
+
+    function onProductEditSubmit(product: Product) {
+        closeProductEditDialog();
+        updateProductInView(product);
+    }
+
     const productName = selectedProduct?.productFullName || selectedProduct?.productGeneralName;
     return (
         <>
@@ -65,6 +104,19 @@ const BrowseProductsPage = () => {
                     onClose={closeProductPriceForm}
                 />
             </Dialog>
+
+            <Dialog open={showProductEditDialog} onClose={closeProductEditDialog}>
+                <DialogTitle>
+                    Edit {selectedProduct?.productFullName || selectedProduct?.productGeneralName}
+                </DialogTitle>
+                <DialogContent>
+                    <ProductEditForm
+                        product={selectedProduct as Product}
+                        onProductSubmit={(product) => onProductEditSubmit(product)}
+                        onCancel={closeProductEditDialog}
+                    />
+                </DialogContent>
+            </Dialog>
             <Typography variant="h4">Browse products</Typography>
             <Grid container>
                 <Grid item>
@@ -72,7 +124,9 @@ const BrowseProductsPage = () => {
                         <ProductView
                             key={idx}
                             product={product}
-                            onPriceEntryClick={() => showProductPriceForm(product)}/>
+                            onPriceEntryClick={() => showProductPriceForm(product)}
+                            onProductEditClick={() => showProductEditForm(product)}
+                        />
                     ))}
                 </Grid>
             </Grid>
