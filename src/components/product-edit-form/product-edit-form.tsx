@@ -1,8 +1,10 @@
+import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import FormControl from "@material-ui/core/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
+import Typography from "@material-ui/core/Typography";
 import { Controller, useForm } from "react-hook-form";
 import ProductApi from "../../api/ProductApi";
 import Product from "../../entity/Product";
@@ -63,6 +65,11 @@ const ProductEditForm = (props: ProductEditFormProps) => {
 
     return (
         <form onSubmit={handleSubmit(editProduct)}>
+            <Box marginBottom={3}>
+                <Typography color="textSecondary">
+                    {product.productBarcode} ({product.productBarcodeType})
+                </Typography>
+            </Box>
             <FormControl error={!!errors.productGeneralName} fullWidth>
                 <InputLabel required htmlFor="product-general-name">
                     General name
