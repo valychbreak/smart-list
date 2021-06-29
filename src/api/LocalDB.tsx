@@ -55,6 +55,24 @@ class LocalDB {
         });
     }
 
+    async replaceProduct(product: Product): Promise<void> {
+        await this.initCacheIfNeeded();
+
+        return new Promise((resolve, reject) => {
+            if (!this.containsProduct(this.productCache, product)) {
+                return reject(new Error("Product does not exist in db"));
+            }
+
+            this.productCache = this.productCache.map((existingProduct) => (
+                existingProduct.productBarcode === product.productBarcode
+                    ? product
+                    : existingProduct
+            ));
+            localStorage.setItem(PRODUCTS_KEY, JSON.stringify(this.productCache));
+            return resolve();
+        });
+    }
+
     async findProductsBy(generalName: string): Promise<Product[]> {
         await this.initCacheIfNeeded();
 
@@ -221,13 +239,17 @@ class LocalDB {
             if (storedProducts == null) {
                 this.productCache = defaultProducts;
             } else {
-                const combinedProducts = defaultProducts;
+                const combinedProducts = [];
 
                 try {
                     for (const storedProduct of JSON.parse(storedProducts)) {
                         const parsedProduct = this.toProduct(storedProduct);
-                        if (!this.containsProduct(combinedProducts, parsedProduct)) {
-                            combinedProducts.push(parsedProduct);
+                        combinedProducts.push(parsedProduct);
+                    }
+
+                    for (const defaultProduct of defaultProducts) {
+                        if (!this.containsProduct(combinedProducts, defaultProduct)) {
+                            combinedProducts.push(defaultProduct);
                         }
                     }
 
