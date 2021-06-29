@@ -64,26 +64,21 @@ const BrowseProductsPage = () => {
     }
 
     function updateProductInView(product: Product) {
-        const updatedProductList = products.map((existingProduct) => {
-            if (existingProduct.productBarcode === product.productBarcode) {
-                const clonedProduct = Product.constructorAll(
-                    product.id,
-                    product.productGeneralName,
-                    product.productBarcode,
-                    product.productBarcodeType,
-                    product.productFullName,
-                    product.productCountry,
-                    product.productCompanyName,
-                    product.image
-                );
-                clonedProduct.category = existingProduct.category;
-                return clonedProduct;
-            }
+        ProductApi.findByBarcode(product.productBarcode, product.productBarcodeType)
+            .then((fetchedProduct) => {
+                if (!fetchedProduct) {
+                    return;
+                }
 
-            return existingProduct;
-        });
+                const updatedProductList = products.map((existingProduct) => {
+                    if (existingProduct.productBarcode === product.productBarcode) {
+                        return fetchedProduct;
+                    }
 
-        setProducts(updatedProductList);
+                    return existingProduct;
+                });
+                setProducts(updatedProductList);
+            });
     }
 
     function onProductEditSubmit(product: Product) {
