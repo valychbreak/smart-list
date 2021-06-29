@@ -3,6 +3,7 @@ import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import FormControl from "@material-ui/core/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText";
+import Grid from "@material-ui/core/Grid";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import Typography from "@material-ui/core/Typography";
@@ -91,26 +92,33 @@ const ProductEditForm = (props: ProductEditFormProps) => {
 
     return (
         <form onSubmit={handleSubmit(editProduct)}>
-            <Box>
-                <img src={productImage || undefined} className={classes.productImage} />
-            </Box>
-            <Controller
-                name="image"
-                control={control}
-                render={({ onChange }) => (
-                    <Button variant="contained" component="label">
-                        Upload File
-                        <input
-                            type="file"
-                            onChange={(e) => {
-                                onPhotoUpdate(e);
-                                onChange(e.currentTarget.files ? e.currentTarget.files[0] : null);
-                            }}
-                            hidden
-                        />
-                    </Button>
-                )}
-            />
+            <Grid container justify="center">
+                <Grid item>
+                    <img src={productImage || undefined} className={classes.productImage} />
+                </Grid>
+            </Grid>
+            <Grid container justify="center">
+                <Grid item>
+                    <Controller
+                        name="image"
+                        control={control}
+                        render={({ onChange }) => (
+                            <Button variant="contained" component="label">
+                                Change photo
+                                <input
+                                    type="file"
+                                    onChange={(e) => {
+                                        onPhotoUpdate(e);
+                                        const { files } = e.currentTarget;
+                                        onChange(files ? files[0] : null);
+                                    }}
+                                    hidden
+                                />
+                            </Button>
+                        )}
+                    />
+                </Grid>
+            </Grid>
             <Box marginY={3}>
                 <Typography color="textSecondary">
                     {product.productBarcode} ({product.productBarcodeType})
@@ -201,12 +209,6 @@ const ProductEditForm = (props: ProductEditFormProps) => {
                     {errors.productCompanyName && "Max length is 64."}
                 </FormHelperText>
             </FormControl>
-
-            <label>Product image (optional): </label>
-            <Button type="button" variant="outlined">
-                Take a picture (TODO)
-            </Button>
-            <br />
 
             <Button type="submit" variant="outlined">
                 Submit
