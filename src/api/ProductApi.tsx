@@ -4,6 +4,7 @@ import Category from "../entity/category";
 import Product from "../entity/Product";
 import LocalDB from "./LocalDB";
 import CategoryLocalDB from "./persistance/local-db-category";
+import compressImage from "./utils/image-compression-utils";
 
 interface ProductApi {
     getProducts(): Promise<Product[]>;
@@ -12,7 +13,7 @@ interface ProductApi {
      */
     saveProduct(product: Product): Promise<Product>;
     createNewProduct(productFormData: ProductFormData): Promise<Product>;
-    updateProduct(product: Product): Promise<void>;
+    updateProduct(product: Product, productImage?: File): Promise<void>;
     changeCategory(product: Product, category: Category | null): Promise<void>;
     findBy(generalName: string): Promise<Product[]>;
     findMatchingBy(query: string): Promise<Product[]>;
@@ -74,7 +75,14 @@ class MockedProductApi implements ProductApi {
         return LocalDB.saveProduct(product);
     }
 
-    async updateProduct(product: Product): Promise<void> {
+    async updateProduct(product: Product, productImage?: File): Promise<void> {
+        let base64Image: string;
+
+        if (productImage) {
+            base64Image = await compressImage(URL.createObjectURL(productImage), "image/jpeg");
+            // eslint-disable-next-line no-param-reassign
+            product.image = base64Image;
+        }
         await LocalDB.replaceProduct(product);
     }
 

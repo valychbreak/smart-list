@@ -57,6 +57,7 @@ export default class Product {
         parsedProduct.productFullName = productJson.productFullName;
         parsedProduct.productCompanyName = productJson.productCompanyName;
         parsedProduct.productCountry = productJson.productCountry;
+        parsedProduct.image = productJson.image || null;
 
         return parsedProduct;
     }

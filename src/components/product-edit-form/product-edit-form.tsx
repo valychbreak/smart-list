@@ -1,3 +1,4 @@
+import { makeStyles } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import FormControl from "@material-ui/core/FormControl";
@@ -5,6 +6,7 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import Typography from "@material-ui/core/Typography";
+import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import ProductApi from "../../api/ProductApi";
 import Product from "../../entity/Product";
@@ -15,7 +17,7 @@ interface ProductEditFormFields {
     productFullName: string | null;
     productCountry: string | null;
     productCompanyName: string | null;
-    image: string | null;
+    image: File | null;
 }
 
 type ProductEditFormProps = {
@@ -24,7 +26,16 @@ type ProductEditFormProps = {
     onCancel(): void;
 };
 
+const useStyles = makeStyles(() => ({
+    productImage: {
+        maxHeight: 300,
+        maxWidth: 300,
+    }
+}));
+
 const ProductEditForm = (props: ProductEditFormProps) => {
+    const classes = useStyles();
+
     const { product } = props;
 
     const { handleSubmit, errors, control } = useForm<ProductEditFormFields>({
@@ -33,8 +44,23 @@ const ProductEditForm = (props: ProductEditFormProps) => {
             productFullName: product.productFullName || "",
             productCompanyName: product.productCompanyName || "",
             productCountry: product.productCountry || "",
+            image: null
         },
     });
+
+    const [productImage, setProductImage] = useState<string | null>(product.image);
+
+    const onPhotoUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = e.currentTarget?.files ? e.currentTarget.files[0] : null;
+
+        if (!selectedFile) {
+            setProductImage(null);
+            return;
+        }
+
+        const imageLocalUrl = URL.createObjectURL(selectedFile);
+        setProductImage(imageLocalUrl);
+    };
 
     const editProduct = async (formData: ProductEditFormFields) => {
         const {
@@ -53,10 +79,10 @@ const ProductEditForm = (props: ProductEditFormProps) => {
             productFullName,
             productCountry,
             productCompanyName,
-            image
+            null
         );
 
-        await ProductApi.updateProduct(updatedProduct);
+        await ProductApi.updateProduct(updatedProduct, image || undefined);
 
         if (props.onProductSubmit) {
             props.onProductSubmit(updatedProduct);
@@ -65,7 +91,27 @@ const ProductEditForm = (props: ProductEditFormProps) => {
 
     return (
         <form onSubmit={handleSubmit(editProduct)}>
-            <Box marginBottom={3}>
+            <Box>
+                <img src={productImage || undefined} className={classes.productImage} />
+            </Box>
+            <Controller
+                name="image"
+                control={control}
+                render={({ onChange }) => (
+                    <Button variant="contained" component="label">
+                        Upload File
+                        <input
+                            type="file"
+                            onChange={(e) => {
+                                onPhotoUpdate(e);
+                                onChange(e.currentTarget.files ? e.currentTarget.files[0] : null);
+                            }}
+                            hidden
+                        />
+                    </Button>
+                )}
+            />
+            <Box marginY={3}>
                 <Typography color="textSecondary">
                     {product.productBarcode} ({product.productBarcodeType})
                 </Typography>
