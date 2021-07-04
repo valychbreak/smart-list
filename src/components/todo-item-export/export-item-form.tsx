@@ -16,7 +16,7 @@ type ExportItemFormFields = {
 };
 
 export type ExportItemFormSubmitData = {
-    category: Category;
+    category: Category | null;
     purchasedPrice: number;
     store: Store | null;
     applyToProduct: boolean;
@@ -48,7 +48,7 @@ const ExportItemEditForm = (props: ExportItemEditFormProps) => {
     }, []);
 
     const submitExportItemEditData = (formData: ExportItemFormFields) => {
-        if (formData.category === null || formData.purchasedPrice.length === 0) {
+        if (formData.purchasedPrice.length === 0) {
             return;
         }
 
@@ -73,7 +73,6 @@ const ExportItemEditForm = (props: ExportItemEditFormProps) => {
                 <Controller
                     name="category"
                     control={control}
-                    rules={{ required: true }}
                     render={({ onChange, value }) => (
                         <CategorySelect
                             label="Category"
