@@ -6,13 +6,13 @@ import {
 import AuthenticatedRoute from "./components/authenticated-route";
 import { AuthenticationContextProvider } from "./components/authentication";
 import AppHeader from "./components/header";
-import BrowseProductsPage from "./pages/browse-products/BrowseProductsPage";
 import AddNewProduct from "./pages/new-product/AddNewProductPage";
 import ScanTest from "./pages/scan-test/ScanTestPage";
 import GroceriesTodo from "./routes/groceries-todo";
 import Login from "./routes/login";
 import Profile from "./routes/profile";
 import Export from "./routes/export";
+import Browse from "./routes/browse";
 
 const useStyles = makeStyles((theme) => ({
     root: {},
@@ -35,7 +35,7 @@ export default function App() {
                     <AppHeader />
                     <Switch>
                         <Route path="/browse">
-                            <BrowseProductsPage />
+                            <Browse />
                         </Route>
                         <Route path="/new-product">
                             <AddNewProduct />

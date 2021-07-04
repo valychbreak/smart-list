@@ -3,12 +3,12 @@ import { Dialog, DialogContent, DialogTitle, Grid, Typography } from "@material-
 import ProductApi from "../../api/ProductApi";
 import ProductPriceApi from "../../api/ProductPriceApi";
 import ProductPriceEntry from "../../entity/ProductPriceEntry";
-import ProductPriceDialogForm, { ProductPriceData } from "../../components/product-price-dialog-form/product-price-dialog-form";
-import ProductView from "../../components/ProductView";
+import ProductPriceDialogForm, { ProductPriceData } from "../product-price-dialog-form/product-price-dialog-form";
+import ProductView from "../ProductView";
 import Product from "../../entity/Product";
-import ProductEditForm from "../../components/product-edit-form";
+import ProductEditForm from "../product-edit-form";
 
-const BrowseProductsPage = () => {
+const ProductSearchPage = () => {
     const [products, setProducts] = useState<Product[]>([]);
 
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -143,4 +143,4 @@ const BrowseProductsPage = () => {
     );
 };
 
-export default BrowseProductsPage;
+export default ProductSearchPage;
