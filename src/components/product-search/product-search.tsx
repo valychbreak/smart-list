@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Dialog, DialogContent, DialogTitle, Grid, Typography } from "@material-ui/core";
+import { Box, Dialog, DialogContent, DialogTitle, Divider, Grid, IconButton, TextField } from "@material-ui/core";
+import SearchIcon from "@material-ui/icons/Search";
+import { Controller, useForm } from "react-hook-form";
 import ProductApi from "../../api/ProductApi";
 import ProductPriceApi from "../../api/ProductPriceApi";
 import ProductPriceEntry from "../../entity/ProductPriceEntry";
@@ -8,8 +10,18 @@ import ProductView from "../ProductView";
 import Product from "../../entity/Product";
 import ProductEditForm from "../product-edit-form";
 
+interface ProductSearchFields {
+    query: string | null;
+}
+
 const ProductSearchPage = () => {
     const [products, setProducts] = useState<Product[]>([]);
+
+    const { control, handleSubmit } = useForm<ProductSearchFields>({
+        defaultValues: {
+            query: ""
+        }
+    });
 
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [addingPrice, setAddingPrice] = useState(false);
@@ -86,6 +98,17 @@ const ProductSearchPage = () => {
         updateProductInView(product);
     }
 
+    const onProductSearch = async (formData: ProductSearchFields) => {
+        const { query } = formData;
+        if (!query) {
+            setProducts([]);
+            return;
+        }
+
+        const loadedProducts = await ProductApi.findMatchingBy(query);
+        setProducts(loadedProducts);
+    };
+
     const productName = selectedProduct?.productFullName || selectedProduct?.productGeneralName;
     return (
         <>
@@ -112,7 +135,27 @@ const ProductSearchPage = () => {
                     />
                 </DialogContent>
             </Dialog>
-            <Typography variant="h4">Browse products</Typography>
+            <form onSubmit={handleSubmit(onProductSearch)}>
+                <Grid justify="center" alignItems="center" container>
+                    <Grid xs={10} item>
+                        <Controller
+                            as={TextField}
+                            name="query"
+                            control={control}
+                            label="Search"
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item>
+                        <IconButton type="submit" aria-label="search">
+                            <SearchIcon />
+                        </IconButton>
+                    </Grid>
+                </Grid>
+            </form>
+            <Box marginY={1}>
+                <Divider />
+            </Box>
             <Grid container>
                 <Grid item>
                     {products.map((product: Product, idx: number) => (
