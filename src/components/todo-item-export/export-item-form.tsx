@@ -109,6 +109,9 @@ const ExportItemEditForm = (props: ExportItemEditFormProps) => {
                             <Input
                                 id="export-item-price"
                                 type="number"
+                                inputProps={{
+                                    step: ".01"
+                                }}
                                 value={value}
                                 onChange={(e) => onChange(e.target.value)}
                                 endAdornment={<InputAdornment position="end">PLN</InputAdornment>}
