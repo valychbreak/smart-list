@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, Dialog, DialogContent, DialogTitle, Divider, Grid, IconButton, TextField } from "@material-ui/core";
+import { Box, Dialog, DialogContent, DialogTitle, Grid, IconButton, InputAdornment, TextField } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import { Controller, useForm } from "react-hook-form";
 import Pagination from "@material-ui/lab/Pagination";
@@ -183,26 +183,31 @@ const ProductSearchPage = () => {
                     />
                 </DialogContent>
             </Dialog>
-            <form onSubmit={handleSubmit(onProductSearch)}>
-                <Grid justify="center" alignItems="center" container>
-                    <Grid xs={10} item>
-                        <Controller
-                            as={TextField}
-                            name="query"
-                            control={control}
-                            label="Search"
-                            fullWidth
-                        />
-                    </Grid>
-                    <Grid item>
-                        <IconButton type="submit" aria-label="search">
-                            <SearchIcon />
-                        </IconButton>
-                    </Grid>
-                </Grid>
-            </form>
-            <Box marginY={1}>
-                <Divider />
+            <Box marginTop={2} marginX={2}>
+                <form onSubmit={handleSubmit(onProductSearch)}>
+                    <Controller
+                        name="query"
+                        control={control}
+                        render={({ onChange }) => (
+                            <TextField
+                                autoFocus
+                                onChange={onChange}
+                                variant="outlined"
+                                label="Search"
+                                fullWidth
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton type="submit" aria-label="search">
+                                                <SearchIcon />
+                                            </IconButton>
+                                        </InputAdornment>
+                                    )
+                                }}
+                            />
+                        )}
+                    />
+                </form>
             </Box>
             <Grid container>
                 <Grid item>
