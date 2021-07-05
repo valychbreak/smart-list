@@ -82,6 +82,10 @@ class MockedProductApi implements ProductApi {
     }
 
     async getProducts(page: number = 1, itemsPerPage: number = 10): Promise<Page<Product>> {
+        if (page < 1) {
+            throw Error("page cannot be less than 1");
+        }
+
         const allProducts = await LocalDB.loadProducts();
         return getPaged(page, itemsPerPage, allProducts);
     }
