@@ -14,7 +14,7 @@ interface ProductApi {
      */
     saveProduct(product: Product): Promise<Product>;
     createNewProduct(productFormData: ProductFormData): Promise<Product>;
-    updateProduct(product: Product, productImage?: File): Promise<void>;
+    updateProduct(product: Product, productImage?: string): Promise<void>;
     changeCategory(product: Product, category: Category | null): Promise<void>;
     findBy(generalName: string): Promise<Product[]>;
     findMatchingBy(query: string): Promise<Product[]>;
@@ -102,19 +102,26 @@ class MockedProductApi implements ProductApi {
             fullName,
             companyName,
             country,
+            imageUrl,
         } = productFormData;
         const product = new Product(generalName, barcode, barcodeType);
         product.productFullName = fullName;
         product.productCompanyName = companyName;
         product.productCountry = country;
+
+        if (imageUrl) {
+            const base64Image = await compressImage(imageUrl, "image/jpeg");
+            product.image = base64Image;
+        }
+
         return LocalDB.saveProduct(product);
     }
 
-    async updateProduct(product: Product, productImage?: File): Promise<void> {
+    async updateProduct(product: Product, productImage?: string): Promise<void> {
         let base64Image: string;
 
         if (productImage) {
-            base64Image = await compressImage(URL.createObjectURL(productImage), "image/jpeg");
+            base64Image = await compressImage(productImage, "image/jpeg");
             // eslint-disable-next-line no-param-reassign
             product.image = base64Image;
         }

@@ -6,6 +6,7 @@ type ProductFormData = {
     fullName: string | null;
     country: string | null;
     companyName: string | null;
+    imageUrl: string | null;
 };
 
 export default ProductFormData;

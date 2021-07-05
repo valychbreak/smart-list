@@ -11,6 +11,7 @@ import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import ProductApi from "../../api/ProductApi";
 import Product from "../../entity/Product";
+import { getImageUrlFromEvent } from "../utils/image-utils";
 
 interface ProductEditFormFields {
     productGeneralName: string;
@@ -18,7 +19,7 @@ interface ProductEditFormFields {
     productFullName: string | null;
     productCountry: string | null;
     productCompanyName: string | null;
-    image: File | null;
+    image: string | null;
 }
 
 type ProductEditFormProps = {
@@ -51,16 +52,8 @@ const ProductEditForm = (props: ProductEditFormProps) => {
 
     const [productImage, setProductImage] = useState<string | null>(product.image);
 
-    const onPhotoUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedFile = e.currentTarget?.files ? e.currentTarget.files[0] : null;
-
-        if (!selectedFile) {
-            setProductImage(null);
-            return;
-        }
-
-        const imageLocalUrl = URL.createObjectURL(selectedFile);
-        setProductImage(imageLocalUrl);
+    const onPhotoUpdate = (imageUrl: string | null) => {
+        setProductImage(imageUrl);
     };
 
     const editProduct = async (formData: ProductEditFormFields) => {
@@ -108,9 +101,9 @@ const ProductEditForm = (props: ProductEditFormProps) => {
                                 <input
                                     type="file"
                                     onChange={(e) => {
-                                        onPhotoUpdate(e);
-                                        const { files } = e.currentTarget;
-                                        onChange(files ? files[0] : null);
+                                        const imageUrl = getImageUrlFromEvent(e);
+                                        onPhotoUpdate(imageUrl);
+                                        onChange(imageUrl);
                                     }}
                                     hidden
                                 />
