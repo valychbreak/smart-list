@@ -60,6 +60,7 @@ const ProductForm = (props: ProductFormProps) => {
             productFullName: defaultFieldValues?.productFullName || "",
             productCompanyName: defaultFieldValues?.productCompanyName || "",
             productCountry: defaultFieldValues?.productCountry || "",
+            image: defaultFieldValues?.image || null
         }
     });
 
