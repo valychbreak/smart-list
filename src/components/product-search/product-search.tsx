@@ -10,7 +10,7 @@ import ProductPriceDialogForm, { ProductPriceData } from "../product-price-dialo
 import ProductView from "../ProductView";
 import Product from "../../entity/Product";
 import ProductEditForm from "../product-edit-form";
-import SearchResult from "../../entity/search-result";
+import Page from "../../entity/page";
 import SearchRequest from "../../entity/search-request";
 
 interface ProductSearchFields {
@@ -23,8 +23,8 @@ const ProductSearchPage = () => {
 
     const [
         productSearchResult,
-        setProductSearchResult
-    ] = useState<SearchResult<Product> | null>(null);
+        setPagedProducts
+    ] = useState<Page<Product> | null>(null);
 
     const products: Product[] = productSearchResult?.items || [];
 
@@ -47,7 +47,7 @@ const ProductSearchPage = () => {
         }
 
         ProductApi.getProducts(currentPage).then((allProductsSearchResult) => {
-            setProductSearchResult(allProductsSearchResult);
+            setPagedProducts(allProductsSearchResult);
         });
     }, [currentPage, searchQuery]);
 
@@ -104,8 +104,8 @@ const ProductSearchPage = () => {
                     return existingProduct;
                 });
 
-                setProductSearchResult(
-                    new SearchResult(
+                setPagedProducts(
+                    new Page(
                         updatedProductList,
                         productSearchResult.itemsPerPage,
                         productSearchResult.totalPages,
@@ -123,7 +123,7 @@ const ProductSearchPage = () => {
     const searchProducts = async (productSearchRequest: SearchRequest) => {
         const { query, page } = productSearchRequest;
         const searchResult = await ProductApi.searchProductBy(query, page);
-        setProductSearchResult(searchResult);
+        setPagedProducts(searchResult);
     };
 
     const onProductSearch = async (formData: ProductSearchFields) => {
@@ -131,7 +131,7 @@ const ProductSearchPage = () => {
         if (!query) {
             setSearchQuery(null);
             setCurrentPage(1);
-            setProductSearchResult(null);
+            setPagedProducts(null);
             return;
         }
 

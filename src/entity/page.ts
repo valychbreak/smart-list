@@ -1,4 +1,4 @@
-class SearchResult<T> {
+class Page<T> {
     readonly items: T[];
 
     readonly itemsPerPage: number;
@@ -15,4 +15,4 @@ class SearchResult<T> {
     }
 }
 
-export default SearchResult;
+export default Page;

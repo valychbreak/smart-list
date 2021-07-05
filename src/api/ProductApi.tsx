@@ -2,13 +2,13 @@
 import ProductFormData from "../components/product-form/types";
 import Category from "../entity/category";
 import Product from "../entity/Product";
-import SearchResult from "../entity/search-result";
+import Page from "../entity/page";
 import LocalDB from "./LocalDB";
 import CategoryLocalDB from "./persistance/local-db-category";
 import compressImage from "./utils/image-compression-utils";
 
 interface ProductApi {
-    getProducts(page?: number, itemsPerPage?: number): Promise<SearchResult<Product>>;
+    getProducts(page?: number, itemsPerPage?: number): Promise<Page<Product>>;
     /**
      * @deprecated Use createNewProduct method with ProductFormData argument instead
      */
@@ -18,7 +18,7 @@ interface ProductApi {
     changeCategory(product: Product, category: Category | null): Promise<void>;
     findBy(generalName: string): Promise<Product[]>;
     findMatchingBy(query: string): Promise<Product[]>;
-    searchProductBy(query: string, page: number, perPage?: number): Promise<SearchResult<Product>>;
+    searchProductBy(query: string, page: number, perPage?: number): Promise<Page<Product>>;
     findByBarcode(barcode: string, barcodeType: string): Promise<Product | null>;
     findGeneralNamesBy(query: string): Promise<string[]>;
 }
@@ -29,7 +29,7 @@ function getPaged(page: number, perPage: number, products: Product[]) {
     const totalPages = Math.ceil(products.length / perPage);
     const totalResults = products.length;
 
-    return new SearchResult(
+    return new Page(
         products.slice(indexStart, indexEnd),
         perPage,
         totalPages,
@@ -59,7 +59,7 @@ class MockedProductApi implements ProductApi {
         query: string,
         page: number,
         perPage: number = 10
-    ): Promise<SearchResult<Product>> {
+    ): Promise<Page<Product>> {
         if (page < 1) {
             throw Error("page cannot be less than 1");
         }
@@ -81,7 +81,7 @@ class MockedProductApi implements ProductApi {
         return product || null;
     }
 
-    async getProducts(page: number = 1, itemsPerPage: number = 10): Promise<SearchResult<Product>> {
+    async getProducts(page: number = 1, itemsPerPage: number = 10): Promise<Page<Product>> {
         const allProducts = await LocalDB.loadProducts();
         return getPaged(page, itemsPerPage, allProducts);
     }
