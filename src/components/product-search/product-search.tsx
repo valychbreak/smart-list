@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Box, Dialog, DialogContent, DialogTitle, Divider, Grid, IconButton, TextField } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import { Controller, useForm } from "react-hook-form";
+import Pagination from "@material-ui/lab/Pagination";
 import ProductApi from "../../api/ProductApi";
 import ProductPriceApi from "../../api/ProductPriceApi";
 import ProductPriceEntry from "../../entity/ProductPriceEntry";
@@ -9,13 +10,22 @@ import ProductPriceDialogForm, { ProductPriceData } from "../product-price-dialo
 import ProductView from "../ProductView";
 import Product from "../../entity/Product";
 import ProductEditForm from "../product-edit-form";
+import SearchResult from "../../entity/search-result";
+import SearchRequest from "../../entity/search-request";
 
 interface ProductSearchFields {
     query: string | null;
 }
 
 const ProductSearchPage = () => {
-    const [products, setProducts] = useState<Product[]>([]);
+    const [searchRequest, setSearchRequest] = useState<SearchRequest | null>(null);
+
+    const [
+        productSearchResult,
+        setProductSearchResult
+    ] = useState<SearchResult<Product> | null>(null);
+
+    const products: Product[] = productSearchResult?.items || [];
 
     const { control, handleSubmit } = useForm<ProductSearchFields>({
         defaultValues: {
@@ -36,13 +46,6 @@ const ProductSearchPage = () => {
         e.target.focus();
         setCopySuccess("Copied!");
     }
-
-    useEffect(() => {
-        ProductApi.getProducts()
-            .then((loadedProducts) => {
-                setProducts(loadedProducts);
-            });
-    }, []);
 
     function showProductPriceForm(product: Product) {
         setSelectedProduct(product);
@@ -78,7 +81,7 @@ const ProductSearchPage = () => {
     function updateProductInView(product: Product) {
         ProductApi.findByBarcode(product.productBarcode, product.productBarcodeType)
             .then((fetchedProduct) => {
-                if (!fetchedProduct) {
+                if (!fetchedProduct || !productSearchResult) {
                     return;
                 }
 
@@ -89,7 +92,15 @@ const ProductSearchPage = () => {
 
                     return existingProduct;
                 });
-                setProducts(updatedProductList);
+
+                setProductSearchResult(
+                    new SearchResult(
+                        updatedProductList,
+                        productSearchResult.itemsPerPage,
+                        productSearchResult.totalPages,
+                        productSearchResult.totalResults
+                    )
+                );
             });
     }
 
@@ -98,15 +109,34 @@ const ProductSearchPage = () => {
         updateProductInView(product);
     }
 
+    const searchProducts = async (productSearchRequest: SearchRequest) => {
+        const { query, page } = productSearchRequest;
+        const searchResult = await ProductApi.searchProductBy(query, page);
+        setProductSearchResult(searchResult);
+    };
+
     const onProductSearch = async (formData: ProductSearchFields) => {
         const { query } = formData;
         if (!query) {
-            setProducts([]);
+            setSearchRequest(null);
+            setProductSearchResult(null);
             return;
         }
 
-        const loadedProducts = await ProductApi.findMatchingBy(query);
-        setProducts(loadedProducts);
+        const productSearchRequest = new SearchRequest(query, 1);
+        setSearchRequest(productSearchRequest);
+
+        searchProducts(productSearchRequest);
+    };
+
+    const onSearchPageChange = async (event: React.ChangeEvent<unknown>, value: number) => {
+        if (!searchRequest) {
+            return;
+        }
+
+        const productSearchRequest = new SearchRequest(searchRequest.query, value);
+        setSearchRequest(productSearchRequest);
+        searchProducts(productSearchRequest);
     };
 
     const productName = selectedProduct?.productFullName || selectedProduct?.productGeneralName;
@@ -169,6 +199,18 @@ const ProductSearchPage = () => {
                 </Grid>
             </Grid>
 
+            {productSearchResult && (
+                <Grid justify="center" container>
+                    <Grid item>
+                        <Pagination
+                            page={searchRequest?.page || 1}
+                            count={productSearchResult.totalPages}
+                            onChange={(e, value) => onSearchPageChange(e, value)}
+                        />
+                    </Grid>
+                </Grid>
+            )}
+
             <h2>JSON Data (for export):</h2>
             <button onClick={(e) => copyToClipboard(e)}>
                 Copy JSON data to clipboard
@@ -178,7 +220,7 @@ const ProductSearchPage = () => {
                 <textarea
                     readOnly
                     ref={textAreaRef}
-                    value={JSON.stringify(products)}
+                    value={localStorage.getItem("products") || ""}
                     style={{ width: "60%", height: 100 }}
                 />
             </form>

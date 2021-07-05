@@ -2,6 +2,7 @@
 import ProductFormData from "../components/product-form/types";
 import Category from "../entity/category";
 import Product from "../entity/Product";
+import SearchResult from "../entity/search-result";
 import LocalDB from "./LocalDB";
 import CategoryLocalDB from "./persistance/local-db-category";
 import compressImage from "./utils/image-compression-utils";
@@ -17,6 +18,7 @@ interface ProductApi {
     changeCategory(product: Product, category: Category | null): Promise<void>;
     findBy(generalName: string): Promise<Product[]>;
     findMatchingBy(query: string): Promise<Product[]>;
+    searchProductBy(query: string, page: number, perPage?: number): Promise<SearchResult<Product>>;
     findByBarcode(barcode: string, barcodeType: string): Promise<Product | null>;
     findGeneralNamesBy(query: string): Promise<string[]>;
 }
@@ -36,6 +38,29 @@ class MockedProductApi implements ProductApi {
 
     findMatchingBy(query: string): Promise<Product[]> {
         return LocalDB.findByGeneralNameOrFullName(query);
+    }
+
+    async searchProductBy(
+        query: string,
+        page: number,
+        perPage: number = 10
+    ): Promise<SearchResult<Product>> {
+        if (page < 1) {
+            throw Error("page cannot be less than 1");
+        }
+
+        const foundProducts = await LocalDB.findByGeneralNameOrFullName(query);
+        const indexStart = (page - 1) * perPage;
+        const indexEnd = page * perPage;
+        const totalPages = Math.floor(foundProducts.length / perPage);
+        const totalResults = foundProducts.length;
+
+        return new SearchResult(
+            foundProducts.slice(indexStart, indexEnd),
+            perPage,
+            totalPages,
+            totalResults
+        );
     }
 
     findBy(generalName: string): Promise<Product[]> {
