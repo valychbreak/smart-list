@@ -2,6 +2,7 @@ import { Button, FormControl, FormHelperText, Grid, Input, InputLabel, makeStyle
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { getImageUrlFromEvent } from "../utils/image-utils";
 import ProductFormData from "./types";
 
 export interface ProductFormFields {
@@ -36,16 +37,6 @@ function isCountryCodeMatching(productCountryPrefix: string, recordCountryCode: 
     }
 
     return false;
-}
-
-function getImageUrl(e: React.ChangeEvent<HTMLInputElement>): string | null {
-    const selectedFile = e.currentTarget?.files ? e.currentTarget.files[0] : null;
-
-    if (!selectedFile) {
-        return null;
-    }
-
-    return URL.createObjectURL(selectedFile);
 }
 
 const useStyles = makeStyles(() => ({
@@ -131,10 +122,6 @@ const ProductForm = (props: ProductFormProps) => {
     };
 
     const onPhotoUpload = (imageUrl: string | null) => {
-        if (!imageUrl) {
-            setProductImage(null);
-            return;
-        }
         setProductImage(imageUrl);
     };
 
@@ -280,7 +267,7 @@ const ProductForm = (props: ProductFormProps) => {
                                         <input
                                             type="file"
                                             onChange={(e) => {
-                                                const imageUrl = getImageUrl(e);
+                                                const imageUrl = getImageUrlFromEvent(e);
                                                 onPhotoUpload(imageUrl);
                                                 onChange(imageUrl);
                                             }}
