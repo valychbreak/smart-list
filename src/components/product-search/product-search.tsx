@@ -126,18 +126,23 @@ const ProductSearchPage = () => {
         setPagedProducts(searchResult);
     };
 
+    const resetSearch = () => {
+        setSearchQuery(null);
+        setCurrentPage(1);
+        setPagedProducts(null);
+    };
+
     const onProductSearch = async (formData: ProductSearchFields) => {
         const { query } = formData;
         if (!query) {
-            setSearchQuery(null);
-            setCurrentPage(1);
-            setPagedProducts(null);
+            resetSearch();
             return;
         }
 
-        const productSearchRequest = new SearchRequest(query, 1);
         setSearchQuery(query);
         setCurrentPage(1);
+
+        const productSearchRequest = new SearchRequest(query, 1);
         searchProducts(productSearchRequest);
     };
 
