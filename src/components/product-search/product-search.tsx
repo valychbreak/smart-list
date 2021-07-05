@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Box, Dialog, DialogContent, DialogTitle, Divider, Grid, IconButton, TextField } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import { Controller, useForm } from "react-hook-form";
@@ -18,7 +18,8 @@ interface ProductSearchFields {
 }
 
 const ProductSearchPage = () => {
-    const [searchRequest, setSearchRequest] = useState<SearchRequest | null>(null);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [searchQuery, setSearchQuery] = useState<string | null>(null);
 
     const [
         productSearchResult,
@@ -39,6 +40,16 @@ const ProductSearchPage = () => {
 
     const [copySuccess, setCopySuccess] = useState("");
     const textAreaRef = useRef<any>(null);
+
+    useEffect(() => {
+        if (searchQuery) {
+            return;
+        }
+
+        ProductApi.getProducts(currentPage).then((allProductsSearchResult) => {
+            setProductSearchResult(allProductsSearchResult);
+        });
+    }, [currentPage, searchQuery]);
 
     function copyToClipboard(e: any) {
         textAreaRef.current.select();
@@ -118,24 +129,26 @@ const ProductSearchPage = () => {
     const onProductSearch = async (formData: ProductSearchFields) => {
         const { query } = formData;
         if (!query) {
-            setSearchRequest(null);
+            setSearchQuery(null);
+            setCurrentPage(1);
             setProductSearchResult(null);
             return;
         }
 
         const productSearchRequest = new SearchRequest(query, 1);
-        setSearchRequest(productSearchRequest);
-
+        setSearchQuery(query);
+        setCurrentPage(1);
         searchProducts(productSearchRequest);
     };
 
     const onSearchPageChange = async (event: React.ChangeEvent<unknown>, value: number) => {
-        if (!searchRequest) {
+        setCurrentPage(value);
+
+        if (!searchQuery) {
             return;
         }
 
-        const productSearchRequest = new SearchRequest(searchRequest.query, value);
-        setSearchRequest(productSearchRequest);
+        const productSearchRequest = new SearchRequest(searchQuery, value);
         searchProducts(productSearchRequest);
     };
 
@@ -203,7 +216,7 @@ const ProductSearchPage = () => {
                 <Grid justify="center" container>
                     <Grid item>
                         <Pagination
-                            page={searchRequest?.page || 1}
+                            page={currentPage}
                             count={productSearchResult.totalPages}
                             onChange={(e, value) => onSearchPageChange(e, value)}
                         />

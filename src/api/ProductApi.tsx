@@ -8,7 +8,7 @@ import CategoryLocalDB from "./persistance/local-db-category";
 import compressImage from "./utils/image-compression-utils";
 
 interface ProductApi {
-    getProducts(): Promise<Product[]>;
+    getProducts(page?: number, itemsPerPage?: number): Promise<SearchResult<Product>>;
     /**
      * @deprecated Use createNewProduct method with ProductFormData argument instead
      */
@@ -21,6 +21,20 @@ interface ProductApi {
     searchProductBy(query: string, page: number, perPage?: number): Promise<SearchResult<Product>>;
     findByBarcode(barcode: string, barcodeType: string): Promise<Product | null>;
     findGeneralNamesBy(query: string): Promise<string[]>;
+}
+
+function getPaged(page: number, perPage: number, products: Product[]) {
+    const indexStart = (page - 1) * perPage;
+    const indexEnd = page * perPage;
+    const totalPages = Math.ceil(products.length / perPage);
+    const totalResults = products.length;
+
+    return new SearchResult(
+        products.slice(indexStart, indexEnd),
+        perPage,
+        totalPages,
+        totalResults
+    );
 }
 
 class MockedProductApi implements ProductApi {
@@ -36,8 +50,9 @@ class MockedProductApi implements ProductApi {
             .slice(0, 5);
     }
 
-    findMatchingBy(query: string): Promise<Product[]> {
-        return LocalDB.findByGeneralNameOrFullName(query);
+    async findMatchingBy(query: string): Promise<Product[]> {
+        const searchResult = await this.searchProductBy(query, 1);
+        return searchResult.items;
     }
 
     async searchProductBy(
@@ -50,17 +65,7 @@ class MockedProductApi implements ProductApi {
         }
 
         const foundProducts = await LocalDB.findByGeneralNameOrFullName(query);
-        const indexStart = (page - 1) * perPage;
-        const indexEnd = page * perPage;
-        const totalPages = Math.floor(foundProducts.length / perPage);
-        const totalResults = foundProducts.length;
-
-        return new SearchResult(
-            foundProducts.slice(indexStart, indexEnd),
-            perPage,
-            totalPages,
-            totalResults
-        );
+        return getPaged(page, perPage, foundProducts);
     }
 
     findBy(generalName: string): Promise<Product[]> {
@@ -76,8 +81,9 @@ class MockedProductApi implements ProductApi {
         return product || null;
     }
 
-    async getProducts(): Promise<Product[]> {
-        return LocalDB.loadProducts();
+    async getProducts(page: number = 1, itemsPerPage: number = 10): Promise<SearchResult<Product>> {
+        const allProducts = await LocalDB.loadProducts();
+        return getPaged(page, itemsPerPage, allProducts);
     }
 
     async saveProduct(product: Product): Promise<Product> {
