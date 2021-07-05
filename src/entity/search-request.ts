@@ -1,0 +1,12 @@
+class SearchRequest {
+    readonly query: string;
+
+    readonly page: number;
+
+    constructor(query: string, page: number) {
+        this.query = query;
+        this.page = page;
+    }
+}
+
+export default SearchRequest;
