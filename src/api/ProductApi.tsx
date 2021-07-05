@@ -102,11 +102,18 @@ class MockedProductApi implements ProductApi {
             fullName,
             companyName,
             country,
+            imageUrl,
         } = productFormData;
         const product = new Product(generalName, barcode, barcodeType);
         product.productFullName = fullName;
         product.productCompanyName = companyName;
         product.productCountry = country;
+
+        if (imageUrl) {
+            const base64Image = await compressImage(imageUrl, "image/jpeg");
+            product.image = base64Image;
+        }
+
         return LocalDB.saveProduct(product);
     }
 

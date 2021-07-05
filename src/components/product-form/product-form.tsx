@@ -1,6 +1,6 @@
-import { Button, FormControl, FormHelperText, Input, InputLabel } from "@material-ui/core";
+import { Button, FormControl, FormHelperText, Grid, Input, InputLabel, makeStyles } from "@material-ui/core";
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import ProductFormData from "./types";
 
@@ -38,8 +38,26 @@ function isCountryCodeMatching(productCountryPrefix: string, recordCountryCode: 
     return false;
 }
 
+function getImageUrl(e: React.ChangeEvent<HTMLInputElement>): string | null {
+    const selectedFile = e.currentTarget?.files ? e.currentTarget.files[0] : null;
+
+    if (!selectedFile) {
+        return null;
+    }
+
+    return URL.createObjectURL(selectedFile);
+}
+
+const useStyles = makeStyles(() => ({
+    productImage: {
+        maxHeight: 100,
+        maxWidth: 100,
+    }
+}));
+
 const ProductForm = (props: ProductFormProps) => {
     const { defaultFieldValues } = props;
+    const classes = useStyles();
 
     const {
         handleSubmit, errors, control, setValue
@@ -53,6 +71,10 @@ const ProductForm = (props: ProductFormProps) => {
             productCountry: defaultFieldValues?.productCountry || "",
         }
     });
+
+    const [
+        productImage, setProductImage
+    ] = useState<string | null>(defaultFieldValues?.image || null);
 
     function updatedSuggestedCountry(barcode: string) {
         if (!barcode || barcode.length < 3) {
@@ -98,13 +120,22 @@ const ProductForm = (props: ProductFormProps) => {
             barcodeType: formData.productBarcodeType,
             fullName: formData.productFullName,
             companyName: formData.productCompanyName,
-            country: formData.productCountry
+            country: formData.productCountry,
+            imageUrl: formData.image
         }
     );
 
     const addItemInfo = (formData: ProductFormFields) => {
-        const product = createProduct(formData);
-        props.onProductSubmit(product);
+        const productFormData = createProduct(formData);
+        props.onProductSubmit(productFormData);
+    };
+
+    const onPhotoUpload = (imageUrl: string | null) => {
+        if (!imageUrl) {
+            setProductImage(null);
+            return;
+        }
+        setProductImage(imageUrl);
     };
 
     return (
@@ -235,8 +266,31 @@ const ProductForm = (props: ProductFormProps) => {
                         </FormHelperText>
                     </FormControl>
 
-                    <label>Product image (optional): </label>
-                    <Button type="button" variant="outlined">Take a picture (TODO)</Button>
+                    <Grid container>
+                        <Grid item>
+                            <img src={productImage || undefined} className={classes.productImage} />
+                        </Grid>
+                        <Grid item>
+                            <Controller
+                                name="image"
+                                control={control}
+                                render={({ onChange }) => (
+                                    <Button variant="contained" component="label">
+                                        Upload photo
+                                        <input
+                                            type="file"
+                                            onChange={(e) => {
+                                                const imageUrl = getImageUrl(e);
+                                                onPhotoUpload(imageUrl);
+                                                onChange(imageUrl);
+                                            }}
+                                            hidden
+                                        />
+                                    </Button>
+                                )}
+                            />
+                        </Grid>
+                    </Grid>
                     <br/>
                 </>}
 
