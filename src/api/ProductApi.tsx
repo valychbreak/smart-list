@@ -17,13 +17,13 @@ interface ProductApi {
     updateProduct(product: Product, productImage?: string): Promise<void>;
     changeCategory(product: Product, category: Category | null): Promise<void>;
     findBy(generalName: string): Promise<Product[]>;
-    findMatchingBy(query: string): Promise<Product[]>;
+    findDistinguishableProductsBy(query: string): Promise<Product[]>;
     searchProductBy(query: string, page: number, perPage?: number): Promise<Page<Product>>;
     findByBarcode(barcode: string, barcodeType: string): Promise<Product | null>;
     findGeneralNamesBy(query: string): Promise<string[]>;
 }
 
-function getPaged(page: number, perPage: number, products: Product[]) {
+function getPaged(page: number, perPage: number, products: Product[]): Page<Product> {
     const indexStart = (page - 1) * perPage;
     const indexEnd = page * perPage;
     const totalPages = Math.ceil(products.length / perPage);
@@ -50,9 +50,13 @@ class MockedProductApi implements ProductApi {
             .slice(0, 5);
     }
 
-    async findMatchingBy(query: string): Promise<Product[]> {
-        const searchResult = await this.searchProductBy(query, 1);
-        return searchResult.items;
+    async findDistinguishableProductsBy(query: string): Promise<Product[]> {
+        const foundProducts = await LocalDB.findByGeneralNameOrFullName(query);
+        const distiguishableProducts = foundProducts.filter((product) => (
+            product.productFullName || product.image
+        ));
+        const pagedResult = getPaged(1, 10, distiguishableProducts);
+        return pagedResult.items;
     }
 
     async searchProductBy(

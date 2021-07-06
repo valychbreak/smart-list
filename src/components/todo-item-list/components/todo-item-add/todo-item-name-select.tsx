@@ -1,4 +1,4 @@
-import { CircularProgress, TextField } from "@material-ui/core";
+import { CircularProgress, Grid, makeStyles, TextField } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import React from "react";
 import Product from "../../../../entity/Product";
@@ -22,6 +22,38 @@ type TodoItemNameSelectProps = {
     setOpen(isOpened: boolean): void;
     setInputValue(newValue: string): void;
     onTodoItemNameSelect(todoItemName: ProductOrName): void;
+};
+
+const useStyles = makeStyles(() => ({
+    productImage: {
+        maxHeight: 100,
+        maxWidth: 30,
+    }
+}));
+
+const OptionView = (props: { option: TodoItemNameItem }) => {
+    const { option } = props;
+    const image = option.product?.image;
+
+    const classes = useStyles();
+
+    if (!image) {
+        return <>{option.label}</>;
+    }
+
+    return (
+        <Grid alignItems="center" container>
+            <Grid xs={3} item>
+                <img
+                    src={option.product?.image || undefined}
+                    className={classes.productImage}
+                />
+            </Grid>
+            <Grid xs={9} item>
+                {option.label}
+            </Grid>
+        </Grid>
+    );
 };
 
 const TodoItemNameSelect = (props: TodoItemNameSelectProps) => {
@@ -77,6 +109,9 @@ const TodoItemNameSelect = (props: TodoItemNameSelectProps) => {
             onInputChange={(event, value) => {
                 onInputChange(value);
             }}
+            renderOption={(option) => (
+                <OptionView option={option} />
+            )}
             renderInput={(params) => (
                 <TextField
                     {...params}
