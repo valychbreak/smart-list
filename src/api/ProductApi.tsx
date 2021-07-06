@@ -17,7 +17,7 @@ interface ProductApi {
     updateProduct(product: Product, productImage?: string): Promise<void>;
     changeCategory(product: Product, category: Category | null): Promise<void>;
     findBy(generalName: string): Promise<Product[]>;
-    findMatchingBy(query: string): Promise<Product[]>;
+    findDistinguishableProductsBy(query: string): Promise<Product[]>;
     searchProductBy(query: string, page: number, perPage?: number): Promise<Page<Product>>;
     findByBarcode(barcode: string, barcodeType: string): Promise<Product | null>;
     findGeneralNamesBy(query: string): Promise<string[]>;
@@ -50,7 +50,7 @@ class MockedProductApi implements ProductApi {
             .slice(0, 5);
     }
 
-    async findMatchingBy(query: string): Promise<Product[]> {
+    async findDistinguishableProductsBy(query: string): Promise<Product[]> {
         const foundProducts = await LocalDB.findByGeneralNameOrFullName(query);
         const distiguishableProducts = foundProducts.filter((product) => (
             product.productFullName || product.image

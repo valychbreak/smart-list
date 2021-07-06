@@ -34,7 +34,7 @@ const useTodoItemNameSelectController = () => {
         let active = true;
         setLoading(true);
 
-        ProductApi.findMatchingBy(inputValue)
+        ProductApi.findDistinguishableProductsBy(inputValue)
             .then((loadedProducts) => {
                 const loadedOptions = loadedProducts.map((product) => (
                     asTodoItemNameItem(product)

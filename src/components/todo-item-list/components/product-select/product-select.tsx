@@ -17,7 +17,7 @@ function asProductSelectItem(product: Product): ProductSelectItem {
 }
 
 async function loadOptions(inputValue: string) {
-    const loadedProducts = await ProductApi.findMatchingBy(inputValue);
+    const loadedProducts = await ProductApi.findDistinguishableProductsBy(inputValue);
     const foundProducts: ProductSelectItem[] = loadedProducts.map((product) => (
         asProductSelectItem(product)
     ));
