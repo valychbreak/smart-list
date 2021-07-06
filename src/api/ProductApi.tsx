@@ -23,7 +23,7 @@ interface ProductApi {
     findGeneralNamesBy(query: string): Promise<string[]>;
 }
 
-function getPaged(page: number, perPage: number, products: Product[]) {
+function getPaged(page: number, perPage: number, products: Product[]): Page<Product> {
     const indexStart = (page - 1) * perPage;
     const indexEnd = page * perPage;
     const totalPages = Math.ceil(products.length / perPage);
@@ -51,8 +51,12 @@ class MockedProductApi implements ProductApi {
     }
 
     async findMatchingBy(query: string): Promise<Product[]> {
-        const searchResult = await this.searchProductBy(query, 1);
-        return searchResult.items;
+        const foundProducts = await LocalDB.findByGeneralNameOrFullName(query);
+        const distiguishableProducts = foundProducts.filter((product) => (
+            product.productFullName || product.image
+        ));
+        const pagedResult = getPaged(1, 10, distiguishableProducts);
+        return pagedResult.items;
     }
 
     async searchProductBy(
