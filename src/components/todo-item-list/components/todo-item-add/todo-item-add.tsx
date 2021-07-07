@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogContentText, DialogTitle, Fab, Grid } from "@material-ui/core";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fab, Grid } from "@material-ui/core";
 import SettingsOverscanIcon from "@material-ui/icons/SettingsOverscan";
 import { Scanner } from "../../../barcode-scanner";
 import TodoItemAddForm from "./todo-item-add-form";
@@ -10,6 +10,9 @@ import TodoItem from "../../types";
 import ProductFormData from "../../../product-form/types";
 import { BarcodeScanResult } from "../../../barcode-scanner/types";
 import { useBooleanState } from "../../../use-extended-state";
+// TODO: move out of purchasing folder
+import ScannedProductDialogView from "../groceries-todo-purchasing/scanned-product-dialog-view";
+import Product from "../../../../entity/Product";
 
 // export for testing only
 export async function addProductToTodoItems(
@@ -34,6 +37,7 @@ const AddTodoItemComponent = () => {
         onBarcodeDetected,
         addTodoItem,
         setOpenNewProductDialog,
+        productViewDialog,
     } = useTodoItemAddController();
 
     const { addItem } = useTodoItemListContext();
@@ -46,6 +50,11 @@ const AddTodoItemComponent = () => {
     const onBarcodeScan = (result: BarcodeScanResult) => {
         disableScanner();
         onBarcodeDetected(result);
+    };
+
+    const addProductToList = (product: Product) => {
+        productViewDialog.closeDialog();
+        addTodoItem(TodoItem.fromProduct(product));
     };
 
     return (
@@ -69,6 +78,25 @@ const AddTodoItemComponent = () => {
                     />
                 </DialogContent>
             </Dialog>
+
+            {productViewDialog.payload.product && <>
+                <Dialog open={productViewDialog.isDialogOpened}>
+                    <DialogTitle>Add product to groceries list?</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            <ScannedProductDialogView product={productViewDialog.payload.product} />
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => productViewDialog.closeDialog()} color="primary">
+                            No
+                        </Button>
+                        <Button onClick={() => addProductToList(productViewDialog.payload.product!)} color="primary" autoFocus>
+                            Yes
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </>}
             <Grid container justify="center" alignItems="center">
                 <Grid item xs>
                     <Fab

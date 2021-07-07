@@ -86,11 +86,9 @@ describe("useTodoItemAddController", () => {
                 result.current.onBarcodeDetected(barcodeScanResult);
             });
 
-            td.verify(
-                todoItemListContext.addItem(
-                    td.matchers.contains({ targetProduct: product })
-                )
-            );
+            const { productViewDialog } = result.current;
+            expect(productViewDialog.isDialogOpened).toBe(true);
+            expect(productViewDialog.payload.product).toBe(product);
         });
 
         it("should open new product dialog when product not found", async () => {

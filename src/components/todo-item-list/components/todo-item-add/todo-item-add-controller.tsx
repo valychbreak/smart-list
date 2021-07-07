@@ -6,6 +6,7 @@ import { BarcodeScanResult } from "../../../barcode-scanner/types";
 import { ProductFormFields } from "../../../product-form";
 import openFoodFactsService from "../../../../api/open-food-facts-api/open-food-facts.service";
 import productDetailsToFormFields from "../utils/product-mapping-utils";
+import Product from "../../../../entity/Product";
 
 const useNewProductDialog = () => {
     const [openNewProductDialog, setOpenNewProductDialog] = useState(false);
@@ -37,8 +38,30 @@ const useNewProductDialog = () => {
     };
 };
 
+const useProductViewDialog = () => {
+    const [isDialogOpened, setDialogOpened] = useState(false);
+
+    const [dialogProduct, setDialogProduct] = useState<Product | null>(null);
+
+    const openDialog = (product: Product) => {
+        setDialogOpened(true);
+        setDialogProduct(product);
+    };
+
+    return {
+        isDialogOpened,
+        openDialog,
+        closeDialog: () => setDialogOpened(false),
+        payload: {
+            product: dialogProduct
+        }
+    };
+};
+
 const useTodoItemAddController = () => {
     const newProductDialog = useNewProductDialog();
+
+    const productViewDialog = useProductViewDialog();
 
     const todoItemListContext = useTodoItemListContext();
 
@@ -58,8 +81,7 @@ const useTodoItemAddController = () => {
                 format: barcodeType,
             }, productDetailsToFormFields(result, loadedExternalProduct));
         } else {
-            const newItem = TodoItem.fromProduct(product);
-            addTodoItem(newItem);
+            productViewDialog.openDialog(product);
         }
     };
 
@@ -71,6 +93,7 @@ const useTodoItemAddController = () => {
         addTodoItem,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         setOpenNewProductDialog: (state: boolean) => newProductDialog.closeNewProductDialog(),
+        productViewDialog,
     };
 };
 
