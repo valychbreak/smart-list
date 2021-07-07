@@ -8,6 +8,8 @@ import ProductApi from "../../../../api/ProductApi";
 import { useTodoItemListContext } from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import TodoItem from "../../types";
 import ProductFormData from "../../../product-form/types";
+import useBarcodeScanner from "../../../use-scanner";
+import { BarcodeScanResult } from "../../../barcode-scanner/types";
 
 // export for testing only
 export async function addProductToTodoItems(
@@ -20,12 +22,15 @@ export async function addProductToTodoItems(
 
 const AddTodoItemComponent = () => {
     const {
-        openScanner,
+        isScannerEnabled,
+        enableScanner,
+        disableScanner
+    } = useBarcodeScanner();
+
+    const {
         openNewProductDialog,
         defaultNewProductFields,
         lastBarcodeScanResult,
-        enableScanner,
-        disableScanner,
         onBarcodeDetected,
         addTodoItem,
         setOpenNewProductDialog,
@@ -36,6 +41,11 @@ const AddTodoItemComponent = () => {
     const onNewProductSubmit = async (productFormData: ProductFormData) => {
         addProductToTodoItems(productFormData, addItem);
         setOpenNewProductDialog(false);
+    };
+
+    const onBarcodeScan = (result: BarcodeScanResult) => {
+        disableScanner();
+        onBarcodeDetected(result);
     };
 
     return (
@@ -69,8 +79,8 @@ const AddTodoItemComponent = () => {
                     >
                         <SettingsOverscanIcon />
                     </Fab>
-                    <Dialog open={openScanner} onClose={disableScanner}>
-                        <Scanner onDetected={onBarcodeDetected} />
+                    <Dialog open={isScannerEnabled} onClose={disableScanner}>
+                        <Scanner onDetected={onBarcodeScan} />
                     </Dialog>
                 </Grid>
                 <Grid item xs={10}>

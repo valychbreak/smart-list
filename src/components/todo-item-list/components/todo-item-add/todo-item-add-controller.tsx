@@ -8,7 +8,6 @@ import openFoodFactsService from "../../../../api/open-food-facts-api/open-food-
 import productDetailsToFormFields from "../utils/product-mapping-utils";
 
 const useTodoItemAddController = () => {
-    const [isScannerEnabled, setScannerEnabled] = useState(false);
     const [openNewProductDialog, setOpenNewProductDialog] = useState(false);
     const [
         defaultNewProductFields,
@@ -22,21 +21,11 @@ const useTodoItemAddController = () => {
 
     const todoItemListContext = useTodoItemListContext();
 
-    const enableScanner = () => {
-        setScannerEnabled(true);
-    };
-
-    const disableScanner = () => {
-        setScannerEnabled(false);
-    };
-
     const addTodoItem = (todoItem: TodoItem) => {
         todoItemListContext.addItem(todoItem);
     };
 
     const onBarcodeDetected = async (result: BarcodeScanResult) => {
-        disableScanner();
-
         const barcode = result.code;
         const barcodeType = result.format;
 
@@ -60,12 +49,9 @@ const useTodoItemAddController = () => {
     };
 
     return {
-        openScanner: isScannerEnabled,
         openNewProductDialog,
         defaultNewProductFields,
         lastBarcodeScanResult,
-        enableScanner,
-        disableScanner,
         onBarcodeDetected,
         addTodoItem,
         setOpenNewProductDialog,
