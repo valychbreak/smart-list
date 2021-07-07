@@ -7,17 +7,38 @@ import { ProductFormFields } from "../../../product-form";
 import openFoodFactsService from "../../../../api/open-food-facts-api/open-food-facts.service";
 import productDetailsToFormFields from "../utils/product-mapping-utils";
 
-const useTodoItemAddController = () => {
+const useNewProductDialog = () => {
     const [openNewProductDialog, setOpenNewProductDialog] = useState(false);
+
+    const [barcodeScanResult, setBarcodeScanResult] = useState<BarcodeScanResult | null>(null);
+
     const [
         defaultNewProductFields,
         setDefaultNewProductFields
     ] = useState<ProductFormFields | undefined>(undefined);
 
-    const [
-        lastBarcodeScanResult,
-        setBarcodeScanResult,
-    ] = useState<BarcodeScanResult | null>(null);
+    const setNewProductDialogOpened = (
+        scanResult: BarcodeScanResult,
+        defaultProductFields?: ProductFormFields
+    ) => {
+        setBarcodeScanResult(scanResult);
+        setDefaultNewProductFields(defaultProductFields);
+        setOpenNewProductDialog(true);
+    };
+
+    return {
+        openNewProductDialog,
+        setNewProductDialogOpened,
+        closeNewProductDialog: () => setOpenNewProductDialog(false),
+        payload: {
+            barcodeScanResult,
+            defaultNewProductFields
+        }
+    };
+};
+
+const useTodoItemAddController = () => {
+    const newProductDialog = useNewProductDialog();
 
     const todoItemListContext = useTodoItemListContext();
 
@@ -31,17 +52,11 @@ const useTodoItemAddController = () => {
 
         const product = await ProductApi.findByBarcode(barcode, barcodeType);
         if (product == null) {
-            setBarcodeScanResult({
+            const loadedExternalProduct = await openFoodFactsService.fetchProduct(barcode);
+            newProductDialog.setNewProductDialogOpened({
                 code: barcode,
                 format: barcodeType,
-            });
-
-            const loadedExternalProduct = await openFoodFactsService.fetchProduct(barcode);
-            setDefaultNewProductFields(
-                productDetailsToFormFields(result, loadedExternalProduct)
-            );
-
-            setOpenNewProductDialog(true);
+            }, productDetailsToFormFields(result, loadedExternalProduct));
         } else {
             const newItem = TodoItem.fromProduct(product);
             addTodoItem(newItem);
@@ -49,12 +64,13 @@ const useTodoItemAddController = () => {
     };
 
     return {
-        openNewProductDialog,
-        defaultNewProductFields,
-        lastBarcodeScanResult,
+        openNewProductDialog: newProductDialog.openNewProductDialog,
+        defaultNewProductFields: newProductDialog.payload.defaultNewProductFields,
+        lastBarcodeScanResult: newProductDialog.payload.barcodeScanResult,
         onBarcodeDetected,
         addTodoItem,
-        setOpenNewProductDialog,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        setOpenNewProductDialog: (state: boolean) => newProductDialog.closeNewProductDialog(),
     };
 };
 
