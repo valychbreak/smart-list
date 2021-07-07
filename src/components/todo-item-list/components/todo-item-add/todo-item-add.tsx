@@ -8,8 +8,8 @@ import ProductApi from "../../../../api/ProductApi";
 import { useTodoItemListContext } from "../../../../pages/groceries-todo/context/TodoItemListContext";
 import TodoItem from "../../types";
 import ProductFormData from "../../../product-form/types";
-import useBarcodeScanner from "../../../use-scanner";
 import { BarcodeScanResult } from "../../../barcode-scanner/types";
+import { useBooleanState } from "../../../use-extended-state";
 
 // export for testing only
 export async function addProductToTodoItems(
@@ -21,11 +21,11 @@ export async function addProductToTodoItems(
 }
 
 const AddTodoItemComponent = () => {
-    const {
+    const [
         isScannerEnabled,
         enableScanner,
         disableScanner
-    } = useBarcodeScanner();
+    ] = useBooleanState();
 
     const {
         openNewProductDialog,
