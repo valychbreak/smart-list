@@ -1,6 +1,6 @@
 import { mount } from "enzyme";
 import Product from "../../../../entity/Product";
-import ScannedProductDialogView from "./scanned-product-dialog-view";
+import ScannedProductDialogView from "./product-dialog-view";
 
 const milkProduct = new Product("Milk", "12345678", "ean8");
 milkProduct.productFullName = "Milk 2.0 Natural";
