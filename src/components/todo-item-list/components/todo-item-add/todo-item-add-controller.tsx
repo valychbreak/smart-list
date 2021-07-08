@@ -25,13 +25,9 @@ const useTodoItemAddController = () => {
         const product = await ProductApi.findByBarcode(barcode, barcodeType);
         if (product == null) {
             const loadedExternalProduct = await openFoodFactsService.fetchProduct(barcode);
-            const barcodeScanResult = {
-                code: barcode,
-                format: barcodeType,
-            };
 
             newProductDialog.openDialog({
-                barcodeScanResult,
+                barcodeScanResult: result,
                 defaultProductFields: productDetailsToFormFields(result, loadedExternalProduct)
             });
         } else {
