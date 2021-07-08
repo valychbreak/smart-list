@@ -37,7 +37,7 @@ const AddTodoItemComponent = () => {
         onBarcodeDetected,
         addTodoItem,
         setOpenNewProductDialog,
-        productViewDialog,
+        productConfirmationDialog,
     } = useTodoItemAddController();
 
     const { addItem } = useTodoItemListContext();
@@ -53,7 +53,7 @@ const AddTodoItemComponent = () => {
     };
 
     const addProductToList = (product: Product) => {
-        productViewDialog.closeDialog();
+        productConfirmationDialog.closeDialog();
         addTodoItem(TodoItem.fromProduct(product));
     };
 
@@ -79,19 +79,21 @@ const AddTodoItemComponent = () => {
                 </DialogContent>
             </Dialog>
 
-            {productViewDialog.payload.product && <>
-                <Dialog open={productViewDialog.isDialogOpened}>
+            {productConfirmationDialog.payload?.product && <>
+                <Dialog open={productConfirmationDialog.isOpened}>
                     <DialogTitle>Add product to groceries list?</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
-                            <ScannedProductDialogView product={productViewDialog.payload.product} />
+                            <ScannedProductDialogView
+                                product={productConfirmationDialog.payload.product}
+                            />
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={() => productViewDialog.closeDialog()} color="primary">
+                        <Button onClick={() => productConfirmationDialog.closeDialog()} color="primary">
                             No
                         </Button>
-                        <Button onClick={() => addProductToList(productViewDialog.payload.product!)} color="primary" autoFocus>
+                        <Button onClick={() => addProductToList(productConfirmationDialog.payload!.product)} color="primary" autoFocus>
                             Yes
                         </Button>
                     </DialogActions>

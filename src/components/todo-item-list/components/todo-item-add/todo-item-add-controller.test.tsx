@@ -86,9 +86,9 @@ describe("useTodoItemAddController", () => {
                 result.current.onBarcodeDetected(barcodeScanResult);
             });
 
-            const { productViewDialog } = result.current;
-            expect(productViewDialog.isDialogOpened).toBe(true);
-            expect(productViewDialog.payload.product).toBe(product);
+            const { productConfirmationDialog } = result.current;
+            expect(productConfirmationDialog.isOpened).toBe(true);
+            expect(productConfirmationDialog.payload?.product).toBe(product);
         });
 
         it("should open new product dialog when product not found", async () => {
