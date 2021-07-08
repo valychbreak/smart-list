@@ -6,7 +6,11 @@ function useDialog<T>() {
 
     const openDialog = (dialogPayload: T) => {
         setOpened(true);
-        setPayload(dialogPayload);
+
+        // check is required for case when T = void
+        if (dialogPayload) {
+            setPayload(dialogPayload);
+        }
     };
 
     const closeDialog = () => {
