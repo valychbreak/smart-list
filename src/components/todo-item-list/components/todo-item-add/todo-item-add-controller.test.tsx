@@ -22,15 +22,9 @@ const barcodeScanResult = scanResult("12345678", "ean8");
 
 describe("useTodoItemAddController", () => {
     const controller = () => useTodoItemAddController();
-    const renderController = (enableScanner: boolean = false) => {
-        const wrapper = renderHook(() => controller());
-
-        if (enableScanner) {
-            act(() => wrapper.result.current.enableScanner());
-        }
-
-        return wrapper;
-    };
+    const renderController = () => (
+        renderHook(() => controller())
+    );
 
     let todoItemListContext: TodoItemListContext.TodoItemListContextType;
 
@@ -47,40 +41,6 @@ describe("useTodoItemAddController", () => {
         );
     });
 
-    it("should enable scanner", () => {
-        const { result } = renderController();
-
-        act(() => result.current.enableScanner());
-
-        expect(result.current.openScanner).toBe(true);
-    });
-
-    it("should disable scanner", () => {
-        const { result } = renderController();
-
-        act(() => {
-            result.current.enableScanner();
-            result.current.disableScanner();
-        });
-
-        expect(result.current.openScanner).toBe(false);
-    });
-
-    it("should disable scanner after barcode scan", async () => {
-        jest.spyOn(ProductApi, "findByBarcode").mockReturnValue(
-            Promise.resolve(null)
-        );
-
-        const { result } = renderController(true);
-
-        await act(async () => {
-            result.current.onBarcodeDetected(barcodeScanResult);
-        });
-
-        expect(ProductApi.findByBarcode).toBeCalled();
-        expect(result.current.openScanner).toBe(false);
-    });
-
     it("should add todo item to context", async () => {
         const { result } = renderController();
 
@@ -90,7 +50,6 @@ describe("useTodoItemAddController", () => {
         });
 
         td.verify(todoItemListContext.addItem(todoItem));
-        expect(result.current.openScanner).toBe(false);
     });
 
     describe("onBarcodeDetected", () => {
@@ -100,42 +59,53 @@ describe("useTodoItemAddController", () => {
             );
         });
 
-        it("should add todo item to context after scanning a barcode", async () => {
+        it("should call ProductAPI", async () => {
+            jest.spyOn(ProductApi, "findByBarcode").mockReturnValue(
+                Promise.resolve(null)
+            );
+
+            const { result } = renderController();
+
+            await act(async () => {
+                result.current.onBarcodeDetected(barcodeScanResult);
+            });
+
+            expect(ProductApi.findByBarcode).toBeCalled();
+        });
+
+        it("should add todo item to context", async () => {
             const product = mockProduct("Milk");
 
             jest.spyOn(ProductApi, "findByBarcode").mockReturnValue(
                 Promise.resolve(product)
             );
 
-            const { result } = renderController(true);
+            const { result } = renderController();
 
             await act(async () => {
                 result.current.onBarcodeDetected(barcodeScanResult);
             });
 
-            td.verify(
-                todoItemListContext.addItem(
-                    td.matchers.contains({ targetProduct: product })
-                )
-            );
-            expect(result.current.openScanner).toBe(false);
+            const { productConfirmationDialog } = result.current;
+            expect(productConfirmationDialog.isOpened).toBe(true);
+            expect(productConfirmationDialog.payload?.product).toBe(product);
         });
 
-        it("should open new product dialog when product not found after scanning a barcode", async () => {
+        it("should open new product dialog when product not found", async () => {
             jest.spyOn(ProductApi, "findByBarcode").mockReturnValue(
                 Promise.resolve(null)
             );
 
-            const { result } = renderController(true);
+            const { result } = renderController();
 
             await act(async () => {
                 result.current.onBarcodeDetected(barcodeScanResult);
             });
 
-            expect(result.current.openNewProductDialog).toBe(true);
+            expect(result.current.newProductDialog.isOpened).toBe(true);
         });
 
-        it("should open new product dialog and load data from OpenFoodFacts when product not found after scanning a barcode", async () => {
+        it("should open new product dialog and load data from OpenFoodFacts when product not found", async () => {
             jest.spyOn(ProductApi, "findByBarcode").mockReturnValue(
                 Promise.resolve(null)
             );
@@ -149,14 +119,16 @@ describe("useTodoItemAddController", () => {
                 })
             );
 
-            const { result } = renderController(true);
+            const { result } = renderController();
 
             await act(async () => {
                 result.current.onBarcodeDetected(barcodeScanResult);
             });
 
-            expect(result.current.openNewProductDialog).toBe(true);
-            expect(result.current.defaultNewProductFields).toStrictEqual({
+            const { newProductDialog } = result.current;
+
+            expect(newProductDialog.isOpened).toBe(true);
+            expect(newProductDialog.payload?.defaultProductFields).toStrictEqual({
                 productBarcode: barcodeScanResult.code,
                 productBarcodeType: barcodeScanResult.format,
                 productCompanyName: "Milky way",

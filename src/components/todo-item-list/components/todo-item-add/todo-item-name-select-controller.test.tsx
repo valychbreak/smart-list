@@ -18,7 +18,7 @@ describe("useTodoItemNameSelectController", () => {
     const controller = () => useTodoItemNameSelectController();
 
     beforeEach(() => {
-        jest.spyOn(ProductApi, "findMatchingBy")
+        jest.spyOn(ProductApi, "findDistinguishableProductsBy")
             .mockImplementation(() => Promise.resolve([]));
     });
 
@@ -59,7 +59,7 @@ describe("useTodoItemNameSelectController", () => {
     });
 
     it("should set loading to false when there's an error in API call", async () => {
-        jest.spyOn(ProductApi, "findMatchingBy")
+        jest.spyOn(ProductApi, "findDistinguishableProductsBy")
             .mockImplementation(() => Promise.reject(new Error()));
 
         const { result } = renderHook(controller);
@@ -74,7 +74,7 @@ describe("useTodoItemNameSelectController", () => {
     it("should load options when input value changes", async () => {
         const milkProduct = createProduct("Milk", "Milk 2.0 super natural");
         const milkyProduct = createProduct("Milky", "Milky also natural");
-        jest.spyOn(ProductApi, "findMatchingBy")
+        jest.spyOn(ProductApi, "findDistinguishableProductsBy")
             .mockImplementation(() => Promise.resolve([
                 milkProduct,
                 milkyProduct
@@ -93,7 +93,7 @@ describe("useTodoItemNameSelectController", () => {
     });
 
     it("should reset input value and options", async () => {
-        jest.spyOn(ProductApi, "findMatchingBy")
+        jest.spyOn(ProductApi, "findDistinguishableProductsBy")
             .mockImplementation(() => Promise.resolve([
                 createProduct("Milk", "Milk 2.0")
             ]));
@@ -112,7 +112,7 @@ describe("useTodoItemNameSelectController", () => {
     });
 
     it("should clear select field when input is cleared", async () => {
-        jest.spyOn(ProductApi, "findMatchingBy")
+        jest.spyOn(ProductApi, "findDistinguishableProductsBy")
             .mockImplementation(() => Promise.resolve([
                 createProduct("Milk", "Milk 2.0")
             ]));

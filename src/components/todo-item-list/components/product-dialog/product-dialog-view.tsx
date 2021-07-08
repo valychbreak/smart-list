@@ -1,3 +1,4 @@
+import { Grid, makeStyles } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import Product from "../../../../entity/Product";
 
@@ -18,14 +19,31 @@ const ProductName = (props: { product: Product }) => {
     );
 };
 
-type ScannedProductDialogViewProps = {
+type ProductDialogViewProps = {
     product: Product;
 };
 
-const ScannedProductDialogView = (props: ScannedProductDialogViewProps) => {
+const useStyles = makeStyles(() => ({
+    productImage: {
+        maxHeight: 300,
+        maxWidth: 300,
+    }
+}));
+
+const ProductDialogView = (props: ProductDialogViewProps) => {
     const { product } = props;
+    const classes = useStyles();
+
+    const productImage = product.image;
     return (
         <>
+            {productImage && <>
+                <Grid container justify="center">
+                    <Grid item>
+                        <img src={productImage} className={classes.productImage} />
+                    </Grid>
+                </Grid>
+            </>}
             <ProductName product={product} />
             <Typography>Barcode: {getProductBarcode(product)}</Typography>
             <Typography>Company: {product.productCompanyName}</Typography>
@@ -34,4 +52,4 @@ const ScannedProductDialogView = (props: ScannedProductDialogViewProps) => {
     );
 };
 
-export default ScannedProductDialogView;
+export default ProductDialogView;
