@@ -13,7 +13,7 @@ import useGroceriesTodoPurchasingController from "./use-groceries-todo-purchasin
 import SelectTodoItemForProduct from "./todo-item-for-product-selector";
 import TodoItem from "../../types";
 import ProductForm from "../../../product-form";
-import ScannedProductDialogView from "./scanned-product-dialog-view";
+import { ProductDialogView } from "../product-dialog";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -127,7 +127,7 @@ const GroceriesTodoPurchasingModeView: React.FC<{}> = () => {
                 <DialogTitle>Add product to groceries list?</DialogTitle>
                 <DialogContent dividers>
                     <DialogContentText>
-                        <ScannedProductDialogView product={productToAdd} />
+                        <ProductDialogView product={productToAdd} />
                     </DialogContentText>
                 </DialogContent>
                 <DialogContent>

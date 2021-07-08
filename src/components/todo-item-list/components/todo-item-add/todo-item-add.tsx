@@ -10,8 +10,7 @@ import TodoItem from "../../types";
 import ProductFormData from "../../../product-form/types";
 import { BarcodeScanResult } from "../../../barcode-scanner/types";
 import { useBooleanState } from "../../../use-extended-state";
-// TODO: move out of purchasing folder
-import ScannedProductDialogView from "../groceries-todo-purchasing/scanned-product-dialog-view";
+import { ProductDialogView } from "../product-dialog";
 import Product from "../../../../entity/Product";
 
 // export for testing only
@@ -84,7 +83,7 @@ const AddTodoItemComponent = () => {
                     <DialogTitle>Add product to groceries list?</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
-                            <ScannedProductDialogView
+                            <ProductDialogView
                                 product={productConfirmationDialog.payload.product}
                             />
                         </DialogContentText>
