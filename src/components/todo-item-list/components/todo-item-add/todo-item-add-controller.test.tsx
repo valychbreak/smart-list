@@ -102,7 +102,7 @@ describe("useTodoItemAddController", () => {
                 result.current.onBarcodeDetected(barcodeScanResult);
             });
 
-            expect(result.current.openNewProductDialog).toBe(true);
+            expect(result.current.newProductDialog.isOpened).toBe(true);
         });
 
         it("should open new product dialog and load data from OpenFoodFacts when product not found", async () => {
@@ -125,8 +125,10 @@ describe("useTodoItemAddController", () => {
                 result.current.onBarcodeDetected(barcodeScanResult);
             });
 
-            expect(result.current.openNewProductDialog).toBe(true);
-            expect(result.current.defaultNewProductFields).toStrictEqual({
+            const { newProductDialog } = result.current;
+
+            expect(newProductDialog.isOpened).toBe(true);
+            expect(newProductDialog.payload?.defaultProductFields).toStrictEqual({
                 productBarcode: barcodeScanResult.code,
                 productBarcodeType: barcodeScanResult.format,
                 productCompanyName: "Milky way",

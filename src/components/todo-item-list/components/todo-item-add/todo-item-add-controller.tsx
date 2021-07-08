@@ -40,14 +40,10 @@ const useTodoItemAddController = () => {
     };
 
     return {
-        openNewProductDialog: newProductDialog.isOpened,
-        defaultNewProductFields: newProductDialog.payload?.defaultProductFields,
-        lastBarcodeScanResult: newProductDialog.payload?.barcodeScanResult,
         onBarcodeDetected,
         addTodoItem,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        setOpenNewProductDialog: (state: boolean) => newProductDialog.closeDialog(),
         productConfirmationDialog,
+        newProductDialog,
     };
 };
 

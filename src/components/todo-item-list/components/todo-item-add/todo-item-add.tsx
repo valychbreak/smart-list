@@ -30,20 +30,17 @@ const AddTodoItemComponent = () => {
     ] = useBooleanState();
 
     const {
-        openNewProductDialog,
-        defaultNewProductFields,
-        lastBarcodeScanResult,
         onBarcodeDetected,
         addTodoItem,
-        setOpenNewProductDialog,
         productConfirmationDialog,
+        newProductDialog,
     } = useTodoItemAddController();
 
     const { addItem } = useTodoItemListContext();
 
     const onNewProductSubmit = async (productFormData: ProductFormData) => {
         addProductToTodoItems(productFormData, addItem);
-        setOpenNewProductDialog(false);
+        newProductDialog.closeDialog();
     };
 
     const onBarcodeScan = (result: BarcodeScanResult) => {
@@ -56,27 +53,32 @@ const AddTodoItemComponent = () => {
         addTodoItem(TodoItem.fromProduct(product));
     };
 
+    const barcodeScanResult = newProductDialog.payload?.barcodeScanResult;
+    const newProductDefaultFields = newProductDialog.payload?.defaultProductFields;
+
     return (
         <>
-            <Dialog open={openNewProductDialog} onClose={() => setOpenNewProductDialog(false)}>
-                <DialogTitle>New product</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        {/* eslint-disable-next-line max-len */}
-                        Scanned barcode {lastBarcodeScanResult?.code} ({lastBarcodeScanResult?.format}) does not exist in our database.
-                    </DialogContentText>
-                    <DialogContentText>
-                        Please, fill the following form to add a new product
-                    </DialogContentText>
-                    <ProductForm
-                        shortForm
-                        defaultFieldValues={defaultNewProductFields}
-                        onProductSubmit={
-                            (productFormData) => onNewProductSubmit(productFormData)
-                        }
-                    />
-                </DialogContent>
-            </Dialog>
+            {newProductDialog.payload && <>
+                <Dialog open={newProductDialog.isOpened} onClose={newProductDialog.closeDialog}>
+                    <DialogTitle>New product</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            {/* eslint-disable-next-line max-len */}
+                            Scanned barcode {barcodeScanResult?.code} ({barcodeScanResult?.format}) does not exist in our database.
+                        </DialogContentText>
+                        <DialogContentText>
+                            Please, fill the following form to add a new product
+                        </DialogContentText>
+                        <ProductForm
+                            shortForm
+                            defaultFieldValues={newProductDefaultFields}
+                            onProductSubmit={
+                                (productFormData) => onNewProductSubmit(productFormData)
+                            }
+                        />
+                    </DialogContent>
+                </Dialog>
+            </>}
 
             {productConfirmationDialog.payload?.product && <>
                 <Dialog open={productConfirmationDialog.isOpened}>
