@@ -18,11 +18,11 @@ const ProductName = (props: { product: Product }) => {
     );
 };
 
-type ScannedProductDialogViewProps = {
+type ProductDialogViewProps = {
     product: Product;
 };
 
-const ScannedProductDialogView = (props: ScannedProductDialogViewProps) => {
+const ProductDialogView = (props: ProductDialogViewProps) => {
     const { product } = props;
     return (
         <>
@@ -34,4 +34,4 @@ const ScannedProductDialogView = (props: ScannedProductDialogViewProps) => {
     );
 };
 
-export default ScannedProductDialogView;
+export default ProductDialogView;
