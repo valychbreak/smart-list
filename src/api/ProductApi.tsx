@@ -125,11 +125,22 @@ class MockedProductApi implements ProductApi {
     }
 
     async updateProduct(product: Product, productImage?: string): Promise<void> {
-        if (productImage) {
-            const base64ImageOrUrl = await getBase64ImageOrUrl(productImage);
-            // eslint-disable-next-line no-param-reassign
-            product.image = base64ImageOrUrl;
+        const existingProduct = (await LocalDB.loadProducts())
+            .find((loadedProduct) => loadedProduct.productBarcode === product.productBarcode);
+
+        if (!existingProduct) {
+            throw Error("Product does not exist");
         }
+
+        let image;
+        if (productImage && productImage !== existingProduct.image) {
+            const base64ImageOrUrl = await getBase64ImageOrUrl(productImage);
+            image = base64ImageOrUrl;
+        } else {
+            image = existingProduct.image;
+        }
+        // eslint-disable-next-line no-param-reassign
+        product.image = image;
         await LocalDB.replaceProduct(product);
     }
 

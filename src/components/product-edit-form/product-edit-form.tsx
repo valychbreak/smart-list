@@ -46,7 +46,7 @@ const ProductEditForm = (props: ProductEditFormProps) => {
             productFullName: product.productFullName || "",
             productCompanyName: product.productCompanyName || "",
             productCountry: product.productCountry || "",
-            image: null
+            image: product.image
         },
     });
 
