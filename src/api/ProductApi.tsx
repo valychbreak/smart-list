@@ -37,13 +37,16 @@ function getPaged(page: number, perPage: number, products: Product[]): Page<Prod
     );
 }
 
-class MockedProductApi implements ProductApi {
-    productCache: Product[];
-
-    constructor() {
-        this.productCache = [];
+async function getBase64ImageOrUrl(imageUrl: string): Promise<string> {
+    if (imageUrl.startsWith("http")) {
+        return imageUrl;
     }
 
+    const base64Image = await compressImage(imageUrl, "image/jpeg");
+    return base64Image;
+}
+
+class MockedProductApi implements ProductApi {
     async findGeneralNamesBy(query: string): Promise<string[]> {
         const matchingProducts = await LocalDB.findByGeneralNameOrFullName(query);
         return matchingProducts.map((product) => product.productGeneralName)
@@ -114,21 +117,30 @@ class MockedProductApi implements ProductApi {
         product.productCountry = country;
 
         if (imageUrl) {
-            const base64Image = await compressImage(imageUrl, "image/jpeg");
-            product.image = base64Image;
+            const base64ImageOrUrl = await getBase64ImageOrUrl(imageUrl);
+            product.image = base64ImageOrUrl;
         }
 
         return LocalDB.saveProduct(product);
     }
 
     async updateProduct(product: Product, productImage?: string): Promise<void> {
-        let base64Image: string;
+        const existingProduct = (await LocalDB.loadProducts())
+            .find((loadedProduct) => loadedProduct.productBarcode === product.productBarcode);
 
-        if (productImage) {
-            base64Image = await compressImage(productImage, "image/jpeg");
-            // eslint-disable-next-line no-param-reassign
-            product.image = base64Image;
+        if (!existingProduct) {
+            throw Error("Product does not exist");
         }
+
+        let image;
+        if (productImage && productImage !== existingProduct.image) {
+            const base64ImageOrUrl = await getBase64ImageOrUrl(productImage);
+            image = base64ImageOrUrl;
+        } else {
+            image = existingProduct.image;
+        }
+        // eslint-disable-next-line no-param-reassign
+        product.image = image;
         await LocalDB.replaceProduct(product);
     }
 

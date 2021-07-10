@@ -105,7 +105,10 @@ const ProductForm = (props: ProductFormProps) => {
         updatedSuggestedCountry(barcode);
     }, [defaultFieldValues?.productBarcode]);
 
-    const createProduct = (formData: ProductFormFields): ProductFormData => (
+    const createProduct = (
+        formData: ProductFormFields,
+        imageUrl: string | null
+    ): ProductFormData => (
         {
             generalName: formData.productGeneralName,
             barcode: formData.productBarcode,
@@ -113,12 +116,16 @@ const ProductForm = (props: ProductFormProps) => {
             fullName: formData.productFullName,
             companyName: formData.productCompanyName,
             country: formData.productCountry,
-            imageUrl: formData.image
+            imageUrl
         }
     );
 
     const addItemInfo = (formData: ProductFormFields) => {
-        const productFormData = createProduct(formData);
+        const image: string | null = props.shortForm && !formData.image
+            ? defaultFieldValues?.image || null
+            : formData.image;
+
+        const productFormData = createProduct(formData, image);
         props.onProductSubmit(productFormData);
     };
 
