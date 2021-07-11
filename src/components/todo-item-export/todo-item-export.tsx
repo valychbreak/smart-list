@@ -131,6 +131,8 @@ const TodoItemExport = () => {
         if (formData.applyToProduct && updatedExportItem.targetProduct) {
             ProductApi.changeCategory(updatedExportItem.targetProduct, category);
         }
+
+        closeEditDialog();
     };
 
     const showExport = () => {
