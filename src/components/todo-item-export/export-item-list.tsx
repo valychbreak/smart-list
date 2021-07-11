@@ -5,10 +5,11 @@ import ExportItemView from "./export-item-view";
 type ExportItemListProps = {
     exportItems: ExportItem[];
     onEdit: (exportItem: ExportItem) => void;
+    onEditProduct: (exportItem: ExportItem) => void;
 };
 
 const ExportItemList = (props: ExportItemListProps) => {
-    const { exportItems, onEdit } = props;
+    const { exportItems, onEdit, onEditProduct } = props;
 
     return (
         <Box padding={1}>
@@ -17,6 +18,7 @@ const ExportItemList = (props: ExportItemListProps) => {
                     key={exportItem.id}
                     exportItem={exportItem}
                     onEdit={onEdit}
+                    onEditProduct={onEditProduct}
                 />
             ))}
         </Box>
