@@ -1,7 +1,8 @@
 import { Container, makeStyles, Paper } from "@material-ui/core";
 import React from "react";
-import AddTodoItemComponent from "../todo-item-add";
+// import AddTodoItemComponent from "../todo-item-add";
 import TodoListView from "../todo-item-list-view";
+import SpeedDials from "./AddProductComponent";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -27,7 +28,8 @@ const GroceriesTodoPlanningModeView: React.FC<{}> = () => {
 
         <Container maxWidth="lg" disableGutters classes={classes}>
             <Paper>
-                <AddTodoItemComponent />
+                {/* <AddTodoItemComponent /> */}
+                <SpeedDials/>
             </Paper>
         </Container>
     </>);
