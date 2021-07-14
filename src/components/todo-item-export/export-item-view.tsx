@@ -27,10 +27,11 @@ function getWarningMessage(exportItem: ExportItem) {
 type ExportItemViewProps = {
     exportItem: ExportItem;
     onEdit: (exportItem: ExportItem) => void;
+    onEditProduct: (exportItem: ExportItem) => void;
 };
 
 const ExportItemView = (props: ExportItemViewProps) => {
-    const { exportItem, onEdit } = props;
+    const { exportItem, onEdit, onEditProduct } = props;
     const { targetProduct } = exportItem;
 
     const productName = targetProduct?.productFullName || exportItem.generalName;
@@ -67,6 +68,14 @@ const ExportItemView = (props: ExportItemViewProps) => {
                         onClick={() => onEdit(exportItem)}
                     >
                         Edit
+                    </Button>
+                    <Button
+                        data-test-id="export-item-edit-product-btn"
+                        startIcon={<EditIcon />}
+                        disabled={exportItem.targetProduct == null}
+                        onClick={() => onEditProduct(exportItem)}
+                    >
+                        Edit Product
                     </Button>
                 </CardActions>
             </Card>
