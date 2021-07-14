@@ -61,4 +61,8 @@ export default class Product {
 
         return parsedProduct;
     }
+
+    get title() : string {
+        return this.productFullName ?? this.productGeneralName;
+    }
 }

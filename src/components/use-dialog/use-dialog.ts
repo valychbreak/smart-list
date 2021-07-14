@@ -5,12 +5,12 @@ function useDialog<T>() {
     const [payload, setPayload] = useState<T | null>(null);
 
     const openDialog = (dialogPayload: T) => {
-        setOpened(true);
-
         // check is required for case when T = void
         if (dialogPayload) {
             setPayload(dialogPayload);
         }
+
+        setOpened(true);
     };
 
     const closeDialog = () => {
