@@ -1,43 +1,69 @@
-import Quagga from '@ericblade/quagga2';
-import React, { Component, useEffect, useRef, useState } from 'react';
-import Product from '../entity/Product';
-import Scanner from '../Scanner';
-import ProductForm from './ProductForm';
+import { Dialog } from "@material-ui/core";
+import { useState } from "react";
+import openFoodFactsService from "../api/open-food-facts-api/open-food-facts.service";
+import { Scanner } from "./barcode-scanner";
+import { BarcodeScanResult } from "./barcode-scanner/types";
+import ProductForm, { ProductFormFields } from "./product-form";
+import ProductFormData from "./product-form/types";
+import productDetailsToFormFields from "./todo-item-list/components/utils/product-mapping-utils";
 
-interface AddProductInfoPros {
-    onProductSubmit(product: Product): void;
+interface AddProductInfoProps {
+    onProductSubmit(productFormData: ProductFormData): void;
 }
 
-const AddProductInfo = (props: AddProductInfoPros) => {
+const INITIAL_STAGE = 0;
 
-    const [stage, setStage] = useState(1);
-    const [barcodeResult, setBarcodeResult] = useState<any>();
+const AddProductInfo = (props: AddProductInfoProps) => {
+    const [stage, setStage] = useState(INITIAL_STAGE);
+    const [barcodeResult, setBarcodeResult] = useState<BarcodeScanResult>();
 
-    useEffect(() => {
-        return function cleanup() {
-            //setStage(1);
-        }
-    })
+    const [
+        newProductDefaultFields, setNewProductDefaultFields
+    ] = useState<ProductFormFields | undefined>(undefined);
 
-    const onBarcodeDetected = (result: any) => {
-        console.log(result);
+    const onBarcodeDetected = async (result: BarcodeScanResult) => {
         setBarcodeResult(result);
-        setStage(2);
-    }
 
-    const onProductSubmit = (product: Product) => {
-        setStage(1);
-        props.onProductSubmit(product);
-    }
+        const loadedExternalProduct = await openFoodFactsService.fetchProduct(result.code);
+        setNewProductDefaultFields(
+            productDetailsToFormFields(result, loadedExternalProduct)
+        );
+
+        setStage(2);
+    };
+
+    const onProductSubmit = (productFormData: ProductFormData) => {
+        setStage(INITIAL_STAGE);
+        props.onProductSubmit(productFormData);
+    };
+
+    const onDialogClose = () => {
+        setStage(INITIAL_STAGE);
+    };
+
+    const barcode: string = barcodeResult?.code || "";
+    const barcodeType: string = barcodeResult?.format || "";
 
     return (
         <>
-            <button onClick={() => setStage(1)}>Scan barcode</button> | <button onClick={() => setStage(2)}>Manual input</button>
+            <button onClick={() => setStage(1)}>Scan barcode</button>
+            |
+            <button onClick={() => setStage(2)}>Manual input</button>
             <br />
-            {stage == 1 && <Scanner onDetected={onBarcodeDetected} />}
-            {stage == 2 && <ProductForm productBarcode={barcodeResult?.codeResult?.code} productBarcodeType={barcodeResult?.codeResult?.format} onProductSubmit={onProductSubmit}/>}
+            <Dialog open={stage === 1} onClose={onDialogClose}>
+                <Scanner onDetected={onBarcodeDetected} />
+            </Dialog>
+            {stage === 2 && <>
+                <div>
+                    <p>Barcode (change if scanned incorrectly): {barcode}</p>
+                    <p>Barcode format: {barcodeType}</p>
+                </div>
+                <ProductForm
+                    defaultFieldValues={newProductDefaultFields}
+                    onProductSubmit={(productFormData) => onProductSubmit(productFormData)}/>
+            </>}
         </>
-    )
-}
+    );
+};
 
 export default AddProductInfo;

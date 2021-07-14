@@ -1,57 +1,104 @@
+/* eslint-disable no-console */
+/* eslint-disable no-await-in-loop */
+/* eslint-disable class-methods-use-this */
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable max-len */
+/* eslint-disable no-param-reassign */
 import axios from "axios";
 import ProductPriceEntry from "../entity/ProductPriceEntry";
 import Product from "../entity/Product";
+import TodoItem from "../components/todo-item-list/types";
+import CategoryLocalDB from "./persistance/local-db-category";
+import Category from "../entity/category";
+import ProductPriceApi from "./ProductPriceApi";
 
-const PRODUCTS_KEY = 'products';
-const PRODUCTS_PRICES_KEY = 'productPrices';
-
+const PRODUCTS_KEY = "products";
+const PRODUCTS_PRICES_KEY = "productPrices";
+const TODO_PRODUCT_ITEMS_KEY = "todoProductItems";
 
 class LocalDB {
-    private _productCache: Product[];
-    private _priceEntriesCache: ProductPriceEntry[];
+    private productCache: Product[];
+
+    private priceEntriesCache: ProductPriceEntry[];
+
+    private todoProductItemsCache: TodoItem[];
 
     constructor() {
-        this._productCache = [];
-        this._priceEntriesCache = [];
+        this.productCache = [];
+        this.priceEntriesCache = [];
+        this.todoProductItemsCache = [];
     }
 
     async loadProducts(): Promise<Product[]> {
         await this.initCacheIfNeeded();
-        
-        return this._productCache;
+
+        for (const product of this.productCache) {
+            await this.enrichProduct(product);
+        }
+
+        return [...this.productCache];
     }
 
     async saveProduct(product: Product): Promise<Product> {
         await this.initCacheIfNeeded();
 
         return new Promise((resolve, reject) => {
-
-            if (this.containsProduct(this._productCache, product)) {
-                return reject('Product already exists in db');
+            if (this.containsProduct(this.productCache, product)) {
+                return reject(new Error("Product already exists in db"));
             }
 
-            product.id = this._productCache.length + 1;
-            this._productCache.push(product);
+            product.id = this.productCache.length + 1;
+            this.productCache.push(product);
 
-            localStorage.setItem(PRODUCTS_KEY, JSON.stringify(this._productCache));
+            localStorage.setItem(PRODUCTS_KEY, JSON.stringify(this.productCache));
             return resolve(product);
-        })
+        });
+    }
+
+    async replaceProduct(product: Product): Promise<void> {
+        await this.initCacheIfNeeded();
+
+        return new Promise((resolve, reject) => {
+            if (!this.containsProduct(this.productCache, product)) {
+                return reject(new Error("Product does not exist in db"));
+            }
+
+            this.productCache = this.productCache.map((existingProduct) => (
+                existingProduct.productBarcode === product.productBarcode
+                    ? product
+                    : existingProduct
+            ));
+            localStorage.setItem(PRODUCTS_KEY, JSON.stringify(this.productCache));
+            return resolve();
+        });
     }
 
     async findProductsBy(generalName: string): Promise<Product[]> {
         await this.initCacheIfNeeded();
 
-        return this._productCache.filter(
-            product => product.productGeneralName.toLocaleLowerCase() === generalName.toLocaleLowerCase()
+        const matchingName = generalName.toLocaleLowerCase();
+        return this.productCache.filter(
+            (product) => product.productGeneralName.toLocaleLowerCase() === matchingName,
+        );
+    }
+
+    async findByGeneralNameOrFullName(query: string): Promise<Product[]> {
+        await this.initCacheIfNeeded();
+
+        const lowerCaseQuery = query.toLowerCase();
+        return this.productCache.filter(
+            (product) => product.productGeneralName.toLowerCase().includes(lowerCaseQuery)
+                       || (product.productFullName
+                           && product.productFullName.toLowerCase().includes(lowerCaseQuery)),
         );
     }
 
     async saveNewPriceEntry(productPriceEntry: ProductPriceEntry): Promise<ProductPriceEntry> {
         await this.initPriceEntriesCacheIfNeeded();
 
-        return new Promise((resolve, reject) => {
-            this._priceEntriesCache.push(productPriceEntry);
-            localStorage.setItem(PRODUCTS_PRICES_KEY, JSON.stringify(this._priceEntriesCache));
+        return new Promise((resolve) => {
+            this.priceEntriesCache.push(productPriceEntry);
+            localStorage.setItem(PRODUCTS_PRICES_KEY, JSON.stringify(this.priceEntriesCache));
             return resolve(productPriceEntry);
         });
     }
@@ -59,11 +106,10 @@ class LocalDB {
     async fetchLatestPriceEntry(product: Product): Promise<ProductPriceEntry | null> {
         await this.initPriceEntriesCacheIfNeeded();
 
-        return new Promise((resolve, reject) => {
-            let productPriceEntries = this._priceEntriesCache.filter(function (entry) { 
-                return entry.barcode === product.productBarcode 
-            });
-            
+        return new Promise((resolve) => {
+            const productPriceEntries = this.priceEntriesCache
+                .filter((entry) => entry.barcode === product.productBarcode);
+
             return resolve(this.getLatestEntry(productPriceEntries));
         });
     }
@@ -71,35 +117,109 @@ class LocalDB {
     async fetchLatestPriceEntryBy(product: Product, counterparty: string): Promise<ProductPriceEntry | null> {
         await this.initPriceEntriesCacheIfNeeded();
 
-        return new Promise((resolve, reject) => {
-            let productPriceEntries = this._priceEntriesCache.filter(function (entry) { 
-                return entry.barcode === product.productBarcode && entry.counterparty === counterparty;
-            });
-            
+        return new Promise((resolve) => {
+            const productPriceEntries = this.priceEntriesCache.filter((entry) => entry.barcode === product.productBarcode && entry.counterparty === counterparty);
+
             return resolve(this.getLatestEntry(productPriceEntries));
         });
+    }
+
+    async loadTodoProductItems(storeName?: string): Promise<TodoItem[]> {
+        await this.initTodoProductItemsCache();
+
+        const todoItemsWithPrice: TodoItem[] = [];
+        for (const todoItem of this.todoProductItemsCache) {
+            const { targetProduct } = todoItem;
+            if (!targetProduct || !storeName) {
+                todoItemsWithPrice.push(todoItem.setProductPrice(null));
+                // eslint-disable-next-line no-continue
+                continue;
+            }
+
+            const priceEntry = await ProductPriceApi.fetchLatestPrice(targetProduct, storeName);
+            if (priceEntry) {
+                const updatedItem = todoItem.setProductPrice(priceEntry.price);
+                todoItemsWithPrice.push(updatedItem);
+            } else {
+                todoItemsWithPrice.push(todoItem.setProductPrice(null));
+            }
+        }
+
+        return todoItemsWithPrice;
+    }
+
+    async saveTodoProductItem(todoItem: TodoItem): Promise<void> {
+        await this.initTodoProductItemsCache();
+
+        this.todoProductItemsCache.push(todoItem);
+        localStorage.setItem(TODO_PRODUCT_ITEMS_KEY, JSON.stringify(this.todoProductItemsCache));
+    }
+
+    async removeTodoProductItem(todoItemRemove: TodoItem): Promise<TodoItem> {
+        await this.initTodoProductItemsCache();
+
+        this.todoProductItemsCache = this.todoProductItemsCache.filter((todoItem) => todoItem.id !== todoItemRemove.id);
+        localStorage.setItem(TODO_PRODUCT_ITEMS_KEY, JSON.stringify(this.todoProductItemsCache));
+        return todoItemRemove;
+    }
+
+    async updateTodoProductItem(todoItem: TodoItem): Promise<void> {
+        await this.initTodoProductItemsCache();
+
+        this.todoProductItemsCache = this.todoProductItemsCache.map((cachedItem) => (cachedItem.id === todoItem.id ? todoItem : cachedItem));
+        localStorage.setItem(TODO_PRODUCT_ITEMS_KEY, JSON.stringify(this.todoProductItemsCache));
+    }
+
+    async clearTodoProductItems(): Promise<void> {
+        await this.initTodoProductItemsCache();
+
+        this.todoProductItemsCache = [];
+        localStorage.setItem(TODO_PRODUCT_ITEMS_KEY, JSON.stringify(this.todoProductItemsCache));
+    }
+
+    private async initTodoProductItemsCache(): Promise<void> {
+        if (this.todoProductItemsCache.length === 0) {
+            const storedTodoItemsJson = localStorage.getItem(TODO_PRODUCT_ITEMS_KEY);
+            const parsedTodoItems: TodoItem[] = [];
+
+            if (storedTodoItemsJson != null) {
+                try {
+                    for (const todoItemJson of JSON.parse(storedTodoItemsJson)) {
+                        const todoItem = TodoItem.from(todoItemJson);
+                        const todoItemProduct = todoItem.targetProduct;
+
+                        if (todoItemProduct) {
+                            await this.enrichProduct(todoItemProduct);
+                        }
+
+                        parsedTodoItems.push(todoItem);
+                    }
+                } catch (err) {
+                    console.log(err);
+                }
+            }
+
+            this.todoProductItemsCache = parsedTodoItems;
+        }
     }
 
     private getLatestEntry(priceEntries: ProductPriceEntry[]): ProductPriceEntry | null {
         if (priceEntries.length === 0) {
             return null;
-        } else {
-            let latestEntry = priceEntries.reduce(function (prev: ProductPriceEntry, current: ProductPriceEntry) {
-                return prev.date.getTime() > current.date.getTime() ? prev : current;
-            });
-            return latestEntry;
         }
+        const latestEntry = priceEntries.reduce((prev: ProductPriceEntry, current: ProductPriceEntry) => (prev.date.getTime() > current.date.getTime() ? prev : current));
+        return latestEntry;
     }
 
     private async initPriceEntriesCacheIfNeeded(): Promise<void> {
-        if (this._priceEntriesCache.length === 0) {
-            let storedPricesJson = localStorage.getItem(PRODUCTS_PRICES_KEY);
-            let storedPriceEntries = [];
+        if (this.priceEntriesCache.length === 0) {
+            const storedPricesJson = localStorage.getItem(PRODUCTS_PRICES_KEY);
+            const storedPriceEntries = [];
 
             if (storedPricesJson != null) {
                 try {
-                    for (let storedPrice of JSON.parse(storedPricesJson)) {
-                        let parsedPriceEntry = new ProductPriceEntry(storedPrice.barcode, storedPrice.price, storedPrice.counterparty, new Date(storedPrice.date));
+                    for (const storedPrice of JSON.parse(storedPricesJson)) {
+                        const parsedPriceEntry = new ProductPriceEntry(storedPrice.barcode, parseFloat(storedPrice.price), storedPrice.counterparty, new Date(storedPrice.date));
                         storedPriceEntries.push(parsedPriceEntry);
                     }
                 } catch (err) {
@@ -107,48 +227,61 @@ class LocalDB {
                 }
             }
 
-            this._priceEntriesCache = storedPriceEntries;
+            this.priceEntriesCache = storedPriceEntries;
         }
     }
 
     private async initCacheIfNeeded(): Promise<void> {
-        if (this._productCache.length === 0) {
-            let defaultProducts = await this.loadDefaultProducts();
-            let storedProducts = localStorage.getItem(PRODUCTS_KEY);
-        
+        if (this.productCache.length === 0) {
+            const defaultProducts = await this.loadDefaultProducts();
+            const storedProducts = localStorage.getItem(PRODUCTS_KEY);
 
             if (storedProducts == null) {
-                this._productCache = defaultProducts;
+                this.productCache = defaultProducts;
             } else {
-                let combinedProducts = defaultProducts;
+                const combinedProducts = [];
 
                 try {
-                    for (let storedProduct of JSON.parse(storedProducts)) {
-                        let parsedProduct = this.toProduct(storedProduct);
-                        if (!this.containsProduct(combinedProducts, parsedProduct)) {
-                            combinedProducts.push(parsedProduct);
+                    for (const storedProduct of JSON.parse(storedProducts)) {
+                        const parsedProduct = this.toProduct(storedProduct);
+                        combinedProducts.push(parsedProduct);
+                    }
+
+                    for (const defaultProduct of defaultProducts) {
+                        if (!this.containsProduct(combinedProducts, defaultProduct)) {
+                            combinedProducts.push(defaultProduct);
                         }
                     }
 
-                    this._productCache = combinedProducts;
+                    for (const product of combinedProducts) {
+                        await this.enrichProduct(product);
+                    }
+
+                    this.productCache = combinedProducts;
                 } catch (err) {
                     console.error(err);
-                    this._productCache = defaultProducts;
+                    this.productCache = defaultProducts;
                 }
-                
             }
 
-            localStorage.setItem(PRODUCTS_KEY, JSON.stringify(this._productCache));
+            localStorage.setItem(PRODUCTS_KEY, JSON.stringify(this.productCache));
+        }
+    }
+
+    private async enrichProduct(product: Product) {
+        const productCategory = await CategoryLocalDB.findCategoryFor(product);
+        if (productCategory != null) {
+            product.category = new Category(productCategory.id, productCategory.name);
         }
     }
 
     private async loadDefaultProducts(): Promise<Product[]> {
-        const response = await axios.get('products.json');
-        let fetchedData = response.data;
-        let products: Product[] = [];
+        const response = await axios.get("products.json");
+        const fetchedData = response.data;
+        const products: Product[] = [];
 
-        for (let productJson of fetchedData) {
-            let parsedProduct = this.toProduct(productJson);
+        for (const productJson of fetchedData) {
+            const parsedProduct = this.toProduct(productJson);
             products.push(parsedProduct);
         }
 
@@ -156,8 +289,8 @@ class LocalDB {
     }
 
     private containsProduct(products: Product[], product: Product): boolean {
-        for (let existingProduct of products) {
-            if (existingProduct.productBarcode == product.productBarcode) {
+        for (const existingProduct of products) {
+            if (existingProduct.productBarcode === product.productBarcode) {
                 return true;
             }
         }
@@ -165,14 +298,7 @@ class LocalDB {
     }
 
     private toProduct(productJson: any) {
-        let parsedProduct = new Product(productJson.productGeneralName, productJson.productBarcode, productJson.productBarcodeType);
-        
-        parsedProduct.id = productJson.id;
-        parsedProduct.productFullName = productJson.productFullName;
-        parsedProduct.productCompanyName = productJson.productCompanyName;
-        parsedProduct.productCountry = productJson.productCountry;
-
-        return parsedProduct;
+        return Product.from(productJson);
     }
 }
 

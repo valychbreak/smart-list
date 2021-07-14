@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ExportItemList should display all todo items 1`] = `
+<Styled(MuiBox)
+  padding={1}
+>
+  <ExportItemView
+    exportItem={
+      ExportItem {
+        "category": null,
+        "generalName": "Milk",
+        "id": 1,
+        "isBought": true,
+        "productPrice": null,
+        "purchasedPrice": null,
+        "purchasedStoreInternal": null,
+        "quantity": 1,
+        "targetProduct": null,
+      }
+    }
+    key="1"
+    onEdit={[Function]}
+  />
+  <ExportItemView
+    exportItem={
+      ExportItem {
+        "category": null,
+        "generalName": "Bread",
+        "id": 2,
+        "isBought": true,
+        "productPrice": null,
+        "purchasedPrice": null,
+        "purchasedStoreInternal": null,
+        "quantity": 1,
+        "targetProduct": null,
+      }
+    }
+    key="2"
+    onEdit={[Function]}
+  />
+</Styled(MuiBox)>
+`;

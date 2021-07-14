@@ -1,64 +1,66 @@
-
+import { makeStyles, Paper } from "@material-ui/core";
 import React from "react";
 import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
+    BrowserRouter as Router, Switch, Route,
 } from "react-router-dom";
-import BrowseProductsPage from "./pages/browse-products/BrowseProductsPage";
-import GroceriesTodoPage from "./pages/groceries-todo/GroceriesTodoPage";
-import AddNewProduct from './pages/new-product/AddNewProductPage'
+import AuthenticatedRoute from "./components/authenticated-route";
+import { AuthenticationContextProvider } from "./components/authentication";
+import AppHeader from "./components/header";
+import AddNewProduct from "./pages/new-product/AddNewProductPage";
 import ScanTest from "./pages/scan-test/ScanTestPage";
- 
-export default function App() {
-  return (
-    <Router>
-      <div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/browse">Browse products</Link>
-            </li>
-            <li>
-              <Link to="/new-product">Add new item</Link>
-            </li>
-            <li>
-              <Link to="/groceries-todo">Groceries to buy</Link>
-            </li>
-            <li>
-              <Link to="/scan-test">Test scanner</Link>
-            </li>
-          </ul>
-        </nav>
+import GroceriesTodo from "./routes/groceries-todo";
+import Login from "./routes/login";
+import Profile from "./routes/profile";
+import Export from "./routes/export";
+import Browse from "./routes/browse";
 
-        {/* A <Switch> looks through its children <Route>s and
-            renders the first one that matches the current URL. */}
-        <Switch>
-        <Route path="/browse">
-            <BrowseProductsPage />
-          </Route>
-          <Route path="/new-product">
-            <AddNewProduct />
-          </Route>
-          <Route path="/groceries-todo">
-            <GroceriesTodoPage />
-          </Route>
-          <Route path="/scan-test">
-            <ScanTest />
-          </Route>
-          <Route path="/">
-            <Home />
-          </Route>
-        </Switch>
-      </div>
-    </Router>
-  );
-}
- 
+const useStyles = makeStyles((theme) => ({
+    root: {},
+    paper: {
+        marginBottom: theme.spacing(2),
+    },
+}));
+
 function Home() {
-  return <h2>Home</h2>;
+    return <h2>Home</h2>;
+}
+
+export default function App() {
+    const classes = useStyles();
+
+    return (
+        <AuthenticationContextProvider>
+            <Router>
+                <Paper className={classes.paper}>
+                    <AppHeader />
+                    <Switch>
+                        <Route path="/browse">
+                            <Browse />
+                        </Route>
+                        <Route path="/new-product">
+                            <AddNewProduct />
+                        </Route>
+                        <AuthenticatedRoute path="/groceries-todo">
+                            <GroceriesTodo />
+                        </AuthenticatedRoute>
+                        <AuthenticatedRoute path="/profile">
+                            <Profile />
+                        </AuthenticatedRoute>
+                        <AuthenticatedRoute path="/export">
+                            <Export />
+                        </AuthenticatedRoute>
+                        <Route path="/scan-test">
+                            <ScanTest />
+                        </Route>
+                        <Route path="/login">
+                            <Login />
+                        </Route>
+                        <Route path="/">
+                            <Home />
+                        </Route>
+                    </Switch>
+                </Paper>
+            </Router>
+        </AuthenticationContextProvider>
+    );
 }
